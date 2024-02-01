@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz@9..40&family=Tourney:wght@100&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="style.css" />
+
+    <script defer src="script.js"></script>
+
+    <title>Mark the dent</title>
+  </head>
+  <body>
+    <div class="main-container">
+      <div class="choose choose__body">
+        <h1>Choose body type</h1>
+      </div>
+
+      <div class="body-container">
+        <button class="button button--body" value="hatchback">
+          <img
+            src="pics/body_pics/hatchback.png"
+            alt="Hatchback"
+            id="hatchback"
+          />
+        </button>
+        <button class="button button--body" value="coupe">
+          <img src="pics/body_pics/coupe.png" alt="Coupe" id="coupe" />
+        </button>
+        <button class="button button--body" value="sedan">
+          <img src="pics/body_pics/sedan.png" alt="Sedan" id="sedan" />
+        </button>
+        <button class="button button--body" value="cabri">
+          <img src="pics/body_pics/cabri.png" alt="Cabri" id="cabri" />
+        </button>
+        <button class="button button--body" value="cuv">
+          <img src="pics/body_pics/cuv.png" alt="Cuv" id="cuv" />
+        </button>
+        <button class="button button--body" value="suv">
+          <img src="pics/body_pics/suv.png" alt="Suv" id="suv" />
+        </button>
+        <button class="button button--body" value="pickup">
+          <img src="pics/body_pics/pickup.png" alt="Pickup" id="pickup" />
+        </button>
+        <button class="button button--body" value="minivan">
+          <img src="pics/body_pics/minivan.png" alt="Minivan" id="minivan" />
+        </button>
+        <button class="button button--body" value="van">
+          <img src="pics/body_pics/van.png" alt="Van" id="van" />
+        </button>
+      </div>
+
+      <div class="choose choose__side hidden">
+        <h1>Choose side</h1>
+      </div>
+
+      <div class="marker-container hidden">
+        <div class="row row--shapes">
+          <label>Shape:</label>
+          <div class="buttons">
+            <button class="m_button m_button--shapes" id="nonagon">
+              <img
+                src="pics/button_pics/nonagon.png"
+                alt="nonagon"
+                id="circle"
+              />
+            </button>
+            <button class="m_button m_button--shapes" id="line">
+              <img src="pics/button_pics/strip.png" alt="strip" id="strip" />
+            </button>
+          </div>
+        </div>
+        <div class="row row--orientation hidden">
+          <label>Orientation:</label>
+          <div class="orientation-buttons">
+            <button class="m_button m_button--orientation" id="0deg">
+              <img src="pics/button_pics/0deg.png" alt="0deg" id="flat" />
+            </button>
+            <button class="m_button m_button--orientation" id="90deg">
+              <img src="pics/button_pics/90deg.png" alt="90deg" id="flat" />
+            </button>
+            <button class="m_button m_button--orientation" id="135deg">
+              <img src="pics/button_pics/135deg.png" alt="135deg" id="flat" />
+            </button>
+            <button class="m_button m_button--orientation" id="45deg">
+              <img src="pics/button_pics/45deg.png" alt="45deg" id="flat" />
+            </button>
+          </div>
+        </div>
+        <div class="row">
+          <label>Distance:</label>
+          <div class="buttons">
+            <button class="m_button m_button--distance" id="small">
+              0 - 5
+            </button>
+            <button class="m_button m_button--distance" id="medium">
+              5-10
+            </button>
+            <button class="m_button m_button--distance" id="big">10+</button>
+          </div>
+        </div>
+        <div class="row">
+          <label class="paint">Paint damaged?</label>
+          <div class="buttons">
+            <button class="m_button m_button--paint" id="yes">Yes</button>
+            <button class="m_button m_button--paint" id="no">No</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="image-container">
+        <img id="vehicleImage" src="" />
+        <div id="marker"></div>
+      </div>
+
+      <div class="save-marks-container hidden">
+        <button class="form__btn remove__last">Remove last mark</button>
+
+        <button class="form__btn remove--marks">Remove all marks</button>
+      </div>
+
+      <div class="send-container hidden">
+        <div class="summary-container"></div>
+        <label class="form__label">Vehicle Model</label>
+        <input type="text" class="form__input form__input--model" />
+        <label class="form__label">Name</label>
+        <input type="text" class="form__input form__input--name" />
+        <label class="form__label">Email</label>
+        <input type="text" class="form__input form__input--email" />
+
+        <div class="form__row form__row--button">
+          <button class="form__btn send-marks">Send</button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
