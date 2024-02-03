@@ -2,7 +2,8 @@ body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background-image: linear-gradient(to right, rgb(45, 64, 89), rgb(45, 64, 89));
+  background-color: rgb(34, 40, 49);
+  /* background-image: linear-gradient(to right, rgb(45, 64, 89), rgb(45, 64, 89)); */
   overflow-y: auto;
   /* margin-bottom: 30rem; */
 }
@@ -31,8 +32,8 @@ html {
 .choose h1 {
   margin-bottom: 5px;
   margin-top: 10px;
-  font-family: "DM Sans", sans-serif;
-  font-family: "Tourney", sans-serif;
+  font-family: 'DM Sans', sans-serif;
+  font-family: 'Tourney', sans-serif;
   color: #ffffff;
 }
 
@@ -98,7 +99,7 @@ html {
 .button img {
   max-width: 100%; /* Make sure the image doesn't exceed the button's width */
   height: auto;
-  border-radius: 4px; /* Optional: Apply border-radius to the image */
+  /* border-radius: 4px; */
 }
 
 /* .button:hover {
@@ -128,34 +129,8 @@ html {
   position: relative;
 }
 
-.marker-container {
-  /* background-color: #3498db;
-  display: flex;
-  flex-direction: column;
-  margin-top: 1rem;
-  opacity: 0;
-  transition: opacity 0.5s ease-in-out;
-  margin: 0 0.5rem; */
-  margin: 0.5rem;
-  opacity: 0;
-  background-color: rgb(238, 238, 238);
-  border: 1px solid #ffffff;
-  border-radius: 2px;
-  transition: opacity 0.5s ease-in-out;
-  width: 300px;
-}
-
 .marker-container--visible {
   opacity: 1;
-}
-
-.row {
-  display: flex;
-  align-items: center;
-  /* background-color: orange; */
-  margin: 0.5rem;
-  padding: 0.5rem;
-  justify-content: space-between;
 }
 
 .shapes-container {
@@ -178,11 +153,6 @@ html {
   align-items: center;
 }
 
-.buttons {
-  display: inline-flex;
-  justify-content: center;
-  gap: 1rem;
-}
 .left {
   display: flex;
   flex-direction: column;
@@ -204,31 +174,116 @@ html {
   display: flex;
   flex-direction: column;
 }
-.m_button {
+/* MARKER CONTAINER */
+
+.marker-container {
+  /* background-color: #3498db;
+  display: flex;
+  flex-direction: column;
+  margin-top: 1rem;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+  margin: 0 0.5rem; */
+  margin: 0.5rem;
+  opacity: 0;
+  /* background-color: rgb(238, 238, 238); */
+  background-image: linear-gradient(to right, rgb(238, 238, 238), #68615d);
+  /* border: 1px solid #ffffff; */
+  border-radius: 2px;
+  transition: opacity 0.5s ease-in-out;
+  width: 300px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  margin: 0.5rem;
+  padding: 0.5rem;
+  justify-content: space-between;
+}
+
+/* .buttons {
+  display: inline-flex;
+  justify-content: center;
+  gap: 1rem;
+} */
+
+/* .m_button {
   margin: 0.3rem;
-  /* border: none; */
   padding: 1.3rem;
   border-radius: 5px;
   background-color: white;
-}
-
-/* MEASUREMENT BUTTONS */
-#small {
-  background-color: #78fa7e; /* Set color for button with id="05" */
-}
-
-#medium {
-  background-color: #faf878; /* Set color for button with id="05" */
-}
-#big {
-  background-color: #e96f4b; /* Set color for button with id="05" */
-}
+} */
 
 .m_button.pressed {
   transform: translateY(1px);
   box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.3);
-  border: 3px solid rgb(26, 165, 230); /* Add orange border to the pressed button */
+  background-color: rgb(143, 140, 140);
+  /* border: 3px solid rgb(26, 165, 230); */
 }
+
+/* .m_button--shapes {
+  padding: 0;
+  border-radius: 5px;
+} */
+
+.buttons button {
+  background-color: rgb(45, 64, 89); /* Green background */
+  border: 1px solid rgb(0, 0, 0); /* Green border */
+  color: white; /* White text */
+  padding: 10px 24px; /* Some padding */
+  cursor: pointer; /* Pointer/hand icon */
+  float: left; /* Float the buttons side by side */
+}
+
+.buttons:after {
+  content: '';
+  clear: both;
+  display: table;
+}
+
+.buttons button:not(:last-child) {
+  border-right: none; /* Prevent double borders */
+}
+
+#circle {
+  width: 3rem;
+}
+
+#strip {
+  width: 3rem;
+  height: 3rem;
+  /* padding: 5px; */
+}
+
+#flat {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.orientation-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.row--orientation.hidden {
+  display: none;
+}
+
+.row--orientation {
+  display: flex;
+}
+
+/* MEASUREMENT BUTTONS */
+/* #small {
+  background-color: #78fa7e; 
+
+#medium {
+  background-color: #faf878; 
+}
+#big {
+  background-color: #e96f4b; 
+} */
 
 .send-container {
   background-color: rgb(130, 179, 219);
@@ -244,24 +299,6 @@ html {
   transition: all 0.5s, transform 1ms;
 }
 
-#circle {
-  width: 5rem;
-}
-
-#strip {
-  width: 5rem;
-  padding: 5px;
-}
-
-#flat {
-  width: 2rem;
-  height: 2rem;
-}
-
-.m_button--shapes {
-  padding: 0;
-  border-radius: 5px;
-}
 .shapes-container {
   display: flex;
   flex-direction: row;
@@ -319,18 +356,7 @@ html {
     height: 4rem;
     font-size: 1rem; 
   } */
-.orientation-buttons {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-.row--orientation.hidden {
-  display: none;
-}
 
-.row--orientation {
-  display: flex;
-}
 .visible {
   opacity: 1;
 }
