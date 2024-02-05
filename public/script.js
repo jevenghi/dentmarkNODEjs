@@ -6,7 +6,7 @@ const sideText = document.querySelector('.choose__side');
 
 const imageContainer = document.querySelector('.image-container');
 const imageContainerSummary = document.querySelector(
-  '.image-container__summary'
+  '.image-container__summary',
 );
 
 const sendContainer = document.querySelector('.send-container');
@@ -36,14 +36,13 @@ const buttonsPaint = document.querySelectorAll('.m_button--paint');
 let sideSelection = document.querySelector('.sides-container');
 
 class Vehicle {
-  date = new Date();
   constructor(customer, model, body, dents) {
     this.id = Math.random().toString(36).substring(2, 9);
     this.customer = customer;
     this.model = model;
     this.body = body;
     this.dents = dents || {};
-    this.createdAt = this.date.toDateString();
+    this.createdAt = new Date().toDateString();
   }
 }
 class App {
@@ -117,7 +116,7 @@ class App {
                   dent.orientation,
                   dent.paintDamaged,
                   dent.coords,
-                  imageContainer
+                  imageContainer,
                 );
               });
             }
@@ -201,7 +200,7 @@ class App {
         this.#lineAngle,
         this.#dentPaintDamaged,
         coords,
-        imageContainer
+        imageContainer,
       );
 
       const dentData = {
@@ -249,7 +248,7 @@ class App {
         dents.forEach((entry) => {
           const { shape, length, orientation, paintDamaged, coords } = entry;
           const imageContainerSummary = document.querySelector(
-            '.image-container__summary'
+            '.image-container__summary',
           );
           this._placeMarker(
             shape,
@@ -257,7 +256,7 @@ class App {
             orientation,
             paintDamaged,
             coords,
-            imageContainerSummary
+            imageContainerSummary,
           );
         });
       });
