@@ -19,6 +19,6 @@ app.use((req, res, next) => {
 });
 
 app.use('/api/v1/admin', adminRouter);
-app.use('/', userRouter);
+app.use('/api', userRouter);
 
 module.exports = app;

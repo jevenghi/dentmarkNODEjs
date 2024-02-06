@@ -13,7 +13,19 @@ const taskSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Body type should be specified'],
   },
+  difficulty: {
+    type: Number,
+  },
   dents: {},
+  taskStatus: {
+    type: String,
+    default: 'Open',
+  },
+  images: [String],
+  createdAt: {
+    type: Date,
+    default: Date.now(),
+  },
 });
 
 const Task = mongoose.model('Task', taskSchema);

@@ -7,6 +7,10 @@ const router = express.Router();
 
 router.route('/customer/:id').get(adminController.getCustomer).patch().delete();
 router.route('/tasks').get(adminController.getAllTasks).patch().delete();
-router.route('/').get(adminController.getAllCustomers).patch().delete();
+router.route('/').get(adminController.getAllCustomerNames).patch().delete();
+router
+  .route('/tasks/:id')
+  .patch(adminController.updateTask)
+  .delete(adminController.deleteTask);
 
 module.exports = router;

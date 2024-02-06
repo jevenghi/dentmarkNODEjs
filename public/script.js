@@ -36,13 +36,13 @@ const buttonsPaint = document.querySelectorAll('.m_button--paint');
 let sideSelection = document.querySelector('.sides-container');
 
 class Vehicle {
-  constructor(customer, model, body, dents) {
-    this.id = Math.random().toString(36).substring(2, 9);
-    this.customer = customer;
-    this.model = model;
-    this.body = body;
+  constructor(user, carModel, bodyType, dents) {
+    this.user = user;
+    this.carModel = carModel;
+    this.bodyType = bodyType;
+    // this.difficulty = difficulty;
     this.dents = dents || {};
-    this.createdAt = new Date().toDateString();
+    this.createdAt = new Date();
   }
 }
 class App {
@@ -224,19 +224,30 @@ class App {
       const email = customerEmail.value;
       if (!model || !name) {
         return alert('Please enter Model and your Name');
-      } else {
-        alert('Data sent!');
       }
       const veh = new Vehicle(name, model, this.#bodyType, this.#dents);
-      console.log(veh);
       this._removeAllMarkers();
 
+      fetch('http://127.0.0.1:5501/api/sendTask', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(veh),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          alert('Data sent successfully!');
+        })
+        .catch((error) => {
+          console.error('Error sending data:', error);
+        });
+
       Object.entries(veh.dents).forEach(([side, dents]) => {
-        console.log(side);
         let html = `
           <div class="image-container__summary">
-            <div class="overlay-text model-text">${veh.model}</div>
-            <div class="overlay-text customer-text">${veh.customer}</div>
+            <div class="overlay-text model-text">${veh.carModel}</div>
+            <div class="overlay-text customer-text">${veh.user}</div>
             <div class="overlay-text date-text">${veh.createdAt}</div>
             <img id="vehicleImage" src="pics/sides_pics/${side}.png" />
             <div id="marker"></div>
@@ -261,7 +272,6 @@ class App {
         });
       });
 
-      // alert("Data sent successfully!");
       // window.scrollTo(0, 0);
       // setTimeout(() => {
       //   location.reload();
