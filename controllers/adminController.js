@@ -1,4 +1,7 @@
 const Task = require('../models/taskModel');
+const RequestQueryHandler = require('../utils/requestQueryHandler');
+const catchAsyncErr = require('../utils/catchAsyncError');
+const AppError = require('../utils/appError');
 
 exports.getAllCustomerNames = async (req, res) => {
   try {
@@ -23,67 +26,44 @@ exports.getAllCustomerNames = async (req, res) => {
   }
 };
 
-exports.getAllTasks = async (req, res) => {
-  try {
-    const query = Task.find(req.query);
-    const page = req.query.page * 1 || 1;
-    const limit = req.query.limit * 1 || 1;
-    const skip = (page - 1) * limit;
+exports.getAllTasks = catchAsyncErr(async (req, res, next) => {
+  const requestQueries = new RequestQueryHandler(Task.find(), req.query)
+    .filter()
+    .sort()
+    .limitFields()
+    .paginate();
+  const tasks = await requestQueries.query;
+  res.status(200).json({
+    status: 'success',
+    results: tasks.length,
+    data: {
+      tasks,
+    },
+  });
+});
 
-    query.skip(skip).limit(limit);
-    const allTasks = await query;
-    res.status(200).json({
-      status: 'success',
-      data: { allTasks },
-    });
-  } catch (err) {
-    res.status(404).json({
-      status: 'fail',
-      message: err,
-    });
+exports.getCustomer = catchAsyncErr(async (req, res, next) => {
+  const customer = await Task.find({ user: req.params.id });
+  if (!customer.length) {
+    return next(new AppError('No customer found with that id', 404));
   }
-};
+  res.status(200).json({
+    status: 'success',
+    data: { customer },
+  });
+});
 
-exports.getCustomer = async (req, res) => {
-  try {
-    const customer = await Task.find({ user: req.params.id });
-    if (customer.length) {
-      res.status(200).json({
-        status: 'success',
-        data: { customer },
-      });
-    } else {
-      res.status(404).json({
-        status: 'fail',
-        message: 'No customer found for the specified ID',
-      });
-    }
-  } catch (err) {
-    res.status(500).json({
-      status: 'fail',
-      message: err,
-    });
-  }
-};
+exports.updateTask = catchAsyncErr(async (req, res) => {
+  const task = await Task.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
 
-exports.updateTask = async (req, res) => {
-  try {
-    const task = await Task.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
-
-    res.status(201).json({
-      status: 'success',
-      data: { task },
-    });
-  } catch (err) {
-    res.status(404).json({
-      status: 'fail',
-      message: err,
-    });
-  }
-};
+  res.status(201).json({
+    status: 'success',
+    data: { task },
+  });
+});
 
 exports.deleteTask = async (req, res) => {
   try {
@@ -92,6 +72,34 @@ exports.deleteTask = async (req, res) => {
     res.status(204).json({
       status: 'success',
       message: 'Task succesfully deleted',
+    });
+  } catch (err) {
+    res.status(404).json({
+      status: 'fail',
+      message: err,
+    });
+  }
+};
+exports.getTaskStats = async (req, res) => {
+  try {
+    const stats = await Task.aggregate([
+      {
+        $match: { difficulty: { $gte: 1 } },
+      },
+      {
+        $group: {
+          _id: '$user',
+          numTasks: { $sum: 1 },
+          avgDifficulty: { $avg: '$difficulty' },
+        },
+      },
+      {
+        $sort: { avgDifficulty: 1 },
+      },
+    ]);
+    res.status(200).json({
+      status: 'success',
+      message: { stats },
     });
   } catch (err) {
     res.status(404).json({

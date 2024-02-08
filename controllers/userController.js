@@ -1,16 +1,10 @@
 const Task = require('../models/taskModel');
+const catchAsyncErr = require('../utils/catchAsyncError');
 
-exports.sendTask = async (req, res) => {
-  try {
-    const newTask = await Task.create(req.body);
-    res.status(201).json({
-      status: 'success',
-      data: newTask,
-    });
-  } catch (err) {
-    res.status(400).json({
-      status: 'fail',
-      message: err,
-    });
-  }
-};
+exports.sendTask = catchAsyncErr(async (req, res, next) => {
+  const newTask = await Task.create(req.body);
+  res.status(201).json({
+    status: 'success',
+    data: newTask,
+  });
+});

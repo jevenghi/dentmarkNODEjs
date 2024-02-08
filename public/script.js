@@ -228,7 +228,7 @@ class App {
       const veh = new Vehicle(name, model, this.#bodyType, this.#dents);
       this._removeAllMarkers();
 
-      fetch('http://127.0.0.1:5501/api/sendTask', {
+      fetch('http://127.0.0.1:5501/api/v1/users/sendTask', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -236,7 +236,7 @@ class App {
         body: JSON.stringify(veh),
       })
         .then((response) => response.json())
-        .then((data) => {
+        .then(() => {
           alert('Data sent successfully!');
         })
         .catch((error) => {
