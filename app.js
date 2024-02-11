@@ -4,7 +4,7 @@ const app = express();
 const morgan = require('morgan');
 const AppError = require('./utils/appError');
 const errorHandler = require('./controllers/errorController');
-const adminRouter = require('./routes/adminRoutes');
+const adminRouter = require('./routes/taskRoutes');
 const userRouter = require('./routes/userRoutes');
 
 if (process.env.NODE_ENV === 'development') {
@@ -19,7 +19,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/api/v1/admin', adminRouter);
+app.use('/api/v1/tasks', adminRouter);
 app.use('/api/v1/users', userRouter);
 
 app.all('*', (req, res, next) => {
