@@ -42,17 +42,6 @@ exports.getAllTasks = catchAsyncErr(async (req, res, next) => {
   });
 });
 
-exports.getCustomer = catchAsyncErr(async (req, res, next) => {
-  const customer = await Task.find({ user: req.params.id });
-  if (!customer.length) {
-    return next(new AppError('No customer found with that id', 404));
-  }
-  res.status(200).json({
-    status: 'success',
-    data: { customer },
-  });
-});
-
 exports.updateTask = catchAsyncErr(async (req, res) => {
   const task = await Task.findByIdAndUpdate(req.params.id, req.body, {
     new: true,

@@ -1,13 +1,14 @@
 const express = require('express');
 const adminController = require('../controllers/taskController');
+const authController = require('../controllers/authController');
 
 const router = express.Router();
 
-// router.param('id', adminController.checkID);
+router.use('/', authController.protect, authController.restrictTo('admin'));
 
 router.route('/task-stats').get(adminController.getTaskStats);
-router.route('/customer/:id').get(adminController.getCustomer).patch().delete();
-router.route('/').get(adminController.getAllTasks).patch().delete();
+router.route('/').get(adminController.getAllTasks);
+
 router
   .route('/customers')
   .get(adminController.getAllCustomerNames)
