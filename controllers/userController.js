@@ -3,6 +3,14 @@ const User = require('../models/userModel');
 const catchAsyncErr = require('../utils/catchAsyncError');
 const AppError = require('../utils/appError');
 
+const filterObj = (obj, ...allowedFields) => {
+  const newObj = {};
+  Object.keys(obj).forEach((el) => {
+    if (allowedFields.includes(el)) newObj[el] = obj[el];
+  });
+  return newObj;
+};
+
 exports.sendTask = catchAsyncErr(async (req, res, next) => {
   const newTask = await Task.create(req.body);
   res.status(201).json({
@@ -17,6 +25,30 @@ exports.getAllUsers = catchAsyncErr(async (req, res, next) => {
     status: 'success',
     results: allUsers.length,
     data: { users: allUsers },
+  });
+});
+
+exports.updateMe = catchAsyncErr(async (req, res, next) => {
+  const filteredBody = filterObj(req.body, 'name', 'email');
+  const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
+    new: true,
+    runValidators: true,
+  });
+
+  res.status(201).json({
+    status: 'success',
+    data: { user: updatedUser },
+  });
+});
+
+exports.deleteMe = catchAsyncErr(async (req, res, next) => {
+  await User.findByIdAndUpdate(req.user.id, {
+    active: false,
+  });
+
+  res.status(204).json({
+    status: 'success',
+    data: null,
   });
 });
 
