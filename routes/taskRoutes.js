@@ -1,22 +1,23 @@
 const express = require('express');
-const adminController = require('../controllers/taskController');
+const taskController = require('../controllers/taskController');
 const authController = require('../controllers/authController');
 
 const router = express.Router();
 
-router.use('/', authController.protect, authController.restrictTo('admin'));
+router.post('/sendTask', authController.protect, taskController.sendTask);
 
-router.route('/task-stats').get(adminController.getTaskStats);
-router.route('/').get(adminController.getAllTasks);
+// Restrict all routes after this middleware to admin & superadmin
+router.use(
+  authController.protect,
+  authController.restrictTo('admin', 'superAdmin'),
+);
 
+router.route('/').get(taskController.getAllTasks);
+router.route('/task-stats').get(taskController.getTaskStats);
 router
-  .route('/customers')
-  .get(adminController.getAllCustomerNames)
-  .patch()
-  .delete();
-router
-  .route('/tasks/:id')
-  .patch(adminController.updateTask)
-  .delete(adminController.deleteTask);
+  .route('/:id')
+  .get(authController.protect, taskController.getTask)
+  .patch(taskController.updateTask)
+  .delete(taskController.deleteTask);
 
 module.exports = router;

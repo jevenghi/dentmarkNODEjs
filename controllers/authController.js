@@ -38,7 +38,6 @@ exports.signup = catchAsyncErr(async (req, res, next) => {
     name: req.body.name,
     email: req.body.email,
     password: req.body.password,
-    role: req.body.role,
     passwordConfirm: req.body.passwordConfirm,
   });
   createSendToken(newUser, 201, res);
@@ -130,7 +129,6 @@ exports.forgotPassword = catchAsyncErr(async (req, res, next) => {
   } catch (err) {
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
-    console.log(err);
     await user.save({ validateBeforeSave: false });
     return next(
       new AppError(
@@ -170,7 +168,6 @@ exports.updatePassword = catchAsyncErr(async (req, res, next) => {
 
   const { oldPassword, newPassword, newPasswordConfirm } = req.body;
   // console.log(await user.correctPassword(oldPassword, user.password));
-  console.log(oldPassword, newPassword, newPasswordConfirm);
 
   if (!(await user.correctPassword(oldPassword, user.password))) {
     return next(new AppError(`Incorrect old password`, 401));

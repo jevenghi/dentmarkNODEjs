@@ -173,6 +173,8 @@ class App {
 
     vehicleImage.addEventListener('click', (event) => {
       event.preventDefault();
+      //calculate the percentage values of the x, y relative to the width,
+      //height of an image, so that x, y can be recreated on image of another size.
       this.#storedCoordinates = {
         x: (event.offsetX / vehicleImage.clientWidth) * 100,
         y: (event.offsetY / vehicleImage.clientHeight) * 100,

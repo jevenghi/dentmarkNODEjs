@@ -1,43 +1,56 @@
 const mongoose = require('mongoose');
-const slugify = require('slugify');
-const validator = require('validator');
 
-const taskSchema = new mongoose.Schema({
-  user: {
-    type: String,
-    required: [true, 'Customer name should be specified'],
-    trim: true,
-    maxlength: [50, 'Name must have less than 50 letters'],
-    minlength: [2, 'Name must have more than 1 letter'],
-  },
-  carModel: {
-    type: String,
-    required: [true, 'Model should be specified'],
-    trim: true,
-    maxlength: [50, 'Car model name must have less than 50 letters'],
-    minlength: [5, 'Car model name must have more than 4 letter'],
-  },
-  bodyType: {
-    type: String,
-  },
-  difficulty: {
-    type: String,
-    enum: {
-      values: ['easy', 'medium', 'difficult'],
-      message: 'Difficulty can be easy, medium or difficult',
+const taskSchema = new mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'User',
+      require: [true, 'Task must belong to a user'],
+      // required: [true, 'Customer name should be specified'],
+      // trim: true,
+      // maxlength: [50, 'Name must have less than 50 letters'],
+      // minlength: [2, 'Name must have more than 1 letter'],
+    },
+    carModel: {
+      type: String,
+      required: [true, 'Model should be specified'],
+      trim: true,
+      maxlength: [50, 'Car model name must have less than 50 letters'],
+      minlength: [5, 'Car model name must have more than 4 letter'],
+    },
+    bodyType: {
+      type: String,
+    },
+    difficulty: {
+      type: String,
+      enum: {
+        values: ['easy', 'medium', 'difficult'],
+        message: 'Difficulty can be easy, medium or difficult',
+      },
+    },
+    dents: {
+      type: Object,
+      required: true,
+    },
+    taskStatus: {
+      type: String,
+      default: 'open',
+      enum: {
+        values: ['open', 'inProgress', 'closed'],
+        message: 'Status can be open, inProgress or closed',
+      },
+    },
+    images: [String],
+    createdAt: {
+      type: Date,
+      default: Date.now(),
     },
   },
-  dents: {},
-  taskStatus: {
-    type: String,
-    default: 'Open',
+  {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   },
-  images: [String],
-  createdAt: {
-    type: Date,
-    default: Date.now(),
-  },
-});
+);
 
 // taskSchema.pre('save', function (next) {
 //   this.slug = slugify(this.name, { lower: true });
