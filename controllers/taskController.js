@@ -1,7 +1,27 @@
+/* eslint-disable no-plusplus */
 const Task = require('../models/taskModel');
 const catchAsyncErr = require('../utils/catchAsyncError');
 const factory = require('./handlerFactory');
 const AppError = require('../utils/appError');
+
+// Counts occurrences of dents' 'length' and 'paintDamaged' values
+// to use it for determining task's difficulty
+const accumulateValues = function (arr) {
+  return arr.reduce((acc, nestedArray) => {
+    nestedArray.forEach((el) => {
+      acc[el.length] = (acc[el.length] || 0) + 1;
+      acc[el.paintDamaged] = (acc[el.paintDamaged] || 0) + 1;
+    });
+    return acc;
+  }, {});
+};
+
+// Determines task's difficulty level
+const calcTaskDifficulty = function (obj) {
+  if (obj.big && obj.yes) return 'difficult';
+  if (obj.medium && obj.yes) return 'medium';
+  return 'easy';
+};
 
 // exports.getAllCustomerNames = async (req, res) => {
 //   try {
@@ -66,6 +86,9 @@ exports.getTask = factory.getOne(Task, { path: 'user', select: 'name' });
 
 exports.sendTask = catchAsyncErr(async (req, res, next) => {
   if (!req.body.user) req.body.user = req.user.id;
+  const dentsValues = Object.values(req.body.dents);
+  const accValues = accumulateValues(dentsValues);
+  req.body.difficulty = calcTaskDifficulty(accValues);
   const newTask = await Task.create(req.body);
   res.status(201).json({
     status: 'success',
@@ -93,7 +116,6 @@ exports.deleteTask = async (req, res, next) => {
       return next(new AppError(`Task with this ID does not exist`, 404));
 
     if (task.user.toHexString() === req.user.id || req.user.id === 'admin') {
-      console.log(task.user.toHexString(), req.user.id);
       await task.deleteOne();
       // Status 200 or 204?
       res.status(200).json({

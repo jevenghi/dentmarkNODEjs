@@ -57,5 +57,7 @@ const taskSchema = new mongoose.Schema(
 //   next();
 // });
 
+// taskSchema.statics.calcDifficulty = function (task) {};
+
 const Task = mongoose.model('Task', taskSchema);
 module.exports = Task;
