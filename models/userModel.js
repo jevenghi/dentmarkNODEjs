@@ -64,6 +64,13 @@ const userSchema = new mongoose.Schema(
       default: true,
       select: false,
     },
+    loginAttempts: {
+      type: Number,
+      default: 0,
+    },
+    lockUntil: {
+      type: Date,
+    },
   },
   {
     toJSON: { virtuals: true },

@@ -7,6 +7,8 @@ const AppError = require('../utils/appError');
 const catchAsyncErr = require('../utils/catchAsyncError');
 const sendEmail = require('../utils/email');
 
+const MAX_LOGIN_ATTEMPTS = 5;
+const LOCK_TIME = 10 * 60 * 1000; //Lock time after login attempts limit reached
 /**
  * Sign JWT token for user authentication.
  * @param {string} id - User ID to be included in the token payload.
@@ -89,25 +91,70 @@ exports.signup = catchAsyncErr(async (req, res, next) => {
  * If authentication is successful, it sends a JWT token along with the user data in the response.
  */
 exports.login = catchAsyncErr(async (req, res, next) => {
-  // Extract email and password from request body
   const { email, password } = req.body;
 
-  // Check if email or password is missing
   if (!email || !password) {
     return next(new AppError('Please provide email and password', 400));
   }
 
-  // Find user by email and select the password field
-  const user = await User.findOne({ email }).select('+password');
+  const user = await User.findOne({ email }).select(
+    '+password -passwordConfirm',
+  );
 
+  // Check if the user account is locked due to too many failed login attempts
+  if (
+    user &&
+    user.loginAttempts >= MAX_LOGIN_ATTEMPTS &&
+    user.lockUntil > Date.now()
+  ) {
+    const remainingTime = Math.ceil((user.lockUntil - Date.now()) / 1000);
+    return next(
+      new AppError(
+        `Account locked due to too many failed login attempts. Please try again in ${remainingTime} seconds.`,
+        401,
+      ),
+    );
+  }
   // Check if user exists and if the provided password is correct
   if (!user || !(await user.correctPassword(password, user.password))) {
+    // Increment login attempts
+    if (user) {
+      user.loginAttempts += 1;
+      if (user.loginAttempts >= MAX_LOGIN_ATTEMPTS) {
+        user.lockUntil = Date.now() + LOCK_TIME; // Lock the account
+      }
+      await user.save();
+    }
     return next(new AppError(`Incorrect email or password`, 401));
   }
 
+  // Reset login attempts upon successful login
+  if (user.loginAttempts !== 0) {
+    user.loginAttempts = 0;
+    user.lockUntil = undefined;
+    await user.save();
+  }
   // Send response with JWT token and user data
   createSendToken(user, 200, res);
 });
+
+// exports.login = catchAsyncErr(async (req, res, next) => {
+//   const { email, password } = req.body;
+
+//   // 1) Check if email and password exist
+//   if (!email || !password) {
+//     return next(new AppError('Please provide email and password!', 400));
+//   }
+//   // 2) Check if user exists && password is correct
+//   const user = await User.findOne({ email }).select('+password');
+
+//   if (!user || !(await user.correctPassword(password, user.password))) {
+//     return next(new AppError('Incorrect email or password', 401));
+//   }
+
+//   // 3) If everything ok, send token to client
+//   createSendToken(user, 200, res);
+// });
 
 /**
  * Middleware to protect routes from unauthorized access.
