@@ -6,7 +6,7 @@ To get started with this project, follow these steps:
 4. Run '**npm install**' to install all dependencies:
 
 #### Running the Project
-Once you have installed the dependencies, you can start the project in either *Development* or *Production* environment:
+Once you have installed the dependencies, you can start the project in either Development or Production environment:
 
 *Development Environment*: Run '**npm run start**':
 This mode provides detailed error information, including the stack trace, which is sent to the client. It's suitable for development purposes.
