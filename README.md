@@ -1,7 +1,7 @@
 #### Project Setup
 To get started with this project, follow these steps:
 1. Clone the project repository.
-2. Install Node.js if you haven't already. You can download it [here](https://nodejs.org/en)
+2. Install Node.js if you haven't already. You can download it [here](https://nodejs.org/en).
 3. Navigate to the project directory in your terminal.
 4. Run '**npm install**' to install all dependencies.
 
