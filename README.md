@@ -9,9 +9,9 @@ To get started with this project, follow these steps:
 Once you have installed the dependencies, you can start the project in either Development or Production environment:
 
 - #### *Development Environment* 
-Run `npm run start`.
+`$ npm run start`.
 This mode provides detailed error information, including the stack trace, which is sent to the client. It's suitable for development purposes.
 
 - #### *Production Environment*
-Run `npm run start:prod`.
+`$ npm run start:prod`.
 In this mode, only specific error messages are sent to the client, while sensitive information such as stack traces is hidden. This approach helps prevent leaking internal details to the client in a production environment.
