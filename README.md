@@ -4,7 +4,7 @@ To get started with this project, follow these steps:
 2. Install Node.js if you haven't already. You can download it [here](https://nodejs.org/en).
 4. Navigate to the project directory in your terminal.
 5. Run `npm install` to install all dependencies.
-6. Run `npm install -g nodemon` to install the Node.js package nodemon globally on your system. Nodemon is a utility tool that helps in development by automatically restarting the Node.js application whenever changes are made to the files in the directory.
+6. Run `npm install -g nodemon` to install the Node.js package 'nodemon' globally on your system. Nodemon is a utility tool that helps in development by automatically restarting the Node.js application whenever changes are made to the files in the directory.
 
 #### Running the Project
 Once you have installed the dependencies, you can start the project in either Development or Production environment:
