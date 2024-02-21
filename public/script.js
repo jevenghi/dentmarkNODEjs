@@ -230,7 +230,7 @@ class App {
       const veh = new Vehicle(name, model, this.#bodyType, this.#dents);
       this._removeAllMarkers();
 
-      fetch('http://127.0.0.1:5501/api/v1/users/sendTask', {
+      fetch('http://127.0.0.1:5501/api/v1/tasks/sendTask', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

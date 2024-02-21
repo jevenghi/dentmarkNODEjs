@@ -11,13 +11,27 @@
       rel="stylesheet"
     />
 
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="css/style.css" />
 
     <script defer src="script.js"></script>
+    <!-- <script type="module" defer src="./js/index.js"></script> -->
 
     <title>Mark the dent</title>
   </head>
   <body>
+    <header class="header">
+      <nav class="nav nav--user">
+        <div class="logged-out">
+          <a class="nav__el nav__el--login" href="login.html">Log in</a>
+          <a class="nav__el nav__el--cta" href="signup.html">Sign up</a>
+        </div>
+        <div class="logged-in" style="display: none">
+          <a class="nav__el nav__el--logout" href="#">Log out</a>
+          <a class="nav__el nav__el--myacc" href="#">My account</a>
+        </div>
+      </nav>
+    </header>
+    <script src="js/checkAuth.js"></script>
     <div class="main-container">
       <div class="choose choose__body">
         <h1>Choose body type</h1>

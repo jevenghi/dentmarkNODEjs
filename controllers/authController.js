@@ -12,6 +12,8 @@ const signToken = (id) =>
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 
+// const createEmailConfirmationToken =
+
 const createAndSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
   const cookieOptions = {
@@ -35,6 +37,40 @@ const createAndSendToken = (user, statusCode, res) => {
   });
 };
 
+exports.isLoggedIn = async (req, res, next) => {
+  if (req.cookies.jwt) {
+    try {
+      const decoded = await promisify(jwt.verify)(
+        req.cookies.jwt,
+        process.env.JWT_SECRET,
+      );
+
+      const currentUser = await User.findById(decoded.id);
+      if (!currentUser) {
+        return next();
+      }
+
+      if (currentUser.changedPasswordAfter(decoded.iat)) {
+        return next();
+      }
+
+      res.locals.user = currentUser;
+      return next();
+    } catch (err) {
+      return next();
+    }
+  }
+  next();
+};
+
+exports.sendAuthStatus = (req, res) => {
+  if (res.locals.user) {
+    res.json({ loggedIn: true, user: res.locals.user });
+  } else {
+    res.json({ loggedIn: false });
+  }
+};
+
 exports.signup = catchAsyncError(async (req, res, next) => {
   const newUser = await User.create({
     name: req.body.name,
@@ -43,7 +79,38 @@ exports.signup = catchAsyncError(async (req, res, next) => {
     passwordConfirm: req.body.passwordConfirm,
   });
 
-  createAndSendToken(newUser, 201, res);
+  const confirmationToken = newUser.createEmailConfirmationToken();
+
+  await newUser.save({ validateBeforeSave: false });
+
+  const confirmationURL = `${req.protocol}://${req.get(
+    'host',
+  )}/api/v1/users/confirmEmail/${confirmationToken}`;
+  const message = `Please confirm your registration at DentMark.AM by clicking the link below:\n${confirmationURL}`;
+  try {
+    await sendEmail({
+      email: newUser.email,
+      subject: 'Confirm your sign-up at DentMark.AM',
+      message,
+    });
+
+    res.status(201).json({
+      status: 'success',
+      message: 'User created. Please check your email for confirmation.',
+    });
+  } catch (err) {
+    newUser.emailConfirmationToken = undefined;
+    newUser.emailConfirmationTokenExpires = undefined;
+    await newUser.save();
+
+    return next(
+      new AppError(
+        'There was an error sending the email. Try again later!',
+        500,
+      ),
+    );
+  }
+  // createAndSendToken(newUser, 200, res);
 });
 
 exports.login = catchAsyncError(async (req, res, next) => {
@@ -82,6 +149,12 @@ exports.login = catchAsyncError(async (req, res, next) => {
     return next(new AppError(`Incorrect email or password`, 401));
   }
 
+  if (!user.emailConfirmed) {
+    return next(
+      new AppError('Please confirm your email address to login', 403),
+    );
+  }
+
   if (user.loginAttempts !== 0) {
     user.loginAttempts = 0;
     user.lockUntil = undefined;
@@ -118,6 +191,8 @@ exports.protect = catchAsyncError(async (req, res, next) => {
     req.headers.authorization.startsWith('Bearer')
   ) {
     token = req.headers.authorization.split(' ')[1];
+  } else if (req.cookies.jwt) {
+    token = req.cookies.jwt;
   }
 
   if (!token) {
@@ -221,6 +296,30 @@ exports.resetPassword = catchAsyncError(async (req, res, next) => {
   await user.save();
 
   createAndSendToken(user, 200, res);
+});
+
+exports.confirmEmail = catchAsyncError(async (req, res, next) => {
+  const hashedToken = crypto
+    .createHash('sha256')
+    .update(req.params.id)
+    .digest('hex');
+
+  const user = await User.findOne({
+    emailConfirmationToken: hashedToken,
+    emailConfirmationTokenExpires: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return next(new AppError('Token is invalid or expired'), 403);
+  }
+
+  user.emailConfirmed = true;
+  user.emailConfirmationToken = undefined;
+  user.emailConfirmationTokenExpires = undefined;
+
+  await user.save({ validateBeforeSave: false });
+
+  res.redirect('/welcome.html');
 });
 
 exports.updatePassword = catchAsyncError(async (req, res, next) => {

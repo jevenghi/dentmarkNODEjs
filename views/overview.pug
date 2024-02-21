@@ -1,0 +1,12 @@
+extends base
+
+block content
+  main.main
+    .task-container
+      each task in tasks
+        .task
+          .column= task.user.name
+          .column= task.carModel
+          .column= task.difficulty
+          .column= task.taskStatus
+          .column= task.createdAt.toLocaleDateString('en-GB')

@@ -5,7 +5,7 @@ const taskSchema = new mongoose.Schema(
     user: {
       type: mongoose.Schema.ObjectId,
       ref: 'User',
-      require: [true, 'Task must belong to a user'],
+      required: [true, 'Task must belong to a user'],
       // required: [true, 'Customer name should be specified'],
       // trim: true,
       // maxlength: [50, 'Name must have less than 50 letters'],
@@ -58,6 +58,14 @@ const taskSchema = new mongoose.Schema(
 // });
 
 // taskSchema.statics.calcDifficulty = function (task) {};
+
+taskSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'user',
+    select: 'name',
+  });
+  next();
+});
 
 const Task = mongoose.model('Task', taskSchema);
 module.exports = Task;

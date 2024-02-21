@@ -2,22 +2,18 @@ const express = require('express');
 const userController = require('../controllers/userController');
 const authController = require('../controllers/authController');
 
-/**
- * Express router setup for user authentication and management endpoints.
- *
- * This router handles various user-related operations such as registration, login,
- * password reset, updating password, retrieving user information, updating user profile,
- * deleting user account, and managing user roles (for admin and superAdmin).
- * Routes are protected using authentication middleware to ensure only logged-in users
- * can access certain endpoints. Additionally, role-based access control is implemented
- * to restrict certain operations to admin and superAdmin users only.
- */
 const router = express.Router({ mergeParams: true });
 
+router.get(
+  '/checkAuth',
+  authController.isLoggedIn,
+  authController.sendAuthStatus,
+);
 router.post('/register', authController.signup);
 router.post('/login', authController.login);
 router.post('/forgotPassword', authController.forgotPassword);
 router.patch('/resetPassword/:token', authController.resetPassword);
+router.get('/confirmEmail/:id', authController.confirmEmail);
 
 // Restrict all routes to logged-in users after this middleware
 router.use(authController.protect);

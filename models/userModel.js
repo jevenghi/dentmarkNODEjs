@@ -19,6 +19,11 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       validate: [validator.isEmail, 'Please provide a valid e-mail address'],
     },
+    company: {
+      type: String,
+      maxlength: [50, 'Company name must not exceed 50 characters'],
+      minlength: [2, 'Company ame must have more than 1 character'],
+    },
     role: {
       type: String,
       enum: ['user', 'admin', 'superAdmin'],
@@ -46,6 +51,8 @@ const userSchema = new mongoose.Schema(
     },
     passwordResetToken: String,
     passwordResetExpires: Date,
+    emailConfirmationToken: String,
+    emailConfirmationTokenExpires: Date,
     createdAt: {
       type: Date,
       default: Date.now(),
@@ -61,6 +68,10 @@ const userSchema = new mongoose.Schema(
     },
     lockUntil: {
       type: Date,
+    },
+    emailConfirmed: {
+      type: Boolean,
+      default: false,
     },
   },
   {
@@ -112,14 +123,32 @@ userSchema.methods.correctPassword = async function (
   return await bcrypt.compare(candidatePassword, userPassword);
 };
 
+const createCryptoToken = (expiresIn = 10 * 60) => {
+  const token = crypto.randomBytes(32).toString('hex');
+  const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+  const expiresAt = Date.now() + expiresIn * 1000;
+  return { token, hashedToken, expiresAt };
+};
+
 userSchema.methods.createPasswordResetToken = function () {
-  const resetToken = crypto.randomBytes(32).toString('hex');
-  this.passwordResetToken = crypto
-    .createHash('sha256')
-    .update(resetToken)
-    .digest('hex');
-  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
-  return resetToken;
+  // const resetToken = crypto.randomBytes(32).toString('hex');
+  // this.passwordResetToken = crypto
+  //   .createHash('sha256')
+  //   .update(resetToken)
+  //   .digest('hex');
+  // this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+  // return resetToken;
+  const { token, hashedToken, expiresAt } = createCryptoToken(); // Expires in 10 minutes
+  this.passwordResetToken = hashedToken;
+  this.passwordResetExpires = expiresAt;
+  return token;
+};
+
+userSchema.methods.createEmailConfirmationToken = function () {
+  const { token, hashedToken, expiresAt } = createCryptoToken(24 * 60 * 60); // Expires in 24 hours
+  this.emailConfirmationToken = hashedToken;
+  this.emailConfirmationTokenExpires = expiresAt;
+  return token;
 };
 
 const User = mongoose.model('User', userSchema);
