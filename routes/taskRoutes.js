@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.post('/sendTask', authController.protect, taskController.sendTask);
 
-// Restrict all routes after this middleware to admin & superadmin
+// Restrict all routes after this middleware to admin & super admin
 router.use(
   authController.protect,
   authController.restrictTo('admin', 'superAdmin'),

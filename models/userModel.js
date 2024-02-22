@@ -138,14 +138,14 @@ userSchema.methods.createPasswordResetToken = function () {
   //   .digest('hex');
   // this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
   // return resetToken;
-  const { token, hashedToken, expiresAt } = createCryptoToken(); // Expires in 10 minutes
+  const { token, hashedToken, expiresAt } = createCryptoToken();
   this.passwordResetToken = hashedToken;
   this.passwordResetExpires = expiresAt;
   return token;
 };
 
 userSchema.methods.createEmailConfirmationToken = function () {
-  const { token, hashedToken, expiresAt } = createCryptoToken(24 * 60 * 60); // Expires in 24 hours
+  const { token, hashedToken, expiresAt } = createCryptoToken(24 * 60 * 60);
   this.emailConfirmationToken = hashedToken;
   this.emailConfirmationTokenExpires = expiresAt;
   return token;

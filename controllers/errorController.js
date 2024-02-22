@@ -6,7 +6,8 @@ const handleCastErrorDB = (err) => {
 };
 
 const handleDuplicateFieldsDB = (err) => {
-  const message = `${err.keyValue.email} is already registered.`;
+  console.log(Object.values(err.keyValue));
+  const message = `${Object.values(err.keyValue)} is already registered.`;
   return new AppError(message, 400);
 };
 

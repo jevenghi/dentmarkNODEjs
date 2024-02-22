@@ -1,5 +1,7 @@
 /* eslint-disable no-restricted-globals */
 /* eslint-disable no-undef */
+// const showAlert = require('./alerts');
+import { showAlert } from './alerts.js';
 
 const login = async (email, password) => {
   try {
@@ -11,14 +13,18 @@ const login = async (email, password) => {
         password,
       },
     });
+    console.log(res.data);
     if (res.data.status === 'success') {
-      alert('Login successful');
+      showAlert('success', 'Login successful');
+      // console.log('login success');
+      // alert('login success');
       window.setTimeout(() => {
         location.assign('/');
       }, 1500);
     }
   } catch (err) {
-    alert(err.response.data.message);
+    showAlert('error', err.response.data.message);
+    // alert(err.response.data.message);
   }
 };
 

@@ -14,8 +14,18 @@ const signup = async (name, email, password, passwordConfirm, company) => {
       },
     });
     console.log(res);
+    if (res.data.status === 'success') {
+      // console.log('login success');
+      alert(res.data.message);
+      window.setTimeout(() => {
+        location.assign('/');
+      }, 1500);
+    } else {
+      alert(res.data.message);
+    }
   } catch (err) {
-    console.log(err.response.data);
+    alert(err.response.data.message);
+    // alert(err.response.data.message);
   }
 };
 

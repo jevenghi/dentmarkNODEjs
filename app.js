@@ -14,7 +14,7 @@ const errorHandler = require('./controllers/errorController');
 
 const taskRouter = require('./routes/taskRoutes');
 const userRouter = require('./routes/userRoutes');
-const viewRouter = require('./routes/viewRoutes');
+// const viewRouter = require('./routes/viewRoutes');
 
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
@@ -64,7 +64,7 @@ app.use((req, res, next) => {
 //   res.status(200).render('tasks');
 // });
 
-app.use('/overview', viewRouter);
+// app.use('/overview', viewRouter);
 app.use('/api/v1/tasks', taskRouter);
 app.use('/api/v1/users', userRouter);
 

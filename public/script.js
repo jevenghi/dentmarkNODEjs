@@ -3,6 +3,7 @@
 const buttonsBody = document.querySelectorAll('.button--body');
 // const main = document.querySelector(".main-container");
 const sideText = document.querySelector('.choose__side');
+const logoutBtn = document.querySelector('.nav__el--logout');
 
 const imageContainer = document.querySelector('.image-container');
 const imageContainerSummary = document.querySelector(
@@ -60,6 +61,7 @@ class App {
   #dentShape;
   #dentPaintDamaged;
   constructor() {
+    if (logoutBtn) logoutBtn.addEventListener('click', this._logoutUser);
     buttonsBody.forEach((button) => {
       button.addEventListener('click', () => {
         buttonsBody.forEach((btn) => {
@@ -230,20 +232,27 @@ class App {
       const veh = new Vehicle(name, model, this.#bodyType, this.#dents);
       this._removeAllMarkers();
 
-      fetch('http://127.0.0.1:5501/api/v1/tasks/sendTask', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(veh),
-      })
-        .then((response) => response.json())
-        .then(() => {
-          alert('Data sent successfully!');
-        })
-        .catch((error) => {
-          console.error('Error sending data:', error);
-        });
+      this._sendTask(veh);
+
+      // fetch('http://127.0.0.1:5501/api/v1/tasks/sendTask', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify(veh),
+      // })
+      //   .then((response) => {
+      //     if (!response.ok) {
+      //       throw new Error('Network response was not ok');
+      //     }
+      //     return response.json();
+      //   })
+      //   .then(() => {
+      //     alert('Your task is sent successfully! We will contact you soon.');
+      //   })
+      //   .catch((error) => {
+      //     console.error('Error sending data:', error);
+      //   });
 
       Object.entries(veh.dents).forEach(([side, dents]) => {
         let html = `
@@ -290,6 +299,28 @@ class App {
       this.#dents[this.#bodySide].pop();
       console.log(this.#dents);
     });
+  }
+
+  _sendTask(obj) {
+    fetch('http://127.0.0.1:5501/api/v1/tasks/sendTask', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(obj),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(() => {
+        alert('Your task is sent successfully! We will contact you soon.');
+      })
+      .catch((error) => {
+        console.error('Error sending data:', error);
+      });
   }
 
   _removeAllMarkers() {
@@ -359,6 +390,29 @@ class App {
     }
 
     image.appendChild(marker);
+  }
+
+  _logoutUser() {
+    fetch('http://127.0.0.1:5501/api/v1/users/logout', {
+      method: 'GET',
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Error logging out!');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (data.status === 'success') {
+          location.reload(true);
+        } else {
+          throw new Error('Error logging out!');
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        alert('Error logging out! Try again.');
+      });
   }
 }
 const app = new App();

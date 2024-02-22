@@ -96,7 +96,7 @@ exports.signup = catchAsyncError(async (req, res, next) => {
 
     res.status(201).json({
       status: 'success',
-      message: 'User created. Please check your email for confirmation.',
+      message: `User created. Please complete your registration, following the instructions sent to your e-mail address. If you haven't received the email, please check your spam folder`,
     });
   } catch (err) {
     newUser.emailConfirmationToken = undefined;
@@ -129,10 +129,12 @@ exports.login = catchAsyncError(async (req, res, next) => {
     user.loginAttempts >= MAX_LOGIN_ATTEMPTS &&
     user.lockUntil > Date.now()
   ) {
-    const remainingTime = Math.ceil((user.lockUntil - Date.now()) / 1000);
+    const remainingTime = Math.ceil((user.lockUntil - Date.now()) / 60000);
+    const units = remainingTime > 1 ? 'minutes' : 'minute';
+
     return next(
       new AppError(
-        `Account locked due to too many failed login attempts. Please try again in ${remainingTime} seconds.`,
+        `Account locked. Please try again in ${remainingTime} ${units}.`,
         401,
       ),
     );
@@ -151,7 +153,10 @@ exports.login = catchAsyncError(async (req, res, next) => {
 
   if (!user.emailConfirmed) {
     return next(
-      new AppError('Please confirm your email address to login', 403),
+      new AppError(
+        'Please complete your signup process, following the instructions sent to your email address',
+        403,
+      ),
     );
   }
 
@@ -164,6 +169,14 @@ exports.login = catchAsyncError(async (req, res, next) => {
   createAndSendToken(user, 200, res);
 });
 
+exports.logout = (req, res) => {
+  // res.cookie('jwt', 'loggedout', {
+  //   expires: new Date(Date.now() + 10 * 1000),
+  //   httpOnly: true,
+  // });
+  res.clearCookie('jwt');
+  res.status(200).json({ status: 'success' });
+};
 // LOGIN WITHOUT ATTEMPTS LIMIT
 // exports.login = catchAsyncError(async (req, res, next) => {
 //   const { email, password } = req.body;
