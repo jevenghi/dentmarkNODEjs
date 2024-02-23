@@ -61,7 +61,7 @@ class App {
   #dentShape;
   #dentPaintDamaged;
   constructor() {
-    if (logoutBtn) logoutBtn.addEventListener('click', this._logoutUser);
+    logoutBtn.addEventListener('click', this._logoutUser);
     buttonsBody.forEach((button) => {
       button.addEventListener('click', () => {
         buttonsBody.forEach((btn) => {
@@ -405,6 +405,7 @@ class App {
       .then((data) => {
         if (data.status === 'success') {
           location.reload(true);
+          // window.location.href = 'landing.html';
         } else {
           throw new Error('Error logging out!');
         }

@@ -1,5 +1,7 @@
 /* eslint-disable no-undef */
 
+import { showAlert } from './alerts.js';
+
 const signup = async (name, email, password, passwordConfirm, company) => {
   try {
     const res = await axios({
@@ -15,16 +17,22 @@ const signup = async (name, email, password, passwordConfirm, company) => {
     });
     console.log(res);
     if (res.data.status === 'success') {
-      // console.log('login success');
-      alert(res.data.message);
-      window.setTimeout(() => {
-        location.assign('/');
-      }, 1500);
+      // showAlert('success', res.data.message);
+      // window.setTimeout(() => {
+      //   location.assign('/');
+      // }, 1500);
+      const successMessage = document.createElement('div');
+      successMessage.classList.add('success-message');
+      successMessage.innerHTML = `
+        <p>${res.data.message}</p>
+      `;
+      document.querySelector('.container').appendChild(successMessage);
+      document.querySelector('.signup-form').style.display = 'none';
     } else {
-      alert(res.data.message);
+      showAlert('error', res.data.message);
     }
   } catch (err) {
-    alert(err.response.data.message);
+    showAlert('error', err.response.data.message);
     // alert(err.response.data.message);
   }
 };

@@ -49,3 +49,36 @@ button[type='submit'] {
 button[type='submit']:hover {
   background-color: #0056b3;
 }
+.privacy-policy-link {
+  text-align: center;
+  margin-top: 2rem;
+  text-decoration: underline rgb(255, 87, 34);
+}
+
+.privacy-policy-link a {
+  color: rgb(255, 87, 34);
+  text-decoration: none;
+}
+.alert {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+  z-index: 9999;
+  color: #fff;
+  font-size: 1rem;
+  /* font-weight: 400; */
+  text-align: center;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  padding: 1rem 1rem;
+  -webkit-box-shadow: 0 2rem 4rem rgba(0, 0, 0, 0.25);
+  box-shadow: 0 2rem 4rem rgba(0, 0, 0, 0.25);
+}
+.alert--success {
+  background-color: #20bf6b;
+}
+.alert--error {
+  background-color: rgb(255, 87, 34);
+}
