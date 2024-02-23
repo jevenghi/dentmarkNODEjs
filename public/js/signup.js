@@ -2,7 +2,7 @@
 
 import { showAlert } from './alerts.js';
 
-const signup = async (name, email, password, passwordConfirm, company) => {
+const signup = async (name, email, password, passwordConfirm) => {
   try {
     const res = await axios({
       method: 'POST',
@@ -12,7 +12,6 @@ const signup = async (name, email, password, passwordConfirm, company) => {
         email,
         password,
         passwordConfirm,
-        company,
       },
     });
     console.log(res);
@@ -24,10 +23,13 @@ const signup = async (name, email, password, passwordConfirm, company) => {
       const successMessage = document.createElement('div');
       successMessage.classList.add('success-message');
       successMessage.innerHTML = `
-        <p>${res.data.message}</p>
-      `;
+        <div class="message-box">
+          <p>${res.data.message}</p>
+        </div>
+        `;
       document.querySelector('.container').appendChild(successMessage);
       document.querySelector('.signup-form').style.display = 'none';
+      document.querySelector('.privacy-policy-link').style.display = 'none';
     } else {
       showAlert('error', res.data.message);
     }
@@ -39,11 +41,10 @@ const signup = async (name, email, password, passwordConfirm, company) => {
 
 document.querySelector('.signup-form').addEventListener('submit', (e) => {
   e.preventDefault();
-  const name = document.getElementById('username').value;
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
   const passwordConfirm = document.getElementById('confirm_password').value;
-  const company = document.getElementById('company').value;
+  const name = document.getElementById('company').value;
 
   signup(name, email, password, passwordConfirm, company);
 });

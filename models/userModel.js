@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: [true, 'Please enter your name'],
+      required: [true, `Please enter your company's or your own name`],
       trim: true,
       maxlength: [50, 'Name must not exceed 50 characters'],
       minlength: [2, 'Name must have more than 1 character'],
@@ -19,11 +19,11 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       validate: [validator.isEmail, 'Please provide a valid e-mail address'],
     },
-    company: {
-      type: String,
-      maxlength: [50, 'Company name must not exceed 50 characters'],
-      minlength: [2, 'Company ame must have more than 1 character'],
-    },
+    // company: {
+    //   type: String,
+    //   maxlength: [50, 'Company name must not exceed 50 characters'],
+    //   minlength: [2, 'Company ame must have more than 1 character'],
+    // },
     role: {
       type: String,
       enum: ['user', 'admin', 'superAdmin'],
