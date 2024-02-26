@@ -7,13 +7,12 @@ const login = async (email, password) => {
   try {
     const res = await axios({
       method: 'POST',
-      url: 'http://127.0.0.1:5501/api/v1/users/login',
+      url: 'http://127.0.0.1:5501/api/v1/auth/login',
       data: {
         email,
         password,
       },
     });
-    console.log(res.data);
     if (res.data.status === 'success') {
       showAlert('success', 'Login successful');
       // console.log('login success');
@@ -23,7 +22,9 @@ const login = async (email, password) => {
       }, 1500);
     }
   } catch (err) {
+    // showAlert('error', err.response.data.message);
     showAlert('error', err.response.data.message);
+    // console.log(err.response);
     // alert(err.response.data.message);
   }
 };

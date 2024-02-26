@@ -12,29 +12,31 @@
     />
 
     <link rel="stylesheet" href="css/style.css" />
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
-    <script defer src="script.js"></script>
+    <script type="module" defer src="script.js"></script>
 
     <!-- <script type="module" defer src="./js/index.js"></script> -->
 
     <title>Mark the dent</title>
   </head>
   <body>
-    <header class="header">
+    <header class="header" style="display: none">
       <nav class="nav nav--user">
-        <!-- <div class="logged-out">
-          <a class="nav__el nav__el--login" href="login.html">Log in</a>
-          <a class="nav__el nav__el--cta" href="signup.html">Sign up</a>
-        </div> -->
-        <!-- <div class="logged-in" style="display: none"> -->
-        <div class="logged-in">
+        <button class="nav__el nav__el--myacc">
+          <img src="user.png" alt="AccIcon" />
+        </button>
+        <!-- <div class="logged-in">
           <a class="nav__el nav__el--logout" href="#">Log out</a>
           <a class="nav__el nav__el--myacc" href="#">My account</a>
-        </div>
+        </div> -->
       </nav>
     </header>
     <script src="js/checkAuth.js"></script>
-    <div class="main-container">
+    <!-- <div class="loading-message">
+      <p>Checking authentication status...</p>
+    </div> -->
+    <div class="main-container" style="display: none">
       <div class="choose choose__body">
         <h1>Choose body type</h1>
       </div>
@@ -146,13 +148,9 @@
         <div class="summary-container"></div>
         <label class="form__label">Vehicle Model</label>
         <input type="text" class="form__input form__input--model" />
-        <label class="form__label">Name</label>
-        <input type="text" class="form__input form__input--name" />
-        <label class="form__label">Email</label>
-        <input type="text" class="form__input form__input--email" />
 
         <div class="form__row form__row--button">
-          <button class="form__btn send-marks">Send</button>
+          <button class="form__btn send-marks">Send task</button>
         </div>
       </div>
     </div>

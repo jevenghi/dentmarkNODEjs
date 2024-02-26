@@ -1,4 +1,5 @@
 'use strict';
+import { showAlert } from '../js/alerts.js';
 
 const buttonsBody = document.querySelectorAll('.button--body');
 // const main = document.querySelector(".main-container");
@@ -16,8 +17,6 @@ const saveMarksButton = document.querySelector('.save--marks');
 
 const sendMarksBtn = document.querySelector('.send-marks');
 const vehicleModel = document.querySelector('.form__input--model');
-const customerName = document.querySelector('.form__input--name');
-const customerEmail = document.querySelector('.form__input--email');
 
 const saveMarksContainer = document.querySelector('.save-marks-container');
 
@@ -37,8 +36,7 @@ const buttonsPaint = document.querySelectorAll('.m_button--paint');
 let sideSelection = document.querySelector('.sides-container');
 
 class Vehicle {
-  constructor(user, carModel, bodyType, dents) {
-    this.user = user;
+  constructor(carModel, bodyType, dents) {
     this.carModel = carModel;
     this.bodyType = bodyType;
     // this.difficulty = difficulty;
@@ -61,7 +59,7 @@ class App {
   #dentShape;
   #dentPaintDamaged;
   constructor() {
-    logoutBtn.addEventListener('click', this._logoutUser);
+    // logoutBtn.addEventListener('click', this._logoutUser);
     buttonsBody.forEach((button) => {
       button.addEventListener('click', () => {
         buttonsBody.forEach((btn) => {
@@ -224,15 +222,13 @@ class App {
 
     sendMarksBtn.addEventListener('click', () => {
       const model = vehicleModel.value;
-      const name = customerName.value;
-      const email = customerEmail.value;
-      if (!model || !name) {
-        return alert('Please enter Model and your Name');
+      if (!model) {
+        return alert('Please enter model name');
       }
-      const veh = new Vehicle(name, model, this.#bodyType, this.#dents);
+      const veh = new Vehicle(model, this.#bodyType, this.#dents);
       this._removeAllMarkers();
-
-      this._sendTask(veh);
+      console.log(model, this.#bodyType, this.#dents);
+      this._sendTask(model, this.#bodyType, this.#dents);
 
       // fetch('http://127.0.0.1:5501/api/v1/tasks/sendTask', {
       //   method: 'POST',
@@ -254,34 +250,35 @@ class App {
       //     console.error('Error sending data:', error);
       //   });
 
-      Object.entries(veh.dents).forEach(([side, dents]) => {
-        let html = `
-          <div class="image-container__summary">
-            <div class="overlay-text model-text">${veh.carModel}</div>
-            <div class="overlay-text customer-text">${veh.user}</div>
-            <div class="overlay-text date-text">${veh.createdAt}</div>
-            <img id="vehicleImage" src="pics/sides_pics/${side}.png" />
-            <div id="marker"></div>
-          </div>
-        `;
+      //TASK RECREATE
+      // Object.entries(veh.dents).forEach(([side, dents]) => {
+      //   let html = `
+      //     <div class="image-container__summary">
+      //       <div class="overlay-text model-text">${veh.carModel}</div>
+      //       <div class="overlay-text customer-text">${veh.user}</div>
+      //       <div class="overlay-text date-text">${veh.createdAt}</div>
+      //       <img id="vehicleImage" src="pics/sides_pics/${side}.png" />
+      //       <div id="marker"></div>
+      //     </div>
+      //   `;
 
-        sendContainer.insertAdjacentHTML('afterend', html);
+      //   sendContainer.insertAdjacentHTML('afterend', html);
 
-        dents.forEach((entry) => {
-          const { shape, length, orientation, paintDamaged, coords } = entry;
-          const imageContainerSummary = document.querySelector(
-            '.image-container__summary',
-          );
-          this._placeMarker(
-            shape,
-            length,
-            orientation,
-            paintDamaged,
-            coords,
-            imageContainerSummary,
-          );
-        });
-      });
+      //   dents.forEach((entry) => {
+      //     const { shape, length, orientation, paintDamaged, coords } = entry;
+      //     const imageContainerSummary = document.querySelector(
+      //       '.image-container__summary',
+      //     );
+      //     this._placeMarker(
+      //       shape,
+      //       length,
+      //       orientation,
+      //       paintDamaged,
+      //       coords,
+      //       imageContainerSummary,
+      //     );
+      //   });
+      // });
 
       // window.scrollTo(0, 0);
       // setTimeout(() => {
@@ -301,27 +298,53 @@ class App {
     });
   }
 
-  _sendTask(obj) {
-    fetch('http://127.0.0.1:5501/api/v1/tasks/sendTask', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(obj),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(() => {
-        alert('Your task is sent successfully! We will contact you soon.');
-      })
-      .catch((error) => {
-        console.error('Error sending data:', error);
+  async _sendTask(carModel, bodyType, dents) {
+    try {
+      const res = await axios({
+        method: 'POST',
+        url: 'http://127.0.0.1:5501/api/v1/tasks/sendTask',
+        data: { carModel, bodyType, dents },
       });
+      if (res.data.status === 'success') {
+        alert('Your task is sent successfully! We will contact you soon.');
+        // console.log('login success');
+        // alert('login success');
+        window.setTimeout(() => {
+          window.scrollTo(0, 0);
+          location.reload();
+        }, 50);
+      }
+      // window.scrollTo(0, 0);
+      // setTimeout(() => {
+      //   location.reload();
+      // }, 50);
+    } catch (err) {
+      // showAlert('error', err.response.data.message);
+      alert(err.response.data.message);
+      // console.log(err.response);
+      // alert(err.response.data.message);
+    }
   }
+
+  //   fetch('http://127.0.0.1:5501/api/v1/tasks/sendTask', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify(obj),
+  //   })
+  //     .then((res) => {
+  //       if (res.status === 201) {
+  //         console.log(res.json());
+  //         alert('Your task is sent successfully! We will contact you soon.');
+  //       } else {
+  //         console.log(res);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error sending data:', error);
+  //     });
+  // }
 
   _removeAllMarkers() {
     if (markers.length > 0) {

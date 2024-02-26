@@ -14,10 +14,9 @@ const taskSchema = new mongoose.Schema(
     carModel: {
       type: String,
       required: [true, 'Model should be specified'],
-      unique: true,
       trim: true,
-      maxlength: [50, 'Car model name must have less than 50 letters'],
-      minlength: [5, 'Car model name must have more than 4 letter'],
+      maxlength: [50, 'Car model name must not exceed 50 characters'],
+      minlength: [5, 'Car model name must have at least 4 characters'],
     },
     bodyType: {
       type: String,

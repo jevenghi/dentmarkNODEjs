@@ -37,6 +37,18 @@ html {
   color: #ffffff;
 }
 
+.loading-message {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.loading-message p {
+  /* Additional styles for the text */
+  font-size: 2rem;
+  color: #ffffff;
+}
+
 .body-container {
   /* position: relative;
     display: flex;
@@ -73,13 +85,15 @@ html {
 }
 
 .header {
+  display: flex;
   background-color: rgb(34, 40, 49);
   padding: 0.5rem;
 }
 
 .nav--user {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+
   gap: 1rem;
 }
 .logged-out {
@@ -90,6 +104,7 @@ html {
 
 .logged-in {
   display: flex;
+
   gap: 1rem;
   padding: 0.8rem 1.2rem;
 }
@@ -104,7 +119,17 @@ html {
   font-size: 1.5rem;
 }
 .nav__el--myacc {
-  background-color: rgb(45, 64, 89);
+  /* background-color: rgb(45, 64, 89); */
+  border-radius: 10%; /* Make the button round */
+  width: 4rem; /* Adjust the width and height according to your icon size */
+  height: 4rem;
+  background-color: #ffffff; /* Set button background color */
+  border: none; /* Remove button border */
+  cursor: pointer; /* Set cursor to pointer on hover */
+  display: flex; /* Use flexbox for centering */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  margin: 0.5rem;
 }
 .nav__el:hover {
   background-color: #0056b3;

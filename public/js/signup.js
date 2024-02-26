@@ -2,11 +2,35 @@
 
 import { showAlert } from './alerts.js';
 
+const checkFieldAvailability = async (field, endpoint) => {
+  const value = document.getElementById(field).value;
+  try {
+    const res = await axios({
+      method: 'POST',
+      url: `http://127.0.0.1:5501/api/v1/auth/${endpoint}`,
+      data: { value },
+    });
+    const availabilityMessage =
+      document.getElementById(field).nextElementSibling;
+    if (res.data.status === 'success') {
+      availabilityMessage.textContent = '';
+      // inputElement.classList.remove('field-exists');
+      // inputElement.classList.add('field-available');
+    } else {
+      availabilityMessage.textContent = 'This email is already registered';
+      // inputElement.classList.remove('field-available');
+      // inputElement.classList.add('field-exists');
+    }
+  } catch (err) {
+    console.error(`Error checking ${endpoint}:`, err);
+  }
+};
+
 const signup = async (name, email, password, passwordConfirm) => {
   try {
     const res = await axios({
       method: 'POST',
-      url: 'http://127.0.0.1:5501/api/v1/users/register',
+      url: 'http://127.0.0.1:5501/api/v1/auth/register',
       data: {
         name,
         email,
@@ -14,7 +38,6 @@ const signup = async (name, email, password, passwordConfirm) => {
         passwordConfirm,
       },
     });
-    console.log(res);
     if (res.data.status === 'success') {
       // showAlert('success', res.data.message);
       // window.setTimeout(() => {
@@ -38,6 +61,11 @@ const signup = async (name, email, password, passwordConfirm) => {
     // alert(err.response.data.message);
   }
 };
+
+const emailInput = document.getElementById('email');
+emailInput.addEventListener('input', () =>
+  checkFieldAvailability('email', 'checkEmail'),
+);
 
 document.querySelector('.signup-form').addEventListener('submit', (e) => {
   e.preventDefault();

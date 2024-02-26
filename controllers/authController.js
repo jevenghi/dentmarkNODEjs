@@ -85,8 +85,9 @@ exports.signup = catchAsyncError(async (req, res, next) => {
 
   const confirmationURL = `${req.protocol}://${req.get(
     'host',
-  )}/api/v1/users/confirmEmail/${confirmationToken}`;
+  )}/api/v1/auth/confirmEmail/${confirmationToken}`;
   const message = `Please confirm your registration at DentMark.AM by clicking the link below:\n${confirmationURL}`;
+
   try {
     await sendEmail({
       email: newUser.email,
@@ -111,6 +112,19 @@ exports.signup = catchAsyncError(async (req, res, next) => {
     );
   }
   // createAndSendToken(newUser, 200, res);
+});
+
+exports.checkEmail = catchAsyncError(async (req, res, next) => {
+  const email = req.body.value;
+  const existingUser = await User.findOne({ email });
+
+  if (existingUser) {
+    res
+      .status(200)
+      .json({ status: 'error', message: 'Email already registered' });
+  } else {
+    res.status(200).json({ status: 'success', message: 'Email available' });
+  }
 });
 
 exports.login = catchAsyncError(async (req, res, next) => {
@@ -262,7 +276,7 @@ exports.forgotPassword = catchAsyncError(async (req, res, next) => {
   const resetToken = user.createPasswordResetToken();
   await user.save({ validateBeforeSave: false });
 
-  const resetURL = `${req.protocol}://${req.get('host')}/api/v1/users/resetPassword/${resetToken}`;
+  const resetURL = `${req.protocol}://${req.get('host')}/resetPassword.html?token=${resetToken}`;
   const message = `Follow the link to reset your password: ${resetURL}`;
 
   try {
@@ -273,7 +287,7 @@ exports.forgotPassword = catchAsyncError(async (req, res, next) => {
     });
     res.status(200).json({
       status: 'success',
-      message: 'Token sent to your e-mail address.',
+      message: 'Instructions sent to your e-mail address.',
     });
   } catch (err) {
     // Reset password reset token and expiry
@@ -287,16 +301,17 @@ exports.forgotPassword = catchAsyncError(async (req, res, next) => {
 });
 
 exports.resetPassword = catchAsyncError(async (req, res, next) => {
+  console.log(req.body.token);
   const hashedToken = crypto
     .createHash('sha256')
-    .update(req.params.token)
+    .update(req.body.token)
     .digest('hex');
-
+  console.log(hashedToken);
   const user = await User.findOne({
     passwordResetToken: hashedToken,
     passwordResetExpires: { $gt: Date.now() },
   });
-
+  console.log(user);
   if (!user) {
     return next(new AppError('Token is invalid or expired'), 403);
   }
@@ -314,7 +329,7 @@ exports.resetPassword = catchAsyncError(async (req, res, next) => {
 exports.confirmEmail = catchAsyncError(async (req, res, next) => {
   const hashedToken = crypto
     .createHash('sha256')
-    .update(req.params.id)
+    .update(req.params.token)
     .digest('hex');
 
   const user = await User.findOne({

@@ -89,10 +89,11 @@ exports.sendTask = catchAsyncErr(async (req, res, next) => {
   const dentsValues = Object.values(req.body.dents);
   const accValues = accumulateValues(dentsValues);
   req.body.difficulty = calcTaskDifficulty(accValues);
-  const newTask = await Task.create(req.body);
+  console.log(req.body.model);
+  await Task.create(req.body);
   res.status(201).json({
     status: 'success',
-    data: { newTask },
+    // data: { newTask },
   });
 });
 

@@ -12,9 +12,10 @@ const morgan = require('morgan');
 const AppError = require('./utils/appError');
 const errorHandler = require('./controllers/errorController');
 
+const authRouter = require('./routes/authRoutes');
 const taskRouter = require('./routes/taskRoutes');
 const userRouter = require('./routes/userRoutes');
-// const viewRouter = require('./routes/viewRoutes');
+const viewRouter = require('./routes/viewRoutes');
 
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
@@ -28,13 +29,24 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-//LIMIT REQUESTS NUMBER FROM ONE IP PER HOUR
+const authLimiter = rateLimit({
+  max: 15,
+  windowMs: 60 * 60 * 1000,
+  message: {
+    message: 'Too many requests from this IP, please try again in one hour.',
+  },
+});
+
 const limiter = rateLimit({
   max: 150,
   windowMs: 60 * 60 * 1000,
-  message: 'Too many requests from this IP, please try again on one hour.',
+  data: {
+    message: 'Too many requests from this IP, please try again in one hour.',
+  },
 });
 
+app.use('/api/v1/auth/login', authLimiter);
+// app.use('/api/v1/auth/forgotPassword', authLimiter);
 app.use('/api', limiter);
 
 //BODY PARSER, CONVERTING BODY INTO REQ.BODY
@@ -65,8 +77,10 @@ app.use((req, res, next) => {
 // });
 
 // app.use('/overview', viewRouter);
+app.use('/', viewRouter);
 app.use('/api/v1/tasks', taskRouter);
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/auth', authRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

@@ -91,3 +91,15 @@ button[type='submit']:hover {
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
+/* .form-group input.field-exists {
+  border: 0.0625rem solid #ff0000;
+}
+
+.form-group input.field-available {
+  border: 0.0625rem solid #00ff00;
+} */
+
+.form-group .availability-message {
+  font-style: italic;
+  color: #ff0000; /* Red color for the message */
+}
