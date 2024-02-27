@@ -4,7 +4,9 @@ import { showAlert } from '../js/alerts.js';
 const buttonsBody = document.querySelectorAll('.button--body');
 // const main = document.querySelector(".main-container");
 const sideText = document.querySelector('.choose__side');
-const logoutBtn = document.querySelector('.nav__el--logout');
+const myAccBtn = document.querySelector('.nav__el--myacc');
+const logout = document.querySelector('.logout');
+const modal = document.querySelector('.modal');
 
 const imageContainer = document.querySelector('.image-container');
 const imageContainerSummary = document.querySelector(
@@ -32,6 +34,7 @@ const removeLastMarkBtn = document.querySelector('.remove__last');
 const buttonsDistance = document.querySelectorAll('.m_button--distance');
 const buttonsShape = document.querySelectorAll('.m_button--shapes');
 const buttonsPaint = document.querySelectorAll('.m_button--paint');
+const overlay = document.querySelector('.overlay');
 
 let sideSelection = document.querySelector('.sides-container');
 
@@ -59,7 +62,16 @@ class App {
   #dentShape;
   #dentPaintDamaged;
   constructor() {
-    // logoutBtn.addEventListener('click', this._logoutUser);
+    logout.addEventListener('click', this._logoutUser);
+    overlay.addEventListener('click', this._closeModal);
+
+    myAccBtn.addEventListener('click', () => {
+      modal.classList.toggle('hidden');
+      overlay.classList.toggle('hidden');
+
+      // modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+    });
+
     buttonsBody.forEach((button) => {
       button.addEventListener('click', () => {
         buttonsBody.forEach((btn) => {
@@ -220,7 +232,8 @@ class App {
       this.#dents[this.#bodySide].push(dentData);
     });
 
-    sendMarksBtn.addEventListener('click', () => {
+    sendMarksBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
       const model = vehicleModel.value;
       if (!model) {
         return alert('Please enter model name');
@@ -228,7 +241,10 @@ class App {
       const veh = new Vehicle(model, this.#bodyType, this.#dents);
       this._removeAllMarkers();
       console.log(model, this.#bodyType, this.#dents);
-      this._sendTask(model, this.#bodyType, this.#dents);
+      document.querySelector('.send-marks').textContent = 'Sending task...';
+
+      await this._sendTask(model, this.#bodyType, this.#dents);
+      document.querySelector('.send-marks').textContent = 'Send task';
 
       // fetch('http://127.0.0.1:5501/api/v1/tasks/sendTask', {
       //   method: 'POST',
@@ -345,6 +361,10 @@ class App {
   //       console.error('Error sending data:', error);
   //     });
   // }
+  _closeModal() {
+    overlay.classList.add('hidden');
+    modal.classList.add('hidden');
+  }
 
   _removeAllMarkers() {
     if (markers.length > 0) {

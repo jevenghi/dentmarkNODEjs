@@ -1,0 +1,23 @@
+.task-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.task-table th,
+.task-table td {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+.task-table th {
+  background-color: #f2f2f2;
+}
+
+.task-table tr:nth-child(even) {
+  background-color: #dddddd;
+}
+a {
+  text-decoration: none;
+  color: black;
+}

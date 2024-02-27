@@ -9,14 +9,14 @@ router.post('/sendTask', authController.protect, taskController.sendTask);
 // Restrict all routes after this middleware to admin & super admin
 router.use(
   authController.protect,
-  authController.restrictTo('admin', 'superAdmin'),
+  // authController.restrictTo('admin', 'superAdmin'),
 );
 
 router.route('/').get(taskController.getAllTasks);
 router.route('/task-stats').get(taskController.getTaskStats);
 router
   .route('/:id')
-  .get(authController.protect, taskController.getTask)
+  .get(taskController.getTask)
   .patch(taskController.updateTask)
   .delete(taskController.deleteTask);
 

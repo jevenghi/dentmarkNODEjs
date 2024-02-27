@@ -4,8 +4,12 @@ const authController = require('../controllers/authController');
 
 const router = express.Router();
 
-router.get('/me', authController.protect, viewsController.getOverview);
+router.use(authController.protect);
+
+router.get('/me', viewsController.getMe);
+router.get('/tasks', viewsController.getMyTasks);
+
 router.get('/', viewsController.getOverview);
-router.get('/task/:id', viewsController.getTask);
+router.get('/tasks/:id', viewsController.getTask);
 
 module.exports = router;

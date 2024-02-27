@@ -19,6 +19,7 @@ exports.getOverview = catchAsyncError(async (req, res, next) => {
 
 exports.getTask = catchAsyncError(async (req, res, next) => {
   const task = await Task.findById(req.params.id);
+  console.log(task);
 
   res.status(200).render('task', {
     title: 'Task',
@@ -32,5 +33,19 @@ exports.getMe = catchAsyncError(async (req, res, next) => {
   res.status(200).render('user', {
     title: 'My Profile',
     user,
+  });
+});
+
+exports.getMyTasks = catchAsyncError(async (req, res, next) => {
+  const tasks = await Task.find({ user: req.user.id })
+    // .populate({ path: 'user', select: 'name' })
+    .sort({ createdAt: -1 });
+
+  res.status(200).render('tasks', {
+    title: 'Tasks',
+    tasks,
+    //   res.status(200).json({
+    //     title: 'All Tasks',
+    //     tasks,
   });
 });

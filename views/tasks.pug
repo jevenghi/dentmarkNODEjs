@@ -1,0 +1,32 @@
+//- extends base
+
+//- block content
+//-   main.main
+//-     .task-container
+//-       each task in tasks
+//-         .task
+//-           .column= task.carModel
+//-           .column= task.difficulty
+//-           .column= task.taskStatus
+//-           .column= task.createdAt.toLocaleDateString('en-GB')
+
+
+extends base
+
+block content
+  main.main
+    a(href='/') Go to Main Page
+    table.task-table
+      thead
+        tr
+          th Vehicle Model
+          th Task Status
+          th Difficulty
+          th Date
+      tbody
+        each task in tasks
+          tr
+            td: a(href=`/tasks/${task._id}`)= task.carModel
+            td: a(href=`/tasks/${task._id}`)= task.taskStatus
+            td: a(href=`/tasks/${task._id}`)= task.difficulty
+            td: a(href=`/tasks/${task._id}`)= task.createdAt.toLocaleDateString('en-GB')

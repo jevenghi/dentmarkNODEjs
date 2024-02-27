@@ -7,7 +7,41 @@ body {
   overflow-y: auto;
   /* margin-bottom: 30rem; */
 }
+.modal {
+  position: absolute;
+  right: 0;
+  /* position: fixed;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 60rem;
+  width: 60%;
+  max-height: 90vh;
+  overflow-y: auto; */
+  background-color: rgb(34, 40, 49);
+  padding: 2rem 2rem 0.5rem 2rem;
+  box-shadow: 0 4rem 6rem rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  transition: all 0.5s;
+  border-radius: 0.5rem;
+  justify-content: center; /* horizontally center the content */
+  align-items: center; /* vertically center the content */
+}
+.modal__content {
+  display: flex;
+  flex-direction: column;
+  font-size: 2rem;
+  padding: 1rem;
+}
 
+.modal__link {
+  color: #ffffff;
+  text-decoration: none;
+  margin-bottom: 1.5rem;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
 .main-container {
   width: 100%;
   max-width: 900px;
@@ -44,7 +78,6 @@ html {
 }
 
 .loading-message p {
-  /* Additional styles for the text */
   font-size: 2rem;
   color: #ffffff;
 }
@@ -93,13 +126,7 @@ html {
 .nav--user {
   display: flex;
   justify-content: space-between;
-
   gap: 1rem;
-}
-.logged-out {
-  display: flex;
-  gap: 1rem;
-  padding: 0.8rem 1.2rem;
 }
 
 .logged-in {
@@ -121,8 +148,8 @@ html {
 .nav__el--myacc {
   /* background-color: rgb(45, 64, 89); */
   border-radius: 10%; /* Make the button round */
-  width: 4rem; /* Adjust the width and height according to your icon size */
-  height: 4rem;
+  width: 3.5rem; /* Adjust the width and height according to your icon size */
+  height: 3.5rem;
   background-color: #ffffff; /* Set button background color */
   border: none; /* Remove button border */
   cursor: pointer; /* Set cursor to pointer on hover */
@@ -130,9 +157,6 @@ html {
   justify-content: center; /* Center horizontally */
   align-items: center; /* Center vertically */
   margin: 0.5rem;
-}
-.nav__el:hover {
-  background-color: #0056b3;
 }
 
 .nav__el.nav__el--cta {
@@ -372,8 +396,12 @@ html {
   transition:
     all 0.5s,
     transform 1ms;
-}
 
+  gap: 1rem;
+}
+.send-marks {
+  padding: 0.5rem;
+}
 .shapes-container {
   display: flex;
   flex-direction: row;
@@ -468,4 +496,35 @@ html {
 .date-text {
   font-size: 10px;
   left: 80%;
+}
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* background-color: rgba(0, 0, 0, 0.5); */
+  backdrop-filter: blur(1.5px);
+  z-index: 100;
+  transition: all 0.5s;
+}
+
+.task-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.task-table th,
+.task-table td {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+.task-table th {
+  background-color: #f2f2f2;
+}
+
+.task-table tr:nth-child(even) {
+  background-color: #dddddd;
 }
