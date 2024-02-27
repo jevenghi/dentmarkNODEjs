@@ -1,14 +1,6 @@
-doctype html
-html(lang="en")
-    head
-        meta(charset="UTF-8")
-        meta(name="viewport", content="width=device-width, initial-scale=1.0")
-        link(rel='stylesheet' href='/css/style.css')
-        title Task Details
-    body
-        each side, dents in task.dents
-            div.image-container__summary
-                img(src=`pics/sides_pics/${side}.png`)
-                div#marker
-                    each entry in dents
-                        - placeMarker(entry.shape, entry.length, entry.orientation, entry.paintDamaged, entry.coords, 'imageContainerSummary')
+extends base
+
+block content
+  main.main
+    // Render other task details as needed
+    != dentsHTML

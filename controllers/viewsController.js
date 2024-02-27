@@ -1,3 +1,5 @@
+const pug = require('pug');
+
 const Task = require('../models/taskModel');
 const User = require('../models/userModel');
 const catchAsyncError = require('../utils/catchAsyncError');
@@ -21,9 +23,12 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
   const task = await Task.findById(req.params.id);
   console.log(task);
 
+  const dentsHTML = pug.renderFile('views/dents.pug', { task });
+
   res.status(200).render('task', {
     title: 'Task',
-    task,
+    // task,
+    dentsHTML: dentsHTML,
   });
 });
 

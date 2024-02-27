@@ -7,6 +7,7 @@ const sideText = document.querySelector('.choose__side');
 const myAccBtn = document.querySelector('.nav__el--myacc');
 const logout = document.querySelector('.logout');
 const modal = document.querySelector('.modal');
+const modalLinks = document.querySelectorAll('.modal__link');
 
 const imageContainer = document.querySelector('.image-container');
 const imageContainerSummary = document.querySelector(
@@ -70,6 +71,11 @@ class App {
       overlay.classList.toggle('hidden');
 
       // modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+    });
+    modalLinks.forEach((button) => {
+      button.addEventListener('click', () => {
+        this._closeModal();
+      });
     });
 
     buttonsBody.forEach((button) => {
