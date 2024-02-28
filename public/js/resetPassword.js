@@ -11,7 +11,6 @@ const resetPassword = async (password, passwordConfirm, token) => {
         token,
       },
     });
-    console.log(res);
     if (res.data.status === 'success') {
       const message = document.createElement('div');
       message.classList.add('success-message');
@@ -26,17 +25,17 @@ const resetPassword = async (password, passwordConfirm, token) => {
       document.querySelector('.login-form').style.display = 'none';
     }
   } catch (err) {
-    const message = document.createElement('div');
-    message.classList.add('success-message');
-    message.innerHTML = `
-      <div class="message-box">
-        <p>${err.response.data.message}</p>
-      </div>
+    // const message = document.createElement('div');
+    // message.classList.add('success-message');
+    // message.innerHTML = `
+    //   <div class="message-box">
+    //     <p>${err.response.data.message}</p>
+    //   </div>
 
-      `;
-    document.querySelector('.container').appendChild(message);
-    document.querySelector('.login-form').style.display = 'none';
-    // showAlert('error', err.response.data.message);
+    //   `;
+    // document.querySelector('.container').appendChild(message);
+    // document.querySelector('.login-form').style.display = 'none';
+    showAlert('error', err.response.data.message);
     // console.log(err);
     // alert(err.response.data.message);
   }

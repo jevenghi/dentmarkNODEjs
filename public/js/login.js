@@ -19,8 +19,10 @@ const login = async (email, password) => {
       // showAlert('success', 'Login successful');
       // console.log('login success');
       // alert('login success');
+
       window.setTimeout(() => {
         location.assign('/');
+        document.getElementById('loginButton').textContent = 'Login';
       }, 1500);
     }
   } catch (err) {

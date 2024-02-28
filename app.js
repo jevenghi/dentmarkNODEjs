@@ -82,7 +82,10 @@ app.use((req, res, next) => {
   // console.log(req.cookies);
   next();
 });
-
+app.use((req, res, next) => {
+  console.log(res.statusCode);
+  next();
+});
 // app.get('/tasks', (req, res) => {
 //   res.status(200).render('tasks');
 // });
