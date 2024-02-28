@@ -38,16 +38,27 @@ const authLimiter = rateLimit({
 });
 
 const limiter = rateLimit({
-  max: 150,
+  max: 50,
   windowMs: 60 * 60 * 1000,
   data: {
     message: 'Too many requests from this IP, please try again in one hour.',
   },
 });
 
+function checkLimit(req, res, next) {
+  console.log(req.rateLimit);
+  if (req.rateLimit.remaining === 0) {
+    return res
+      .status(429)
+      .json({ message: 'Rate limit exceeded. Please try again later.' });
+  }
+  next();
+}
+
 app.use('/api/v1/auth/login', authLimiter);
 // app.use('/api/v1/auth/forgotPassword', authLimiter);
 app.use('/api', limiter);
+// app.use('/', checkLimit);
 
 //BODY PARSER, CONVERTING BODY INTO REQ.BODY
 app.use(express.json({ limit: '10kb' }));

@@ -22,7 +22,8 @@ const checkFieldAvailability = async (field, endpoint) => {
       // inputElement.classList.add('field-exists');
     }
   } catch (err) {
-    console.error(`Error checking ${endpoint}:`, err);
+    showAlert('error', err.response.data);
+    // console.error(`Error checking ${endpoint}:`, err);
   }
 };
 

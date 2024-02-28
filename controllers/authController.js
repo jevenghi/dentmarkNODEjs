@@ -5,7 +5,11 @@ const User = require('../models/userModel');
 const AppError = require('../utils/appError');
 const catchAsyncError = require('../utils/catchAsyncError');
 const sendEmail = require('../utils/email');
-const { MAX_LOGIN_ATTEMPTS, LOCK_TIME } = require('../constants/authConstants');
+const {
+  MAX_LOGIN_ATTEMPTS,
+  LOCK_TIME,
+  RATE_LIMIT,
+} = require('../constants/authConstants');
 
 const signToken = (id) =>
   jwt.sign({ id: id }, process.env.JWT_SECRET, {
@@ -115,6 +119,7 @@ exports.signup = catchAsyncError(async (req, res, next) => {
 });
 
 exports.checkEmail = catchAsyncError(async (req, res, next) => {
+  // console.log(req.rateLimit.remaining);
   const email = req.body.value;
   const existingUser = await User.findOne({ email });
 
