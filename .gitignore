@@ -19,3 +19,17 @@ venv.bak/
 
 node_modules/
 .prettierrc
+
+.parcel-cache/
+.parcel-cache/1e66c0b2894a50ca-AssetGraph-0
+.parcel-cache/3a43dcc8e868dd02-RequestGraph-0
+.parcel-cache/06f80607b61cac6a-BundleGraph-0
+.parcel-cache/7d3d872b02d671a6-AssetGraph-0
+.parcel-cache/7e7e6a940d0226b2.txt
+.parcel-cache/36a84ded96881663-RequestGraph-0
+.parcel-cache/3757de0ec3e5e72b-BundleGraph-0
+.parcel-cache/014524d8ffe80629-AssetGraph-0
+.parcel-cache/ad172c083d88d1e6-AssetGraph-0
+.parcel-cache/c20709715bfc6b71.txt
+.parcel-cache/data.mdb
+.parcel-cache/lock.mdb
