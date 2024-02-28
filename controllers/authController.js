@@ -70,7 +70,7 @@ exports.sendAuthStatus = (req, res) => {
     res.json({ loggedIn: false });
   }
 };
-
+//TODO: if email confirmation expires, remove document from DB
 exports.signup = catchAsyncError(async (req, res, next) => {
   const newUser = await User.create({
     name: req.body.name,

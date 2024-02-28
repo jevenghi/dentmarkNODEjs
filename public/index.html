@@ -23,19 +23,18 @@
   <body>
     <header class="header" style="display: none">
       <nav class="nav nav--user">
+        <div class="nav__spacer"></div>
         <button class="nav__el nav__el--myacc">
           <img src="user.png" alt="AccIcon" />
         </button>
-        <!-- <div class="logged-in">
-          <a class="nav__el nav__el--logout" href="#">Log out</a>
-          <a class="nav__el nav__el--myacc" href="#">My account</a>
-        </div> -->
       </nav>
     </header>
     <script src="js/checkAuth.js"></script>
     <div class="modal hidden">
       <div class="modal__content">
-        <a href="#" class="modal__link">My profile</a>
+        <a href="/me" class="modal__link">My profile</a>
+
+        <a href="/" class="modal__link">Send new task</a>
 
         <a href="/tasks" class="modal__link">My sent tasks</a>
 

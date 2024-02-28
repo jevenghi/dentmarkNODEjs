@@ -4,8 +4,9 @@ const authController = require('../controllers/authController');
 
 const router = express.Router();
 
-router.get('/me', viewsController.getMe);
-router.get('/tasks', viewsController.getMyTasks);
+router.get('/me', authController.protect, viewsController.getMe);
+
+router.get('/tasks', authController.protect, viewsController.getMyTasks);
 
 router.get('/', viewsController.getOverview);
 router.get('/tasks/:id', viewsController.getTask);

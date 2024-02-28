@@ -21,9 +21,39 @@ exports.getOverview = catchAsyncError(async (req, res, next) => {
 
 exports.getTask = catchAsyncError(async (req, res, next) => {
   const task = await Task.findById(req.params.id);
-  console.log(task);
-
-  const dentsHTML = pug.renderFile('views/dents.pug', { task });
+  let dentsHTML = '';
+  Object.entries(task.dents).forEach(([side, dents]) => {
+    dentsHTML += `
+      <div class="image-container__summary">
+        <img id="vehicleImage" src="/pics/sides_pics/${side}.png" />
+        
+    `;
+    dents.forEach((dent) => {
+      const { shape, length, orientation, paintDamaged, coords } = dent;
+      let markerStyle = `left: ${coords.x - 1}%; top: ${coords.y - 3}%;`;
+      if (shape === 'line') {
+        markerStyle += `width: 2rem; border-radius: 0.8rem; transform: rotate(${orientation});`;
+      }
+      let markerClass = 'marker';
+      if (paintDamaged === 'yes') markerClass += ' paint-damaged';
+      if (length === 'small') {
+        markerClass += ' small';
+        markerStyle += 'background: #78fa7e;'; // Apply background color for small
+      } else if (length === 'medium') {
+        markerClass += ' medium';
+        markerStyle += 'background: #faf878;'; // Apply background color for medium
+      } else if (length === 'big') {
+        markerClass += ' big';
+        markerStyle += 'background: #e96f4b;'; // Apply background color for big
+      }
+      dentsHTML += `
+        <div class="${markerClass}" style="${markerStyle}">
+          ${paintDamaged === 'yes' ? '<span>X</span>' : ''}
+        </div>
+      `;
+    });
+    dentsHTML += `</div>`;
+  });
 
   res.status(200).render('task', {
     title: 'Task',
@@ -34,8 +64,7 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
 
 exports.getMe = catchAsyncError(async (req, res, next) => {
   const user = await User.findById(req.user.id);
-
-  res.status(200).render('user', {
+  res.status(200).render('account', {
     title: 'My Profile',
     user,
   });

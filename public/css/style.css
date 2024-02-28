@@ -4,28 +4,22 @@ body {
   padding: 0;
   background-color: rgb(45, 64, 89);
   /* background-image: linear-gradient(to right, rgb(45, 64, 89), rgb(45, 64, 89)); */
+
   overflow-y: auto;
   /* margin-bottom: 30rem; */
 }
+
 .modal {
   position: absolute;
   right: 0;
-  /* position: fixed;
-  top: 45%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  max-width: 60rem;
-  width: 60%;
-  max-height: 90vh;
-  overflow-y: auto; */
   background-color: rgb(34, 40, 49);
   padding: 2rem 2rem 0.5rem 2rem;
   box-shadow: 0 4rem 6rem rgba(0, 0, 0, 0.3);
   z-index: 1000;
   transition: all 0.5s;
   border-radius: 0.5rem;
-  justify-content: center; /* horizontally center the content */
-  align-items: center; /* vertically center the content */
+  justify-content: center;
+  align-items: center;
 }
 .modal__content {
   display: flex;
@@ -50,8 +44,6 @@ body {
   align-items: center;
   /* justify-content: space-between; */
   justify-content: flex-start;
-  overflow-y: auto;
-
   height: 100vh;
 }
 html {
@@ -157,14 +149,6 @@ html {
   justify-content: center; /* Center horizontally */
   align-items: center; /* Center vertically */
   margin: 0.5rem;
-}
-
-.nav__el.nav__el--cta {
-  background-color: #28a745;
-}
-
-.nav__el.nav__el--cta:hover {
-  background-color: #218838;
 }
 
 .sides-container {
@@ -527,4 +511,105 @@ html {
 
 .task-table tr:nth-child(even) {
   background-color: #dddddd;
+}
+.task-table tbody tr:nth-child(odd) .table-link {
+  color: rgb(255, 255, 255); /* Change the color as desired for odd rows */
+}
+.table-link {
+  text-decoration: none;
+  /* color: black; */
+}
+
+.signup-form {
+  background-color: rgb(238, 238, 238);
+  padding: 1.25rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 0.625rem rgba(0, 0, 0, 0.1);
+  width: 18.75rem;
+  margin-top: 2rem;
+}
+.signup-form h2 {
+  text-align: center;
+  margin-bottom: 1.25rem;
+}
+.form-group {
+  margin-bottom: 0.9375rem;
+}
+.form-group label {
+  display: block;
+  text-align: left;
+  margin-bottom: 0.3125rem;
+}
+.form-group input {
+  width: 100%;
+  padding: 0.625rem;
+  border: 0.0625rem solid #ccc;
+  border-radius: 0.3125rem;
+  box-sizing: border-box;
+}
+button[type='submit'] {
+  width: 100%;
+  background-color: rgb(34, 40, 49);
+  color: #fff;
+  padding: 0.625rem;
+  border: none;
+  border-radius: 0.3125rem;
+  cursor: pointer;
+}
+button[type='submit']:hover {
+  background-color: #0056b3;
+}
+.privacy-policy-link {
+  text-align: center;
+  margin-top: 2rem;
+  text-decoration: underline rgb(255, 87, 34);
+}
+
+.privacy-policy-link a {
+  color: rgb(255, 87, 34);
+  text-decoration: none;
+}
+.alert {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+  z-index: 9999;
+  color: #fff;
+  font-size: 1rem;
+  /* font-weight: 400; */
+  text-align: center;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  padding: 1rem 1rem;
+  -webkit-box-shadow: 0 2rem 4rem rgba(0, 0, 0, 0.25);
+  box-shadow: 0 2rem 4rem rgba(0, 0, 0, 0.25);
+}
+.alert--success {
+  background-color: #20bf6b;
+}
+.alert--error {
+  background-color: rgb(255, 87, 34);
+}
+.message-box {
+  max-width: 600px;
+  margin: 100px auto;
+  text-align: center;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+/* .form-group input.field-exists {
+  border: 0.0625rem solid #ff0000;
+}
+
+.form-group input.field-available {
+  border: 0.0625rem solid #00ff00;
+} */
+
+.form-group .availability-message {
+  font-style: italic;
+  color: #ff0000; /* Red color for the message */
 }

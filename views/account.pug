@@ -1,0 +1,32 @@
+extends base
+
+block styles
+  link(rel="stylesheet" href="/css/signup.css")
+  
+
+block content
+ .container
+    form.signup-form.form-user-data
+      h2 Change your account settings
+
+      div.form-group
+        label(for="email") Email
+        input(type="email" id="email" name="email" value=`${user.email}` required)
+      div.form-group
+        label(for="name") Company / Name
+        input(type="text" id="name" name="name" value=`${user.name}` required)
+      button(type="submit") Save changes  
+
+    form.signup-form.form-user-password
+      h2 Change your password
+      
+      div.form-group
+        label(for="oldPassword") Current password
+        input(type="password" id="oldPassword" name="oldPassword" required)
+      div.form-group
+        label(for="newPassword") New password
+        input(type="password" id="newPassword" name="newPassword" required)
+      div.form-group
+        label(for="confirmNewPassword") Confirm new password
+        input(type="password" id="confirmNewPassword" name="confirmNewPassword" required)
+      button(type="submit") Change password
