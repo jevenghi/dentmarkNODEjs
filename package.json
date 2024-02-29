@@ -10,8 +10,7 @@
     "start": "nodemon server.js",
     "start:prod": "cross-env NODE_ENV=production nodemon server.js",
     "debug:prod": "SET NODE_ENV=production&& ndb server.js",
-    "build": "parcel build ./public/js/index.js --dist-dir ./public/js/bundled",
-    "watch:js": "parcel watch ./public/js/index.js --out-dir ./public/js --out-file bundle.js"
+    "build": "parcel build ./public/js/index.js --dist-dir ./public/js/bundled"
   },
   "author": "jLapLab",
   "license": "ISC",

@@ -31,6 +31,12 @@ exports.getLanding = catchAsyncError(async (req, res, next) => {
   });
 });
 
+exports.getWelcome = catchAsyncError(async (req, res, next) => {
+  res.status(200).render('welcome', {
+    title: 'Welcome page',
+  });
+});
+
 exports.getSignupForm = catchAsyncError(async (req, res, next) => {
   res.status(200).render('signup', {
     title: 'Sign up',

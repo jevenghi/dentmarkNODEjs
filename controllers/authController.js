@@ -90,12 +90,12 @@ exports.signup = catchAsyncError(async (req, res, next) => {
   const confirmationURL = `${req.protocol}://${req.get(
     'host',
   )}/api/v1/auth/confirmEmail/${confirmationToken}`;
-  const message = `Please confirm your registration at DentMark.AM by clicking the link below:\n${confirmationURL}`;
+  const message = `Please confirm your registration at DentMark.AM by clicking the link below:\n${confirmationURL}. Unverified accounts are automatically deleted 30 days after signup. If you didn't request this, please ignore this email.`;
 
   try {
     await sendEmail({
       email: newUser.email,
-      subject: 'Confirm your sign-up at DentMark.AM',
+      subject: 'Confirm your signup at DentMark.AM',
       message,
     });
 
@@ -349,7 +349,7 @@ exports.confirmEmail = catchAsyncError(async (req, res, next) => {
 
   await user.save({ validateBeforeSave: false });
 
-  res.redirect('/welcome.html');
+  res.redirect('/welcome');
 });
 
 exports.updatePassword = catchAsyncError(async (req, res, next) => {
