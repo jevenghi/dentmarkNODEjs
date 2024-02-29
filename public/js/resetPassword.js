@@ -17,7 +17,7 @@ const resetPassword = async (password, passwordConfirm, token) => {
       message.innerHTML = `
         <div class="message-box">
           <p>Password changed successfully!</p>
-          <a href="/" class="btn">Go to Main Page</a>
+          <a href="/login" class="btn">Login</a>
         </div>
         
         `;
