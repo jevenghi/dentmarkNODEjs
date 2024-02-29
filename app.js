@@ -30,6 +30,30 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 const authLimiter = rateLimit({
+  max: 10,
+  windowMs: 60 * 60 * 1000,
+  message: {
+    message: 'Too many requests from this IP, please try again in one hour.',
+  },
+});
+
+const forgotPassLimiter = rateLimit({
+  max: 5,
+  windowMs: 60 * 60 * 1000,
+  message: {
+    message: 'Too many requests from this IP, please try again in one hour.',
+  },
+});
+
+const signupLimiter = rateLimit({
+  max: 100,
+  windowMs: 60 * 60 * 1000,
+  message: {
+    message: 'Too many requests from this IP, please try again in one hour.',
+  },
+});
+
+const userUpdateLimiter = rateLimit({
   max: 15,
   windowMs: 60 * 60 * 1000,
   message: {
@@ -37,28 +61,29 @@ const authLimiter = rateLimit({
   },
 });
 
-const limiter = rateLimit({
-  max: 50,
+const passResetLimiter = rateLimit({
+  max: 10,
   windowMs: 60 * 60 * 1000,
   data: {
-    message: 'Too many requests from this IP, please try again in one hour.',
+    message: 'Too many tasks sent from this IP, please try again in one hour.',
   },
 });
 
-function checkLimit(req, res, next) {
-  console.log(req.rateLimit);
-  if (req.rateLimit.remaining === 0) {
-    return res
-      .status(429)
-      .json({ message: 'Rate limit exceeded. Please try again later.' });
-  }
-  next();
-}
-
+const taskLimiter = rateLimit({
+  max: 15,
+  windowMs: 60 * 60 * 1000,
+  data: {
+    message: 'Too many tasks sent from this IP, please try again in one hour.',
+  },
+});
 app.use('/api/v1/auth/login', authLimiter);
-// app.use('/api/v1/auth/forgotPassword', authLimiter);
-app.use('/api', limiter);
-// app.use('/', checkLimit);
+app.use('/api/v1/auth/forgotPassword', forgotPassLimiter);
+app.use('/api/v1/auth/register', signupLimiter);
+app.use('/api/v1/auth/checkEmail', signupLimiter);
+app.use('/api/v1/users/updateMe', userUpdateLimiter);
+app.use('/api/v1/users/updatePassword', userUpdateLimiter);
+app.use('/api/v1/tasks/sendTask', taskLimiter);
+app.use('/api/v1/auth/resetPassword', passResetLimiter);
 
 //BODY PARSER, CONVERTING BODY INTO REQ.BODY
 app.use(express.json({ limit: '10kb' }));
@@ -82,10 +107,15 @@ app.use((req, res, next) => {
   // console.log(req.cookies);
   next();
 });
-app.use((req, res, next) => {
-  console.log(res.statusCode);
-  next();
-});
+// app.use((req, res, next) => {
+//   console.log(req.rateLimit);
+//   if (req.rateLimit.remaining === 0) {
+//     return res
+//       .status(429)
+//       .json({ message: 'Rate limit exceeded. Please try again later.' });
+//   }
+//   next();
+// });
 // app.get('/tasks', (req, res) => {
 //   res.status(200).render('tasks');
 // });

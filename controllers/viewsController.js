@@ -19,6 +19,18 @@ exports.getOverview = catchAsyncError(async (req, res, next) => {
   });
 });
 
+exports.getLoginForm = catchAsyncError(async (req, res, next) => {
+  res.status(200).render('login', {
+    title: 'Log into your account',
+  });
+});
+
+exports.getSignupForm = catchAsyncError(async (req, res, next) => {
+  res.status(200).render('signup', {
+    title: 'Sign up',
+  });
+});
+
 exports.getTask = catchAsyncError(async (req, res, next) => {
   const task = await Task.findById(req.params.id);
   let dentsHTML = '';

@@ -13,7 +13,8 @@ body {
 .container {
   text-align: center;
 }
-.signup-form {
+.signup-form,
+.login-form {
   background-color: rgb(238, 238, 238);
   padding: 1.25rem;
   border-radius: 0.5rem;
@@ -21,14 +22,16 @@ body {
   width: 18.75rem;
   margin-top: 2rem;
 }
-.signup-form h2 {
+.signup-form,
+.login-form h2 {
   text-align: center;
   margin-bottom: 1.25rem;
 }
 .form-group {
   margin-bottom: 0.9375rem;
 }
-.form-group label {
+.form-group,
+.login-form label {
   display: block;
   text-align: left;
   margin-bottom: 0.3125rem;
@@ -174,4 +177,43 @@ button[type='submit']:hover {
   justify-content: center; /* Center horizontally */
   align-items: center; /* Center vertically */
   margin: 0.5rem;
+}
+
+.form-user-data {
+  background-color: rgb(238, 238, 238);
+  padding: 1.25rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 0.625rem rgba(0, 0, 0, 0.1);
+  width: 18.75rem;
+  margin-top: 2rem;
+}
+.form-user-data h2 {
+  text-align: center;
+  margin-bottom: 1.25rem;
+}
+
+.form-user-password {
+  background-color: rgb(238, 238, 238);
+  padding: 1.25rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 0.625rem rgba(0, 0, 0, 0.1);
+  width: 18.75rem;
+  margin-top: 2rem;
+}
+.form-user-password h2 {
+  text-align: center;
+  margin-bottom: 1.25rem;
+}
+.forgot-password {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.forgot-password a {
+  color: rgb(255, 87, 34);
+  text-decoration: none;
+}
+
+.forgot-password a:hover {
+  text-decoration: underline;
 }

@@ -1,8 +1,9 @@
 /* eslint-disable no-undef */
 
 import { showAlert } from './alerts.js';
+import axios from 'axios';
 
-const checkFieldAvailability = async (field, endpoint) => {
+export const checkFieldAvailability = async (field, endpoint) => {
   const value = document.getElementById(field).value;
   try {
     const res = await axios({
@@ -22,12 +23,13 @@ const checkFieldAvailability = async (field, endpoint) => {
       // inputElement.classList.add('field-exists');
     }
   } catch (err) {
-    showAlert('error', err.response.data);
+    console.log(err);
+    showAlert('error', err.response.data.message);
     // console.error(`Error checking ${endpoint}:`, err);
   }
 };
 
-const signup = async (name, email, password, passwordConfirm) => {
+export const signup = async (name, email, password, passwordConfirm) => {
   try {
     const res = await axios({
       method: 'POST',
@@ -62,18 +64,3 @@ const signup = async (name, email, password, passwordConfirm) => {
     // alert(err.response.data.message);
   }
 };
-
-const emailInput = document.getElementById('email');
-emailInput.addEventListener('input', () =>
-  checkFieldAvailability('email', 'checkEmail'),
-);
-
-document.querySelector('.signup-form').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-  const passwordConfirm = document.getElementById('confirm_password').value;
-  const name = document.getElementById('company').value;
-
-  signup(name, email, password, passwordConfirm, company);
-});

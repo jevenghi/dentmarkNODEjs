@@ -1,0 +1,27 @@
+extends base
+
+
+block styles
+  link(rel="stylesheet" href="/css/signup.css")
+
+block content
+  .container
+    form.signup-form
+      h2 Signup
+
+      .form-group
+        label(for="email-signup") Email
+        input(type="email", id="email-signup", name="email-signup", required)
+        .availability-message
+      .form-group
+        label(for="company") Company / Name
+        input(type="text", id="company", name="company")
+      .form-group
+        label(for="password") Password
+        input(type="password", id="password", name="password", required)
+      .form-group
+        label(for="confirm_password") Confirm Password
+        input(type="password", id="confirm_password", name="confirm_password", required)
+      button(type="submit") Signup
+    .privacy-policy-link
+      a(href="privacyPolicy.html") Privacy Policy

@@ -25,6 +25,12 @@ const resetPassword = async (password, passwordConfirm, token) => {
       document.querySelector('.login-form').style.display = 'none';
     }
   } catch (err) {
+    if (err.response.status === 429) {
+      // window.location.href = 'limit-exceeded.html';
+      showAlert('error', err.response.data);
+    } else {
+      showAlert('error', err.response.data.message);
+    }
     // const message = document.createElement('div');
     // message.classList.add('success-message');
     // message.innerHTML = `
@@ -35,7 +41,7 @@ const resetPassword = async (password, passwordConfirm, token) => {
     //   `;
     // document.querySelector('.container').appendChild(message);
     // document.querySelector('.login-form').style.display = 'none';
-    showAlert('error', err.response.data.message);
+    console.log(err);
     // console.log(err);
     // alert(err.response.data.message);
   }

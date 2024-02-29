@@ -2,8 +2,9 @@
 /* eslint-disable no-undef */
 // const showAlert = require('./alerts');
 import { showAlert } from './alerts.js';
+import axios from 'axios';
 
-const login = async (email, password) => {
+export const login = async (email, password) => {
   try {
     document.getElementById('loginButton').textContent = 'Logging in...';
 
@@ -26,17 +27,15 @@ const login = async (email, password) => {
       }, 1500);
     }
   } catch (err) {
-    // showAlert('error', err.response.data.message);
+    // if (err.response.status === 429) {
+    //   console.log('429 caught');
+    //   window.location.href = 'limit-exceeded.html';
+    // } else {
     showAlert('error', err.response.data.message);
     document.getElementById('loginButton').textContent = 'Login';
-    // console.log(err.response);
-    // alert(err.response.data.message);
   }
-};
+  // showAlert('error', err.response.data.message);
 
-document.querySelector('.login-form').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-  login(email, password);
-});
+  // console.log(err.response);
+  // alert(err.response.data.message);
+};

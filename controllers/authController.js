@@ -306,17 +306,14 @@ exports.forgotPassword = catchAsyncError(async (req, res, next) => {
 });
 
 exports.resetPassword = catchAsyncError(async (req, res, next) => {
-  console.log(req.body.token);
   const hashedToken = crypto
     .createHash('sha256')
     .update(req.body.token)
     .digest('hex');
-  console.log(hashedToken);
   const user = await User.findOne({
     passwordResetToken: hashedToken,
     passwordResetExpires: { $gt: Date.now() },
   });
-  console.log(user);
   if (!user) {
     return next(new AppError('Token is invalid or expired'), 403);
   }
