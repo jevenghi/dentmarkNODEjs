@@ -30,7 +30,7 @@ const checkAuth = async () => {
       url: 'http://127.0.0.1:5501/api/v1/auth/checkAuth',
     });
     if (!res.data.loggedIn) {
-      window.location.href = 'landing.html';
+      window.location.href = '/landing';
     } else {
       document.querySelector('.main-container').style.display = 'flex';
       document.querySelector('.header').style.display = 'flex';
