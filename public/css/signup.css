@@ -149,13 +149,6 @@ button[type='submit']:hover {
   gap: 1rem;
 }
 
-.logged-in {
-  display: flex;
-
-  gap: 1rem;
-  padding: 0.8rem 1.2rem;
-}
-
 .nav__el {
   text-decoration: none;
   padding: 0.8rem 1.2rem;
@@ -216,4 +209,24 @@ button[type='submit']:hover {
 
 .forgot-password a:hover {
   text-decoration: underline;
+}
+.hidden {
+  visibility: hidden;
+  opacity: 0;
+}
+.btn {
+  background-color: rgb(34, 40, 49);
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  display: block;
+  margin-top: 1.5rem;
+  text-decoration: none;
+}
+
+.btn:hover {
+  background-color: #0056b3;
 }

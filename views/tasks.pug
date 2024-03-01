@@ -17,17 +17,35 @@ block styles
 block content
   main.main
     a(href='/') Go to Main Page
-    table.task-table
-      thead
-        tr
-          th Vehicle Model
-          th Task Status
-          th Difficulty
-          th Date
-      tbody
-        each task in tasks
+    - if (role === 'user')
+      table.task-table
+        thead
           tr
-            td: a(href=`/tasks/${task._id}` class='table-link')= task.carModel
-            td: a(href=`/tasks/${task._id}` class='table-link')= task.taskStatus
-            td: a(href=`/tasks/${task._id}` class='table-link')= task.difficulty
-            td: a(href=`/tasks/${task._id}` class='table-link')= task.createdAt.toLocaleDateString('en-GB')
+            th Vehicle Model
+            th Task Status
+            th Difficulty
+            th Date
+        tbody
+          each task in tasks
+            tr
+              td: a(href=`/tasks/${task._id}` class='table-link')= task.carModel
+              td: a(href=`/tasks/${task._id}` class='table-link')= task.taskStatus
+              td: a(href=`/tasks/${task._id}` class='table-link')= task.difficulty
+              td: a(href=`/tasks/${task._id}` class='table-link')= task.createdAt.toLocaleDateString('en-GB')
+    - if (role === 'admin') 
+      table.task-table
+        thead
+          tr
+            th Customer
+            th Vehicle Model
+            th Task Status
+            th Difficulty
+            th Date
+        tbody
+          each task in tasks
+            tr
+              td: a(href=`/tasks/${task._id}` class='table-link')= task.user.name
+              td: a(href=`/tasks/${task._id}` class='table-link')= task.carModel
+              td: a(href=`/tasks/${task._id}` class='table-link')= task.taskStatus
+              td: a(href=`/tasks/${task._id}` class='table-link')= task.difficulty
+              td: a(href=`/tasks/${task._id}` class='table-link')= task.createdAt.toLocaleDateString('en-GB')
