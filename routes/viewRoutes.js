@@ -23,4 +23,11 @@ router.get(
   viewsController.getUser,
 );
 
+router.get(
+  '/usersList',
+  authController.protect,
+  authController.restrictTo('admin'),
+  viewsController.getAllUsers,
+);
+
 module.exports = router;

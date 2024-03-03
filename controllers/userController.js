@@ -78,3 +78,17 @@ exports.getUser = factory.getOne(User, 'tasks');
 //     data: { customer },
 //   });
 // });
+exports.suggestUser = catchAsyncErr(async (req, res, next) => {
+  console.log('req came');
+  const query = req.query.q;
+  console.log(query);
+  try {
+    const results = await User.find({
+      name: { $regex: query, $options: 'i' },
+    }).limit(5);
+    res.json(results);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});

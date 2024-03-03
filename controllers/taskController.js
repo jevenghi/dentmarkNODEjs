@@ -176,3 +176,11 @@ exports.getTaskStats = async (req, res) => {
 //     data: { userTasks },
 //   });
 // });
+exports.getDents = catchAsyncErr(async (req, res, next) => {
+  const task = await Task.findById(req.params.id);
+  const { dentId } = req.params;
+  res.status(200).json({
+    status: 'success',
+    dent: dentId,
+  });
+});

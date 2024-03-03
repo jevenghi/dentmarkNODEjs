@@ -500,7 +500,25 @@ html {
     font-size: 0.5rem;
   }
 } */
+
+.search-bar {
+  margin-top: 1rem;
+}
+
+.task-header {
+  width: 100%;
+  background-color: rgb(238, 238, 238);
+  /* padding: 1rem; */
+  margin: 1rem;
+}
+
+.task-header p {
+  font-size: 1.2rem;
+  margin-left: 1rem;
+}
+
 .task-table {
+  margin-top: 1rem;
   border-collapse: collapse;
   width: 100%;
   background-color: rgb(238, 238, 238);
@@ -527,6 +545,15 @@ html {
 .table-link {
   text-decoration: none;
   /* color: black; */
+}
+
+.dent-cost {
+  width: 3rem;
+}
+
+.save-dent-changes {
+  margin: 1rem;
+  padding: 0.5rem;
 }
 
 .signup-form {

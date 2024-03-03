@@ -32,6 +32,12 @@ router.get(
   userController.getAllUsers,
 );
 
+router.get(
+  '/suggestUser',
+  authController.restrictTo('admin', 'superAdmin'),
+  userController.suggestUser,
+);
+
 router
   .route('/:id')
   .get(authController.restrictTo('admin', 'superAdmin'), userController.getUser)

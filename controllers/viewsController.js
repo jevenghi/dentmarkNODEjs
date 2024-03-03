@@ -27,7 +27,10 @@ exports.getSignupForm = catchAsyncError(async (req, res, next) => {
 });
 
 exports.getUser = catchAsyncError(async (req, res, next) => {
-  const user = await User.findById(req.params.id).populate('tasks');
+  const user = await User.findById(req.params.id).populate({
+    path: 'tasks',
+    options: { sort: { createdAt: -1 } },
+  });
   res.status(200).render('user', {
     title: 'User',
     email: user.email,
@@ -38,6 +41,7 @@ exports.getUser = catchAsyncError(async (req, res, next) => {
 
 exports.getTask = catchAsyncError(async (req, res, next) => {
   const task = await Task.findById(req.params.id);
+  console.log(task);
   let dentsHTML = '';
   const dentsArray = [];
   Object.entries(task.dents).forEach(([side, dents]) => {
@@ -97,6 +101,7 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
     date: task.createdAt.toLocaleDateString('en-GB'),
     model: task.carModel,
     dents: dentsArray,
+    customer: task.user.name,
     dentsHTML: dentsHTML,
   });
 });
@@ -127,5 +132,13 @@ exports.getMyTasks = catchAsyncError(async (req, res, next) => {
     title: 'Tasks',
     role: role,
     tasks,
+  });
+});
+exports.getAllUsers = catchAsyncError(async (req, res, next) => {
+  const users = await User.find().populate('tasks').sort({ name: 1 });
+  // console.log(users[0].tasks.length);
+  res.status(200).render('usersList', {
+    title: 'My Profile',
+    users,
   });
 });

@@ -20,4 +20,10 @@ router
   .patch(taskController.updateTask)
   .delete(taskController.deleteTask);
 
+router
+  .route('/:id/dents/:dentId')
+  .get(authController.restrictTo('admin'), taskController.getDents);
+// .patch(authController.restrictTo('admin'), taskController.updateDents)
+// .delete(authController.restrictTo('admin'), taskController.deleteDents);
+
 module.exports = router;
