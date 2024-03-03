@@ -55,7 +55,7 @@ const userSchema = new mongoose.Schema(
     emailConfirmationTokenExpires: Date,
     createdAt: {
       type: Date,
-      default: Date.now(),
+      default: Date.now,
     },
     active: {
       type: Boolean,

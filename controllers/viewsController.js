@@ -1,23 +1,6 @@
-const pug = require('pug');
-
 const Task = require('../models/taskModel');
 const User = require('../models/userModel');
 const catchAsyncError = require('../utils/catchAsyncError');
-const AppError = require('../utils/appError');
-
-exports.getOverview = catchAsyncError(async (req, res, next) => {
-  const tasks = await Task.find()
-    // .populate({ path: 'user', select: 'name' })
-    .sort({ createdAt: -1 });
-
-  res.status(200).render('overview', {
-    title: 'All Tasks',
-    tasks,
-    //   res.status(200).json({
-    //     title: 'All Tasks',
-    //     tasks,
-  });
-});
 
 exports.getLoginForm = catchAsyncError(async (req, res, next) => {
   res.status(200).render('login', {
@@ -43,18 +26,32 @@ exports.getSignupForm = catchAsyncError(async (req, res, next) => {
   });
 });
 
+exports.getUser = catchAsyncError(async (req, res, next) => {
+  const user = await User.findById(req.params.id).populate('tasks');
+  res.status(200).render('user', {
+    title: 'User',
+    email: user.email,
+    name: user.name,
+    tasks: user.tasks,
+  });
+});
+
 exports.getTask = catchAsyncError(async (req, res, next) => {
   const task = await Task.findById(req.params.id);
   let dentsHTML = '';
+  const dentsArray = [];
   Object.entries(task.dents).forEach(([side, dents]) => {
+    dentsArray.push(...dents);
     dentsHTML += `
       <div class="image-container__summary">
         <img id="vehicleImage" src="/pics/sides_pics/${side}.png" />
         
     `;
     dents.forEach((dent) => {
-      const { shape, length, orientation, paintDamaged, coords } = dent;
+      const { shape, length, orientation, paintDamaged, coords, markerNumber } =
+        dent;
       let markerStyle = `left: ${coords.x - 1}%; top: ${coords.y - 3}%;`;
+      const numberStyle = `left: ${coords.x - 5}%; top: ${coords.y - 5}%;`;
       if (shape === 'line') {
         markerStyle += `width: 2rem; border-radius: 0.8rem; transform: rotate(${orientation});`;
       }
@@ -62,26 +59,44 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
       if (paintDamaged === 'yes') markerClass += ' paint-damaged';
       if (length === 'small') {
         markerClass += ' small';
-        markerStyle += 'background: #78fa7e;'; // Apply background color for small
+        markerStyle += 'background: #78fa7e;';
       } else if (length === 'medium') {
         markerClass += ' medium';
-        markerStyle += 'background: #faf878;'; // Apply background color for medium
+        markerStyle += 'background: #faf878;';
       } else if (length === 'big') {
         markerClass += ' big';
-        markerStyle += 'background: #e96f4b;'; // Apply background color for big
+        markerStyle += 'background: #e96f4b;';
       }
       dentsHTML += `
+
         <div class="${markerClass}" style="${markerStyle}">
+
           ${paintDamaged === 'yes' ? '<span>X</span>' : ''}
         </div>
       `;
+      dentsHTML += `
+
+        <div class="marker-number" style="${numberStyle}">
+          <span>${markerNumber}</span>
+        </div>
+      `;
+      // dentsHTML += `
+
+      //   <div class="${markerClass}" style="${markerStyle}">
+
+      //     ${paintDamaged === 'yes' ? '<span>X</span>' : ''}
+      //     <span class="marker-number">${markerNumber}</span>
+      //   </div>
+      // `;
     });
     dentsHTML += `</div>`;
   });
 
   res.status(200).render('task', {
     title: 'Task',
-    // task,
+    date: task.createdAt.toLocaleDateString('en-GB'),
+    model: task.carModel,
+    dents: dentsArray,
     dentsHTML: dentsHTML,
   });
 });
@@ -95,7 +110,6 @@ exports.getMe = catchAsyncError(async (req, res, next) => {
 });
 
 exports.getMyTasks = catchAsyncError(async (req, res, next) => {
-  console.log(req.user.role);
   let tasks;
   let role;
   if (req.user.role === 'user') {
@@ -113,8 +127,5 @@ exports.getMyTasks = catchAsyncError(async (req, res, next) => {
     title: 'Tasks',
     role: role,
     tasks,
-    //   res.status(200).json({
-    //     title: 'All Tasks',
-    //     tasks,
   });
 });

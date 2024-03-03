@@ -58,11 +58,13 @@ class App {
   #bodyType;
   #bodySide;
   #dents = {};
+  #markerCount;
 
   #dentLength;
   #dentShape;
   #dentPaintDamaged;
   constructor() {
+    this.#markerCount = 0;
     logout.addEventListener('click', this._logoutUser);
     overlay.addEventListener('click', this._closeModal);
 
@@ -191,6 +193,7 @@ class App {
 
     vehicleImage.addEventListener('click', (event) => {
       event.preventDefault();
+      this.#markerCount++;
       //calculate the percentage values of the x, y relative to the width,
       //height of an image, so that x, y can be recreated on image of another size.
       this.#storedCoordinates = {
@@ -223,12 +226,23 @@ class App {
         imageContainer,
       );
 
+      const uniqueId = () => {
+        const dateString = Date.now().toString(36);
+        const randomness = Math.random().toString(36).substr(2);
+        return dateString + randomness;
+      };
+      console.log(uniqueId());
+
       const dentData = {
         shape: this.#dentShape,
         length: this.#dentLength,
         orientation: this.#orientationPressed ? this.#lineAngle : null,
         paintDamaged: this.#dentPaintDamaged,
         coords: this.#storedCoordinates,
+        cost: 0,
+        markerNumber: this.#markerCount,
+        status: 'Open',
+        id: uniqueId(),
       };
 
       if (!this.#dents[this.#bodySide]) {
@@ -246,10 +260,10 @@ class App {
       }
       const veh = new Vehicle(model, this.#bodyType, this.#dents);
       this._removeAllMarkers();
-      console.log(model, this.#bodyType, this.#dents);
       document.querySelector('.send-marks').textContent = 'Sending task...';
 
       await this._sendTask(model, this.#bodyType, this.#dents);
+      this.#markerCount = 0;
       document.querySelector('.send-marks').textContent = 'Send task';
 
       // fetch('http://127.0.0.1:5501/api/v1/tasks/sendTask', {

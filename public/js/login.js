@@ -34,8 +34,18 @@ export const login = async (email, password) => {
     showAlert('error', err.response.data.message);
     document.getElementById('loginButton').textContent = 'Login';
   }
-  // showAlert('error', err.response.data.message);
+};
 
-  // console.log(err.response);
-  // alert(err.response.data.message);
+export const logoutUser = async () => {
+  try {
+    const res = await axios({
+      method: 'GET',
+      url: 'http://127.0.0.1:5501/api/v1/users/logout',
+    });
+    location.assign('/');
+  } catch (err) {
+    showAlert('error', err.response.data.message);
+
+    console.log(err.response.data.message);
+  }
 };

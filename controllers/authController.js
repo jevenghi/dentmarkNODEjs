@@ -69,7 +69,6 @@ exports.isLoggedIn = async (req, res, next) => {
 
 exports.sendAuthStatus = (req, res) => {
   if (res.locals.user && res.locals.user.emailConfirmed) {
-    console.log(res.locals.user);
     res.json({ loggedIn: true, user: res.locals.user });
   } else {
     res.json({ loggedIn: false });

@@ -3,11 +3,20 @@ extends base
 block styles
   link(rel="stylesheet" href="/css/style.css")
 block content
-  .main-container
+  .container
     // Render other task details as needed
+    p MODEL:#{model}
+    p TASK CREATED: #{date}
     != dentsHTML
-
-//-   .main-container
-//-     .image-container__summary
-//-       img#vehicleImage(src=`pics/sides_pics/${side}.png`)
-//-       #marker
+    table.task-table
+        thead
+          tr
+            th Dent number
+            th Task Status
+            th Cost
+        tbody
+          each dent in dents
+            tr
+              td= dent.markerNumber
+              td= dent.status
+              td= dent.cost

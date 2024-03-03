@@ -15,8 +15,17 @@ extends base
 block styles
   link(rel="stylesheet" href="/css/style.css")
 block content
-  main.main
-    a(href='/') Go to Main Page
+  header.header
+    nav.nav.nav--user
+      button.nav__el.nav__el--myacc
+        img(src="user.png", alt="AccIcon")
+  div.modal.hidden
+    div.modal__content
+      a.modal__link(href="/me") My profile
+      a.modal__link(href="/") Send new task
+      a.modal__link(href="/tasks") My tasks
+      a.modal__link.logout(href="#") Log out
+  .main-container
     - if (role === 'user')
       table.task-table
         thead
@@ -44,8 +53,11 @@ block content
         tbody
           each task in tasks
             tr
-              td: a(href=`/tasks/${task._id}` class='table-link')= task.user.name
+              td: a(href=`/users/${task.user.id}` class='table-link')= task.user.name
               td: a(href=`/tasks/${task._id}` class='table-link')= task.carModel
-              td: a(href=`/tasks/${task._id}` class='table-link')= task.taskStatus
-              td: a(href=`/tasks/${task._id}` class='table-link')= task.difficulty
-              td: a(href=`/tasks/${task._id}` class='table-link')= task.createdAt.toLocaleDateString('en-GB')
+              td= task.taskStatus
+              td= task.difficulty
+              td= task.createdAt.toLocaleDateString('en-GB')
+  .overlay.hidden            
+
+

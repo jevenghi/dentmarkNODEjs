@@ -1,5 +1,5 @@
 import { updateSettings } from './updateAccount';
-import { login } from './login';
+import { login, logoutUser } from './login';
 import { signup, checkFieldAvailability } from './signup';
 
 const userDataForm = document.querySelector('.form-user-data');
@@ -7,7 +7,42 @@ const userPasswordForm = document.querySelector('.form-user-password');
 const loginForm = document.querySelector('.login-form');
 const signupForm = document.querySelector('.signup-form');
 
+const myAccBtn = document.querySelector('.nav__el--myacc');
+const logout = document.querySelector('.logout');
+const modal = document.querySelector('.modal');
+const modalLinks = document.querySelectorAll('.modal__link');
+const overlay = document.querySelector('.overlay');
+
 const emailInputSignup = document.getElementById('email-signup');
+
+if (overlay) {
+  overlay.addEventListener('click', () => {
+    overlay.classList.add('hidden');
+    modal.classList.add('hidden');
+  });
+}
+
+if (myAccBtn) {
+  myAccBtn.addEventListener('click', () => {
+    modal.classList.toggle('hidden');
+    overlay.classList.toggle('hidden');
+  });
+}
+
+if (logout) {
+  logout.addEventListener('click', () => {
+    logoutUser();
+  });
+}
+
+if (modalLinks) {
+  modalLinks.forEach((button) => {
+    button.addEventListener('click', () => {
+      overlay.classList.add('hidden');
+      modal.classList.add('hidden');
+    });
+  });
+}
 
 if (emailInputSignup) {
   emailInputSignup.addEventListener('input', () =>
