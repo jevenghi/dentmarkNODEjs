@@ -40,17 +40,38 @@ block content
               td: a(href=`/tasks/${task._id}` class='table-link')= task.carModel
               td: a(href=`/tasks/${task._id}` class='table-link')= task.taskStatus
               td: a(href=`/tasks/${task._id}` class='table-link')= task.difficulty
-              td: a(href=`/tasks/${task._id}` class='table-link')= task.createdAt.toLocaleDateString('en-GB')
+              td= new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
     - if (role === 'admin') 
       .search-bar
         input(type='text', placeholder='Search customer...', id='search-input')
+
+      //- .filter-menu
+      //-   h3 Filter by Task Status:
+      //-   label
+      //-     input(type='checkbox', value='pending', class='status-checkbox', checked)
+      //-     | Pending
+      //-   label
+      //-     input(type='checkbox', value='completed', class='status-checkbox', checked)
+      //-     | Completed
+      //-   label
+      //-     input(type='checkbox', value='in-progress', class='status-checkbox', checked)
+      //-     | In Progress  
+      .filter-menu
+        h3 Filter by Task Status:
+        select#status-filter
+          option(value='' selected=status === '') All
+          option(value='open' selected=status === "open") Open
+          option(value='complete' selected=status === "complete") Paid
+          option(value='pending' selected=status === "pending") Complete/Not paid
+          option(value='in-progress' selected=status === 'in-progress') In Progress
+
       table.task-table
         thead
           tr
             th Customer
             th Vehicle Model
             th Task Status
-            th Difficulty
+            th Total Cost
             th Date
         tbody
           each task in tasks
@@ -58,8 +79,18 @@ block content
               td: a(href=`/users/${task.user.id}` class='table-link')= task.user.name
               td: a(href=`/tasks/${task._id}` class='table-link')= task.carModel
               td= task.taskStatus
-              td= task.difficulty
-              td= task.createdAt.toLocaleDateString('en-GB')
+              td= task.totalCost
+              td= new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
+    div.pagination-buttons
+    if page > 1
+      button.previous-button() Previous
+      //- if page < totalPageCount
+    if tasks.length === limit
+      button.next-button() Next
+    button.download-report Download Report
+      //- a(href='/generate-report') Download Report 
+
+     
   .overlay.hidden            
 
 

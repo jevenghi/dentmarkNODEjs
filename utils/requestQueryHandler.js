@@ -1,3 +1,5 @@
+const { RESULTS_LIMIT } = require('../constants/queryConstants');
+
 class RequestQueryHandler {
   constructor(query, queryString) {
     this.query = query;
@@ -41,7 +43,7 @@ class RequestQueryHandler {
 
   paginate() {
     const page = this.queryString.page * 1 || 1;
-    const limit = this.queryString.limit * 1 || 25;
+    const limit = this.queryString.limit * 1 || RESULTS_LIMIT;
     const skip = (page - 1) * limit;
 
     this.query = this.query.skip(skip).limit(limit);

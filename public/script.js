@@ -57,7 +57,9 @@ class App {
   #storedCoordinates;
   #bodyType;
   #bodySide;
-  #dents = {};
+  #dents = [];
+  #dentsTemp = {};
+
   #markerCount;
 
   #dentLength;
@@ -126,7 +128,7 @@ class App {
               markerContainer.classList.add('visible');
             }, 50);
 
-            const sideDents = this.#dents[this.#bodySide];
+            const sideDents = this.#dentsTemp[this.#bodySide];
 
             if (sideDents && sideDents.length > 0) {
               sideDents.forEach((dent) => {
@@ -191,6 +193,7 @@ class App {
       });
     });
 
+    const markers = {};
     vehicleImage.addEventListener('click', (event) => {
       event.preventDefault();
       this.#markerCount++;
@@ -228,12 +231,30 @@ class App {
 
       const uniqueId = () => {
         const dateString = Date.now().toString(36);
-        const randomness = Math.random().toString(36).substr(2);
+        const randomness = Math.random().toString(36);
         return dateString + randomness;
       };
-      console.log(uniqueId());
 
-      const dentData = {
+      // const dentData = {
+      //   shape: this.#dentShape,
+      //   length: this.#dentLength,
+      //   orientation: this.#orientationPressed ? this.#lineAngle : null,
+      //   paintDamaged: this.#dentPaintDamaged,
+      //   coords: this.#storedCoordinates,
+      //   cost: 0,
+      //   markerNumber: this.#markerCount,
+      //   status: 'open',
+      //   id: uniqueId(),
+      // };
+
+      // if (!this.#dents[this.#bodySide]) {
+      //   this.#dents[this.#bodySide] = [];
+      // }
+
+      // this.#dents[this.#bodySide].push(dentData);
+
+      const newObj = {
+        img: this.#bodySide,
         shape: this.#dentShape,
         length: this.#dentLength,
         orientation: this.#orientationPressed ? this.#lineAngle : null,
@@ -241,19 +262,30 @@ class App {
         coords: this.#storedCoordinates,
         cost: 0,
         markerNumber: this.#markerCount,
-        status: 'Open',
-        id: uniqueId(),
+        status: 'open',
       };
 
-      if (!this.#dents[this.#bodySide]) {
-        this.#dents[this.#bodySide] = [];
+      this.#dents.push(newObj);
+      if (!this.#dentsTemp[this.#bodySide]) {
+        this.#dentsTemp[this.#bodySide] = [];
       }
 
-      this.#dents[this.#bodySide].push(dentData);
+      this.#dentsTemp[this.#bodySide].push(newObj);
+      // let existingSide = this.#dents.find(
+      //   (item) => Object.keys(item)[0] === this.#bodySide,
+      // );
+      // if (!existingSide) {
+      //   this.#dents.push({ [this.#bodySide]: [newObj] });
+      // } else {
+      //   existingSide[this.#bodySide].push(newObj);
+      // }
     });
 
     sendMarksBtn.addEventListener('click', async (e) => {
       e.preventDefault();
+      if (this.#dents.length === 0)
+        return alert('You have not placed any dent yet');
+
       const model = vehicleModel.value;
       if (!model) {
         return alert('Please enter model name');
@@ -261,10 +293,15 @@ class App {
       const veh = new Vehicle(model, this.#bodyType, this.#dents);
       this._removeAllMarkers();
       document.querySelector('.send-marks').textContent = 'Sending task...';
-
+      console.log(this.#dents);
       await this._sendTask(model, this.#bodyType, this.#dents);
       this.#markerCount = 0;
       document.querySelector('.send-marks').textContent = 'Send task';
+
+      window.scrollTo(0, 0);
+      setTimeout(() => {
+        location.reload();
+      }, 50);
 
       // fetch('http://127.0.0.1:5501/api/v1/tasks/sendTask', {
       //   method: 'POST',
@@ -324,13 +361,14 @@ class App {
 
     removeMarksBtn.addEventListener('click', () => {
       this._removeAllMarkers();
-      this.#dents = {};
+      this.#dentsTemp = {};
+      this.#dents = [];
     });
 
     removeLastMarkBtn.addEventListener('click', () => {
       this._removeLastMarker();
-      this.#dents[this.#bodySide].pop();
-      console.log(this.#dents);
+      this.#dentsTemp[this.#bodySide].pop();
+      this.#dents.pop();
     });
   }
 
@@ -343,17 +381,12 @@ class App {
       });
       if (res.data.status === 'success') {
         alert('Your task is sent successfully! We will contact you soon.');
-        // console.log('login success');
-        // alert('login success');
-        window.setTimeout(() => {
-          window.scrollTo(0, 0);
-          location.reload();
-        }, 50);
+
+        // window.setTimeout(() => {
+        //   window.scrollTo(0, 0);
+        //   location.reload();
+        // }, 50);
       }
-      // window.scrollTo(0, 0);
-      // setTimeout(() => {
-      //   location.reload();
-      // }, 50);
     } catch (err) {
       // showAlert('error', err.response.data.message);
       alert(err.response.data.message);

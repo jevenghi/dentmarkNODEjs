@@ -14,16 +14,15 @@ router.use(
 
 router.route('/').get(taskController.getAllTasks);
 router.route('/task-stats').get(taskController.getTaskStats);
+router.get(
+  '/generate-admin-report',
+  authController.restrictTo('admin'),
+  taskController.generateAdminReport,
+);
 router
   .route('/:id')
   .get(taskController.getTask)
-  .patch(taskController.updateTask)
+  .patch(authController.restrictTo('admin'), taskController.updateDents)
   .delete(taskController.deleteTask);
-
-router
-  .route('/:id/dents/:dentId')
-  .get(authController.restrictTo('admin'), taskController.getDents);
-// .patch(authController.restrictTo('admin'), taskController.updateDents)
-// .delete(authController.restrictTo('admin'), taskController.deleteDents);
 
 module.exports = router;

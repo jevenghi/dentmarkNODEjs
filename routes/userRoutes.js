@@ -38,6 +38,12 @@ router.get(
   userController.suggestUser,
 );
 
+router.get(
+  '/generateReport',
+  authController.restrictTo('admin'),
+  userController.generateReport,
+);
+
 router
   .route('/:id')
   .get(authController.restrictTo('admin', 'superAdmin'), userController.getUser)

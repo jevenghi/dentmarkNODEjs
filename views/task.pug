@@ -18,24 +18,35 @@ block content
       p Customer: #{customer}
       p Model: #{model}
       p Task created: #{date}
+      .task-status-wrapper
+        p Task status 
+        select.task-status-select
+          option(value="open", selected=taskStatus === "open") Open
+          option(value="in-progress", selected=taskStatus === "in-progress") In Progress
+          option(value="pending", selected=taskStatus === "pending") Complete/Not paid
+          option(value="complete", selected=taskStatus === "complete") Paid
     != dentsHTML
     table.task-table
         thead
           tr
             th Dent number
-            th Task Status
+            //- th Task Status
             th Cost
         tbody
           each dent in dents
-            tr
+            tr(data-dent-id=dent._id)
               td= dent.markerNumber
-              td
-                select(name="status", class="dent-status-select", value=dent.status)
-                  option(value="open") Open
-                  option(value="in-progress") In Progress
-                  option(value="complete") Complete
-              td €  
-                input(type="text", value=dent.cost, name="cost", class='dent-cost')
-    button(type="button" class='save-dent-changes') Save changes           
+              //- td
+              //-   select(name="status", class="dent-status-select")
+              //-     option(value="open", selected=dent.status === "open") Open
+              //-     option(value="in-progress", selected=dent.status === "in-progress") In Progress
+              //-     option(value="complete", selected=dent.status === "complete") Complete
+              if role === 'admin'
+                td €  
+                  input(type="text", value=dent.cost, name="cost", class='dent-cost')
+              if role === 'user'   
+                td= dent.cost
+    if user === 'admin'              
+      button(type="button" class='save-dent-changes' data-task-id=taskId) Save changes           
   .overlay.hidden
             

@@ -1,4 +1,5 @@
 const User = require('../models/userModel');
+const Task = require('../models/taskModel');
 const catchAsyncErr = require('../utils/catchAsyncError');
 const factory = require('./handlerFactory');
 
@@ -79,9 +80,7 @@ exports.getUser = factory.getOne(User, 'tasks');
 //   });
 // });
 exports.suggestUser = catchAsyncErr(async (req, res, next) => {
-  console.log('req came');
   const query = req.query.q;
-  console.log(query);
   try {
     const results = await User.find({
       name: { $regex: query, $options: 'i' },
@@ -92,3 +91,5 @@ exports.suggestUser = catchAsyncErr(async (req, res, next) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
+exports.generateReport = catchAsyncErr(async (req, res, next) => {});

@@ -1,6 +1,10 @@
+const axios = require('axios');
+const { RESULTS_LIMIT } = require('../constants/queryConstants');
+
 const Task = require('../models/taskModel');
 const User = require('../models/userModel');
 const catchAsyncError = require('../utils/catchAsyncError');
+// const { showAlert } = require('../public/js/alerts');
 
 exports.getLoginForm = catchAsyncError(async (req, res, next) => {
   res.status(200).render('login', {
@@ -41,16 +45,23 @@ exports.getUser = catchAsyncError(async (req, res, next) => {
 
 exports.getTask = catchAsyncError(async (req, res, next) => {
   const task = await Task.findById(req.params.id);
-  console.log(task);
   let dentsHTML = '';
-  const dentsArray = [];
-  Object.entries(task.dents).forEach(([side, dents]) => {
-    dentsArray.push(...dents);
+
+  const taskDents = task.dents.toObject();
+  let groupedDents = taskDents.reduce((acc, obj) => {
+    const { img } = obj;
+    if (!acc[img]) {
+      acc[img] = [];
+    }
+    acc[img].push(obj);
+    return acc;
+  }, {});
+
+  Object.entries(groupedDents).forEach(([side, dents]) => {
     dentsHTML += `
-      <div class="image-container__summary">
-        <img id="vehicleImage" src="/pics/sides_pics/${side}.png" />
-        
-    `;
+        <div class="image-container__summary">
+          <img id="vehicleImage" src="/pics/sides_pics/${side}.png" />
+        `;
     dents.forEach((dent) => {
       const { shape, length, orientation, paintDamaged, coords, markerNumber } =
         dent;
@@ -95,12 +106,14 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
     });
     dentsHTML += `</div>`;
   });
-
   res.status(200).render('task', {
     title: 'Task',
+    taskId: req.params.id,
+    role: req.user.role,
     date: task.createdAt.toLocaleDateString('en-GB'),
+    taskStatus: task.taskStatus,
     model: task.carModel,
-    dents: dentsArray,
+    dents: taskDents,
     customer: task.user.name,
     dentsHTML: dentsHTML,
   });
@@ -115,25 +128,56 @@ exports.getMe = catchAsyncError(async (req, res, next) => {
 });
 
 exports.getMyTasks = catchAsyncError(async (req, res, next) => {
-  let tasks;
-  let role;
-  if (req.user.role === 'user') {
-    tasks = await Task.find({ user: req.user.id })
-      // .populate({ path: 'user', select: 'name' })
-      .sort({ createdAt: -1 });
-    role = 'user';
-  } else if (req.user.role === 'admin') {
-    tasks = await Task.find()
-      .populate({ path: 'user', select: 'name' })
-      .sort({ createdAt: -1 });
-    role = 'admin';
-  }
+  // let tasks;
+  // let role;
+  const page = req.query.page * 1 || 1;
+  const limit = req.query.limit * 1 || RESULTS_LIMIT;
+  const { status, sort } = req.query;
+
+  // Constructing the API URL with query parameters
+  let apiUrl = `http://127.0.0.1:5501/api/v1/tasks?`;
+
+  if (status) apiUrl += `taskStatus=${status}&`;
+  if (sort) apiUrl += `sort=${sort}&`;
+  if (limit) apiUrl += `limit=${limit}&`;
+  if (page) apiUrl += `page=${page}&`;
+
+  // if (req.user.role === 'user') {
+  //   tasks = await Task.find({ user: req.user.id })
+  //     // .populate({ path: 'user', select: 'name' })
+  //     .sort({ createdAt: -1 });
+
+  //   role = 'user';
+  // } else if (req.user.role === 'admin') {
+  //   tasks = await Task.find()
+  //     .populate({ path: 'user', select: 'name' })
+  //     .sort({ createdAt: -1 });
+
+  //   role = 'admin';
+  // }
+
+  const response = await axios({
+    method: 'GET',
+    url: apiUrl,
+    headers: {
+      Authorization: `Bearer ${req.cookies.jwt}`,
+    },
+  });
+  const { tasks } = response.data;
+  const totalDocCount = response.data.totalTasks;
+  const totalPageCount = Math.ceil(totalDocCount / limit);
+
   res.status(200).render('tasks', {
     title: 'Tasks',
-    role: role,
+    role: req.user.role,
     tasks,
+    page,
+    totalPageCount,
+    status,
+    limit,
   });
 });
+
 exports.getAllUsers = catchAsyncError(async (req, res, next) => {
   const users = await User.find().populate('tasks').sort({ name: 1 });
   // console.log(users[0].tasks.length);

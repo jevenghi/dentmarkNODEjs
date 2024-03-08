@@ -526,7 +526,7 @@ html {
 
 .task-table th,
 .task-table td {
-  border: 0.05px solid #000000;
+  border: 0.05px solid #4b4b4b;
   font-size: larger;
   text-align: left;
   padding: 8px;
@@ -750,4 +750,56 @@ button[type='submit']:hover {
 
 .btn:hover {
   background-color: #0056b3;
+}
+
+.task-status-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.task-status-wrapper p {
+  margin-right: 10px;
+  font-size: 1.2rem;
+}
+
+/*FILTERING ELEMENTS*/
+.filter-menu {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  padding: 0.5rem;
+}
+
+.filter-menu h3 {
+  margin-top: 0;
+}
+
+.filter-menu label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.filter-menu input[type='checkbox'] {
+  margin-right: 5px;
+}
+
+.filter-menu label:hover {
+  cursor: pointer;
+}
+
+.filter-date label {
+  margin-right: 10px;
+}
+.filter-date {
+  top: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+}
+
+.filter-date label {
+  margin-right: 10px; /* Add some space between label and input */
+}
+
+#show-more-button {
+  margin-top: 1rem;
 }

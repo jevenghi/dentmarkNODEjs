@@ -1,0 +1,10 @@
+//- h1 Report for period: ${from} - ${to}
+
+//- h2 All submitted tasks: ${allTasks}
+//- h2 Open tasks: ${openTasks}
+//- h2 In progress tasks: ${inProgressTasks}
+//- h2 Complete / not paid tasks: ${notPaidTasks}
+//- h2 Paid tasks: ${paidTasks}
+
+each task in tasks
+  p ${task.user.name} ${task.carModel} ${task.taskStatus} ${task.totalCost} ${task.createdAt} 

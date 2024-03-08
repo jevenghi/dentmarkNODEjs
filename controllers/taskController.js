@@ -1,8 +1,11 @@
 /* eslint-disable no-plusplus */
 const Task = require('../models/taskModel');
+const Dent = require('../models/dentModel');
+const RequestQueryHandler = require('../utils/requestQueryHandler');
 const catchAsyncErr = require('../utils/catchAsyncError');
 const factory = require('./handlerFactory');
 const AppError = require('../utils/appError');
+const { constants } = require('buffer');
 
 // Counts occurrences of dents' 'length' and 'paintDamaged' values
 // to use it for determining task's difficulty
@@ -46,27 +49,40 @@ const calcTaskDifficulty = function (obj) {
 //   }
 // };
 
-exports.getAllTasks = factory.getAll(Task);
+//WITH FACTORY HANDLER
+// exports.getAllTasks = factory.getAll(Task);
 
-// exports.getAllTasks = catchAsyncErr(async (req, res, next) => {
-//   const requestQueries = new RequestQueryHandler(Task.find(), req.query)
-//     .filter()
-//     .sort()
-//     .limitFields()
-//     .paginate();
+//for role based queries
+exports.getAllTasks = catchAsyncErr(async (req, res, next) => {
+  let requestQueries;
+  let totalDocCount;
 
-//   const tasks = await requestQueries.query.populate({
-//     path: 'user',
-//     select: 'name',
-//   });
-//   res.status(200).json({
-//     status: 'success',
-//     results: tasks.length,
-//     data: {
-//       tasks,
-//     },
-//   });
-// });
+  if (req.user.role === 'user') {
+    requestQueries = new RequestQueryHandler(
+      Task.find({ user: req.user.id }),
+      req.query,
+    )
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+    totalDocCount = await Task.countDocuments({ user: req.user.id });
+  }
+  if (req.user.role === 'admin') {
+    requestQueries = new RequestQueryHandler(Task.find(), req.query)
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+    totalDocCount = await Task.countDocuments();
+  }
+  const tasks = await requestQueries.query;
+  res.status(200).json({
+    status: 'success',
+    tasks,
+    totalTasks: totalDocCount,
+  });
+});
 
 exports.getTask = factory.getOne(Task, { path: 'user', select: 'name' });
 
@@ -84,17 +100,31 @@ exports.getTask = factory.getOne(Task, { path: 'user', select: 'name' });
 //   });
 // });
 
+//ORIGINAL SEND TASK
 exports.sendTask = catchAsyncErr(async (req, res, next) => {
   if (!req.body.user) req.body.user = req.user.id;
-  const dentsValues = Object.values(req.body.dents);
-  const accValues = accumulateValues(dentsValues);
-  req.body.difficulty = calcTaskDifficulty(accValues);
+  // const dentsValues = Object.values(req.body.dents);
+  // const accValues = accumulateValues(dentsValues);
+  // req.body.difficulty = calcTaskDifficulty(accValues);
+  const { dents, ...taskData } = req.body;
+  // console.log(dents); // Log the dents array
+
+  // const formattedDents = dents.map((dentType) => dentType);
+
+  // console.log(formattedDents);
+  // const taskPayload = {
+  //   ...taskData,
+  //   dents: formattedDents,
+  // };
+
   await Task.create(req.body);
   res.status(201).json({
     status: 'success',
-    // data: { newTask },
   });
 });
+
+//REFERENCED DENTS
+// exports.sendTask = catchAsyncErr(async (req, res, next) => {});
 
 exports.updateTask = factory.updateOne(Task);
 
@@ -176,11 +206,61 @@ exports.getTaskStats = async (req, res) => {
 //     data: { userTasks },
 //   });
 // });
-exports.getDents = catchAsyncErr(async (req, res, next) => {
-  const task = await Task.findById(req.params.id);
-  const { dentId } = req.params;
+
+//WITH DENTS: [{side: [dentschema]}]
+// exports.getDents = catchAsyncErr(async (req, res, next) => {
+//   const { id, dentId } = req.params;
+//   const { cost, status } = req.body;
+//   console.log(cost);
+//   const updatedTask = await Task.findByIdAndUpdate(
+//     { _id: id },
+//     { $set: { 'dents.$[].sedanls.$[inner].cost': cost } },
+//     {
+//       arrayFilters: [{ 'inner.id': dentId }],
+//       new: true,
+//     },
+//   );
+
+//   res.status(200).json({
+//     status: 'success',
+//     task: updatedTask,
+//   });
+// });
+exports.updateDents = catchAsyncErr(async (req, res, next) => {
+  const taskId = req.params.id;
+
+  const { dentId, cost, taskStatus } = req.body;
+
+  const updatedDent = await Task.findOneAndUpdate(
+    { _id: taskId, 'dents._id': dentId },
+    { $set: { 'dents.$.cost': cost } },
+    { new: true },
+  );
+  await Task.findByIdAndUpdate(taskId, { taskStatus });
+
   res.status(200).json({
     status: 'success',
-    dent: dentId,
+    data: updatedDent,
   });
+});
+
+exports.generateUserReport = catchAsyncErr(async (req, res, next) => {
+  console.log(req.query.status);
+  res.status(200).json({
+    status: 'success',
+  });
+});
+
+exports.generateAdminReport = catchAsyncErr(async (req, res, next) => {
+  const { status } = req.query;
+
+  try {
+    const tasks = await Task.find({ taskStatus: status });
+    res.status(200).json({
+      status: 'success',
+      tasks,
+    });
+  } catch (err) {
+    console.log(err);
+  }
 });

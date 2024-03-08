@@ -16,18 +16,26 @@ block content
     .task-header  
       p Customer: #{name}
       p Email: #{email}
+
+    .filter-menu
+
+      .filter-date
+        label(for='from-date') From:
+        input(type='date', id='from-date')
+        label(for='to-date') To:
+        input(type='date', id='to-date')  
     table.task-table
         thead
           tr
             th Vehicle Model
             th Task Status
-            th Difficulty
+            th Total Cost
             th Date
         tbody
           each task in tasks
             tr
               td: a(href=`/tasks/${task._id}` class='table-link')= task.carModel
               td= task.taskStatus
-              td= task.difficulty
+              td= task.totalCost
               td= task.createdAt.toLocaleDateString('en-GB')
   .overlay.hidden            

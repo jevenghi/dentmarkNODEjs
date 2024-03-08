@@ -1,15 +1,24 @@
 const mongoose = require('mongoose');
 
+const dentSchema = new mongoose.Schema({
+  img: String,
+  shape: String,
+  length: String,
+  orientation: String,
+  paintDamaged: String,
+  coords: Object,
+  cost: Number,
+  markerNumber: Number,
+  status: String,
+  id: String,
+});
+
 const taskSchema = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.ObjectId,
       ref: 'User',
       required: [true, 'Task must belong to a user'],
-      // required: [true, 'Customer name should be specified'],
-      // trim: true,
-      // maxlength: [50, 'Name must have less than 50 letters'],
-      // minlength: [2, 'Name must have more than 1 letter'],
     },
     carModel: {
       type: String,
@@ -28,16 +37,16 @@ const taskSchema = new mongoose.Schema(
         message: 'Difficulty can be easy, medium or difficult',
       },
     },
-    dents: {
-      type: Object,
-      required: true,
-    },
+    // dents: {
+    //   type: Object,
+    //   required: true,
+    // },
+    dents: [dentSchema],
     taskStatus: {
       type: String,
       default: 'open',
       enum: {
-        values: ['open', 'inProgress', 'closed'],
-        message: 'Status can be open, inProgress or closed',
+        values: ['open', 'complete-not-paid', 'in-progress', 'paid'],
       },
     },
     images: [String],
@@ -45,26 +54,39 @@ const taskSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    completedAt: {
+      type: Date,
+    },
   },
   {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
   },
 );
-
-// taskSchema.pre('save', function (next) {
-//   this.slug = slugify(this.name, { lower: true });
-//   next();
-// });
-
-// taskSchema.statics.calcDifficulty = function (task) {};
-
+//TODO: add completedAt field to task schema
 taskSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'user',
     select: 'name',
   });
   next();
+});
+
+taskSchema.virtual('totalCostDents').get(function () {
+  let totalCost = 0;
+  if (this.dents && this.dents.length > 0) {
+    totalCost = this.dents.reduce((acc, dent) => acc + (dent.cost || 0), 0);
+  }
+  return totalCost;
+});
+
+taskSchema.pre('save', function (next) {
+  this.totalCost = this.totalCostDents;
+  next();
+});
+
+taskSchema.virtual('totalCost').get(function () {
+  return this.totalCostDents;
 });
 
 const Task = mongoose.model('Task', taskSchema);
