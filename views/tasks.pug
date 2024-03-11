@@ -26,44 +26,37 @@ block content
       a.modal__link(href="/tasks") My tasks
       a.modal__link.logout(href="#") Log out
   .main-container
+    .filter-menu
+        .filter-date
+          label(for='from-date') From:
+          input(type='date', id='from-date', value=from)
+          label(for='to-date') To:
+          input(type='date', id='to-date', value=to) 
+        .filter-status Status:  
+          select#status-filter
+            option(value='' selected=status === '') All
+            option(value='open' selected=status === "open") Open
+            option(value='complete' selected=status === "complete") Paid
+            option(value='pending' selected=status === "pending") Complete/Not paid
+            option(value='in-progress' selected=status === 'in-progress') In Progress
     - if (role === 'user')
       table.task-table
         thead
           tr
             th Vehicle Model
             th Task Status
-            th Difficulty
+            th Total Cost
             th Date
         tbody
           each task in tasks
             tr
               td: a(href=`/tasks/${task._id}` class='table-link')= task.carModel
-              td: a(href=`/tasks/${task._id}` class='table-link')= task.taskStatus
-              td: a(href=`/tasks/${task._id}` class='table-link')= task.difficulty
+              td= task.taskStatus
+              td= task.totalCost
               td= new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
     - if (role === 'admin') 
-      .search-bar
-        input(type='text', placeholder='Search customer...', id='search-input')
-
-      //- .filter-menu
-      //-   h3 Filter by Task Status:
-      //-   label
-      //-     input(type='checkbox', value='pending', class='status-checkbox', checked)
-      //-     | Pending
-      //-   label
-      //-     input(type='checkbox', value='completed', class='status-checkbox', checked)
-      //-     | Completed
-      //-   label
-      //-     input(type='checkbox', value='in-progress', class='status-checkbox', checked)
-      //-     | In Progress  
-      .filter-menu
-        h3 Filter by Task Status:
-        select#status-filter
-          option(value='' selected=status === '') All
-          option(value='open' selected=status === "open") Open
-          option(value='complete' selected=status === "complete") Paid
-          option(value='pending' selected=status === "pending") Complete/Not paid
-          option(value='in-progress' selected=status === 'in-progress') In Progress
+      //- .search-bar
+      //-   input(type='text', placeholder='Search customer...', id='search-input')
 
       table.task-table
         thead
@@ -80,7 +73,7 @@ block content
               td: a(href=`/tasks/${task._id}` class='table-link')= task.carModel
               td= task.taskStatus
               td= task.totalCost
-              td= new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
+              td= new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) 
     div.pagination-buttons
     if page > 1
       button.previous-button() Previous

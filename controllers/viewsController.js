@@ -106,6 +106,7 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
     });
     dentsHTML += `</div>`;
   });
+
   res.status(200).render('task', {
     title: 'Task',
     taskId: req.params.id,
@@ -132,7 +133,13 @@ exports.getMyTasks = catchAsyncError(async (req, res, next) => {
   // let role;
   const page = req.query.page * 1 || 1;
   const limit = req.query.limit * 1 || RESULTS_LIMIT;
-  const { status, sort } = req.query;
+  let { status, sort, from, to } = req.query;
+
+  // if (to) {
+  //   const toDate = new Date(to);
+  //   toDate.setDate(toDate.getDate() + 1);
+  //   toPlusOneDay = toDate.toISOString().split('T')[0];
+  // }
 
   // Constructing the API URL with query parameters
   let apiUrl = `http://127.0.0.1:5501/api/v1/tasks?`;
@@ -141,6 +148,18 @@ exports.getMyTasks = catchAsyncError(async (req, res, next) => {
   if (sort) apiUrl += `sort=${sort}&`;
   if (limit) apiUrl += `limit=${limit}&`;
   if (page) apiUrl += `page=${page}&`;
+  if (from) apiUrl += `createdAt[gte]=${from}&`;
+
+  if (to) {
+    const toDate = new Date(to);
+    toDate.setDate(toDate.getDate() + 1);
+    const toPlusOneDay = toDate.toISOString().split('T')[0];
+    apiUrl += `createdAt[lt]=${toPlusOneDay}&`;
+  }
+
+  if (apiUrl.endsWith('&')) {
+    apiUrl = apiUrl.slice(0, -1);
+  }
 
   // if (req.user.role === 'user') {
   //   tasks = await Task.find({ user: req.user.id })
@@ -175,6 +194,8 @@ exports.getMyTasks = catchAsyncError(async (req, res, next) => {
     totalPageCount,
     status,
     limit,
+    from,
+    to,
   });
 });
 

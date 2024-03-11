@@ -18,12 +18,18 @@ block content
       p Email: #{email}
 
     .filter-menu
-
       .filter-date
         label(for='from-date') From:
-        input(type='date', id='from-date')
+        input(type='date', id='from-date', value=from)
         label(for='to-date') To:
-        input(type='date', id='to-date')  
+        input(type='date', id='to-date', value=to) 
+      .filter-status Status:  
+        select#status-filter
+          option(value='' selected=status === '') All
+          option(value='open' selected=status === "open") Open
+          option(value='complete' selected=status === "complete") Paid
+          option(value='pending' selected=status === "pending") Complete/Not paid
+          option(value='in-progress' selected=status === 'in-progress') In Progress
     table.task-table
         thead
           tr

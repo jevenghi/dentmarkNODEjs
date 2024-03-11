@@ -13,18 +13,22 @@ block content
       a.modal__link(href="/tasks") My tasks
       a.modal__link.logout(href="#") Log out
   .main-container
-    // Render other task details as needed
     .task-header
-      p Customer: #{customer}
+      if role === 'admin'
+        p Customer: #{customer}
       p Model: #{model}
       p Task created: #{date}
       .task-status-wrapper
-        p Task status 
-        select.task-status-select
-          option(value="open", selected=taskStatus === "open") Open
-          option(value="in-progress", selected=taskStatus === "in-progress") In Progress
-          option(value="pending", selected=taskStatus === "pending") Complete/Not paid
-          option(value="complete", selected=taskStatus === "complete") Paid
+        
+        if role === 'admin' 
+          p Task status:  
+          select.task-status-select
+            option(value="open", selected=taskStatus === "open") Open
+            option(value="in-progress", selected=taskStatus === "in-progress") In Progress
+            option(value="pending", selected=taskStatus === "pending") Complete/Not paid
+            option(value="complete", selected=taskStatus === "complete") Paid
+        if role === 'user'
+          p Task status: #{taskStatus}
     != dentsHTML
     table.task-table
         thead
@@ -45,8 +49,8 @@ block content
                 td €  
                   input(type="text", value=dent.cost, name="cost", class='dent-cost')
               if role === 'user'   
-                td= dent.cost
-    if user === 'admin'              
+                td= dent.cost        
+    if role === 'admin'               
       button(type="button" class='save-dent-changes' data-task-id=taskId) Save changes           
   .overlay.hidden
             

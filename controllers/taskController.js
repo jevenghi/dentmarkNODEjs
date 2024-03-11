@@ -1,11 +1,13 @@
 /* eslint-disable no-plusplus */
+const generatePDF = require('../utils/generatePDF');
+const pug = require('pug');
+
 const Task = require('../models/taskModel');
 const Dent = require('../models/dentModel');
 const RequestQueryHandler = require('../utils/requestQueryHandler');
 const catchAsyncErr = require('../utils/catchAsyncError');
 const factory = require('./handlerFactory');
 const AppError = require('../utils/appError');
-const { constants } = require('buffer');
 
 // Counts occurrences of dents' 'length' and 'paintDamaged' values
 // to use it for determining task's difficulty
@@ -77,6 +79,7 @@ exports.getAllTasks = catchAsyncErr(async (req, res, next) => {
     totalDocCount = await Task.countDocuments();
   }
   const tasks = await requestQueries.query;
+
   res.status(200).json({
     status: 'success',
     tasks,
@@ -245,22 +248,51 @@ exports.updateDents = catchAsyncErr(async (req, res, next) => {
 });
 
 exports.generateUserReport = catchAsyncErr(async (req, res, next) => {
-  console.log(req.query.status);
   res.status(200).json({
     status: 'success',
   });
 });
 
 exports.generateAdminReport = catchAsyncErr(async (req, res, next) => {
-  const { status } = req.query;
-
+  const { status, from, to } = req.query;
   try {
-    const tasks = await Task.find({ taskStatus: status });
-    res.status(200).json({
-      status: 'success',
-      tasks,
+    let matchStage = {}; // Default empty match stage
+
+    if (status) {
+      matchStage = { taskStatus: status };
+    }
+    const tasks = await Task.find(matchStage).sort({
+      createdAt: -1,
     });
+    const totalCostAggregate = await Task.aggregate([
+      {
+        $match: matchStage,
+      },
+      {
+        $unwind: '$dents',
+      },
+      {
+        $group: {
+          _id: null,
+          totalCost: { $sum: '$dents.cost' },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          totalCost: 1,
+        },
+      },
+    ]);
+
+    const pdf = await generatePDF({ tasks, totalCostAggregate });
+    res.setHeader('Content-Disposition', 'attachment; filename="report.pdf"');
+    res.setHeader('Content-Type', 'application/pdf');
+    res.send(pdf);
+
+    // Create PDF
   } catch (err) {
-    console.log(err);
+    console.error('Error generating PDF:', err);
+    res.status(500).send('Error generating PDF');
   }
 });

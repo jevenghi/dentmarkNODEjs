@@ -72,7 +72,7 @@ taskSchema.pre(/^find/, function (next) {
   next();
 });
 
-taskSchema.virtual('totalCostDents').get(function () {
+taskSchema.virtual('totalCost').get(function () {
   let totalCost = 0;
   if (this.dents && this.dents.length > 0) {
     totalCost = this.dents.reduce((acc, dent) => acc + (dent.cost || 0), 0);
@@ -80,14 +80,22 @@ taskSchema.virtual('totalCostDents').get(function () {
   return totalCost;
 });
 
-taskSchema.pre('save', function (next) {
-  this.totalCost = this.totalCostDents;
-  next();
-});
+// taskSchema.virtual('totalCostDents').get(function () {
+//   let totalCost = 0;
+//   if (this.dents && this.dents.length > 0) {
+//     totalCost = this.dents.reduce((acc, dent) => acc + (dent.cost || 0), 0);
+//   }
+//   return totalCost;
+// });
 
-taskSchema.virtual('totalCost').get(function () {
-  return this.totalCostDents;
-});
+// taskSchema.pre('save', function (next) {
+//   this.totalCost = this.totalCostDents;
+//   next();
+// });
+
+// taskSchema.virtual('totalCost').get(function () {
+//   return this.totalCostDents;
+// });
 
 const Task = mongoose.model('Task', taskSchema);
 module.exports = Task;

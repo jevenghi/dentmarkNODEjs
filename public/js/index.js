@@ -64,8 +64,20 @@ if (filterOptions) {
     url.searchParams.set('status', selectedStatus);
     window.location.href = url.toString();
   });
+  fromDateInput.addEventListener('change', function () {
+    const fromDate = fromDateInput.value;
+
+    url.searchParams.set('from', fromDate);
+    window.location.href = url.toString();
+  });
+  toDateInput.addEventListener('change', function () {
+    const toDate = toDateInput.value;
+
+    url.searchParams.set('to', toDate);
+    window.location.href = url.toString();
+  });
 }
-// fromDateInput.addEventListener('change', filterTasks);
+
 // toDateInput.addEventListener('change', filterTasks);
 
 // const dateString = row.querySelector('td:nth-child(4)').textContent;

@@ -5,6 +5,51 @@
 //- h2 In progress tasks: ${inProgressTasks}
 //- h2 Complete / not paid tasks: ${notPaidTasks}
 //- h2 Paid tasks: ${paidTasks}
-
-each task in tasks
-  p ${task.user.name} ${task.carModel} ${task.taskStatus} ${task.totalCost} ${task.createdAt} 
+//- extends base
+//- block styles
+//-   link(rel="stylesheet" href="/css/style.css")
+html
+  head
+    style(type='text/css').
+      body {
+        font-family: Arial, sans-serif;
+        font-size: 1rem;
+        margin-left: 3rem;
+        margin-right: 3rem;
+        margin-top: 5rem;
+      }
+      .main-container {
+        margin-top: 2rem; /* Adjust as needed */
+      }
+      .task-table {
+        width: 100%; /* Ensure table fills the width */
+        border-collapse: collapse; /* Collapse borders */
+      }
+      .task-table th,
+      .task-table td {
+        padding: 0.5rem; /* Add padding to table cells */
+        border: 1px solid black; /* Add borders to cells */
+      }
+  body
+    .main-container 
+      table.task-table
+        thead
+          tr
+            th Date
+            th Customer
+            th Vehicle Model
+            th Status
+            th Cost
+        tbody
+          each task in tasks
+            tr
+              td= new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
+              td= task.user.name
+              td= task.carModel
+              td= task.taskStatus
+              td= task.totalCost
+        tfoot
+          tr
+            td(colspan="4") Total:
+            td
+              strong= totalCostAggregate[0].totalCost    
