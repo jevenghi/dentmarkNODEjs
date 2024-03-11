@@ -293,15 +293,14 @@ class App {
       const veh = new Vehicle(model, this.#bodyType, this.#dents);
       this._removeAllMarkers();
       document.querySelector('.send-marks').textContent = 'Sending task...';
-      console.log(this.#dents);
       await this._sendTask(model, this.#bodyType, this.#dents);
       this.#markerCount = 0;
       document.querySelector('.send-marks').textContent = 'Send task';
 
-      window.scrollTo(0, 0);
-      setTimeout(() => {
-        location.reload();
-      }, 50);
+      // window.scrollTo(0, 0);
+      // setTimeout(() => {
+      //   location.reload();
+      // }, 50);
 
       // fetch('http://127.0.0.1:5501/api/v1/tasks/sendTask', {
       //   method: 'POST',
@@ -382,10 +381,10 @@ class App {
       if (res.data.status === 'success') {
         alert('Your task is sent successfully! We will contact you soon.');
 
-        // window.setTimeout(() => {
-        //   window.scrollTo(0, 0);
-        //   location.reload();
-        // }, 50);
+        window.setTimeout(() => {
+          window.scrollTo(0, 0);
+          location.reload();
+        }, 50);
       }
     } catch (err) {
       // showAlert('error', err.response.data.message);
