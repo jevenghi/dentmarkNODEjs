@@ -233,11 +233,11 @@ exports.updateDents = catchAsyncErr(async (req, res, next) => {
   const taskId = req.params.id;
 
   const { dentId, cost, taskStatus } = req.body;
-
+  // try {
   const updatedDent = await Task.findOneAndUpdate(
     { _id: taskId, 'dents._id': dentId },
     { $set: { 'dents.$.cost': cost } },
-    { new: true },
+    { new: true, runValidators: true },
   );
   await Task.findByIdAndUpdate(taskId, { taskStatus });
 
@@ -245,6 +245,12 @@ exports.updateDents = catchAsyncErr(async (req, res, next) => {
     status: 'success',
     data: updatedDent,
   });
+  //   } catch (err) {
+  //     res.status(400).json({
+  //       status: 'fail',
+  //       message: err,
+  //     });
+  //   }
 });
 
 exports.generateUserReport = catchAsyncErr(async (req, res, next) => {
@@ -293,6 +299,6 @@ exports.generateAdminReport = catchAsyncErr(async (req, res, next) => {
     // Create PDF
   } catch (err) {
     console.error('Error generating PDF:', err);
-    res.status(500).send('Error generating PDF');
+    return next(new AppError(`Error generating PDF`, 500));
   }
 });

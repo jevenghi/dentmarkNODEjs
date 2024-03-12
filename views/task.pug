@@ -38,7 +38,7 @@ block content
             th Cost
         tbody
           each dent in dents
-            tr(data-dent-id=dent._id)
+            tr(data-dent-id=dent._id data-task-id=taskId)
               td= dent.markerNumber
               //- td
               //-   select(name="status", class="dent-status-select")
@@ -47,10 +47,12 @@ block content
               //-     option(value="complete", selected=dent.status === "complete") Complete
               if role === 'admin'
                 td €  
-                  input(type="text", value=dent.cost, name="cost", class='dent-cost')
+                  input(type="text", value=dent.cost, name="cost", class='dent-cost', data-dent-id=dent._id, data-task-id=taskId)
               if role === 'user'   
-                td= dent.cost        
-    if role === 'admin'               
-      button(type="button" class='save-dent-changes' data-task-id=taskId) Save changes           
+                td= dent.cost
+    
+                       
+                   
+    button(type="button" class='back-tasks') Back to tasks           
   .overlay.hidden
             

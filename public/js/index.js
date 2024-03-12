@@ -3,12 +3,13 @@ import { login, logoutUser } from './login';
 import { signup, checkFieldAvailability } from './signup';
 import { updatedDent } from './updateDent';
 import { generatePDF } from './generatePDF';
+import { showAlert } from './alerts';
 
 const userDataForm = document.querySelector('.form-user-data');
 const userPasswordForm = document.querySelector('.form-user-password');
 const loginForm = document.querySelector('.login-form');
 const signupForm = document.querySelector('.signup-form');
-
+const costInputs = document.querySelectorAll('.dent-cost');
 const myAccBtn = document.querySelector('.nav__el--myacc');
 const logout = document.querySelector('.logout');
 const modal = document.querySelector('.modal');
@@ -16,7 +17,7 @@ const modalLinks = document.querySelectorAll('.modal__link');
 const overlay = document.querySelector('.overlay');
 const downloadReportBtn = document.querySelector('.download-report');
 
-const saveDentChangesBtn = document.querySelector('.save-dent-changes');
+const backToTasks = document.querySelector('.back-tasks');
 
 const emailInputSignup = document.getElementById('email-signup');
 const paginationBtns = document.querySelector('.pagination-buttons');
@@ -68,6 +69,7 @@ if (filterOptions) {
     const fromDate = fromDateInput.value;
 
     url.searchParams.set('from', fromDate);
+
     window.location.href = url.toString();
   });
   toDateInput.addEventListener('change', function () {
@@ -183,15 +185,56 @@ if (userPasswordForm) {
   });
 }
 
-if (saveDentChangesBtn) {
-  saveDentChangesBtn.addEventListener('click', async function () {
-    const taskId = this.dataset.taskId;
-    const taskStatus = document.querySelector('.task-status-select').value;
-    console.log(taskStatus);
-    document.querySelectorAll('tbody tr').forEach((row) => {
-      const dentId = row.dataset.dentId;
-      const cost = row.querySelector('.dent-cost').value;
+// if (saveDentChangesBtn) {
+//   saveDentChangesBtn.addEventListener('click', async function () {
+//     const taskId = this.dataset.taskId;
+//     const taskStatus = document.querySelector('.task-status-select').value;
+//     console.log(taskStatus);
+//     document.querySelectorAll('tbody tr').forEach((row) => {
+//       const dentId = row.dataset.dentId;
+//       console.log(dentId);
+//       const cost = row.querySelector('.dent-cost').value;
+//       updatedDent(taskId, dentId, taskStatus, cost);
+//     });
+//   });
+// }
+if (costInputs) {
+  costInputs.forEach((input) => {
+    input.addEventListener('change', () => {
+      const taskId = input.dataset.taskId;
+      const dentId = input.dataset.dentId;
+      const taskStatus = document.querySelector('.task-status-select').value;
+      const cost = parseFloat(input.value);
+      if (isNaN(cost) || cost < 0) {
+        return showAlert('error', 'Cost must be a positive number');
+      } else if (cost > 10000) {
+        return showAlert('error', 'Cost must not exceed 10,000');
+      }
       updatedDent(taskId, dentId, taskStatus, cost);
     });
   });
 }
+
+if (backToTasks) {
+  backToTasks.addEventListener('click', function () {
+    window.location.href = '/tasks';
+  });
+}
+// document.querySelectorAll('tbody tr').forEach((row) => {
+//   const costInput = row.querySelector('.dent-cost');
+//   const taskId = row.dataset.taskId;
+//   const dentId = row.dataset.dentId;
+//   const taskStatus = document.querySelector('.task-status-select').value;
+//   costInput.addEventListener('change', () => {
+//     const cost = parseFloat(row.querySelector('.dent-cost').value);
+//     if (isNaN(cost) || cost < 0) {
+//       return showAlert('error', 'Cost must be a positive number');
+//     } else if (cost > 10000) {
+//       return showAlert('error', 'Cost must not exceed 10,000');
+//     }
+//     updatedDent(taskId, dentId, taskStatus, cost);
+//   });
+// });
+// saveDentChangesBtn.addEventListener('click', async function () {
+//   const taskStatus = document.querySelector('.task-status-select').value;
+// });

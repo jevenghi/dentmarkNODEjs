@@ -185,7 +185,6 @@ exports.getMyTasks = catchAsyncError(async (req, res, next) => {
   const { tasks } = response.data;
   const totalDocCount = response.data.totalTasks;
   const totalPageCount = Math.ceil(totalDocCount / limit);
-
   res.status(200).render('tasks', {
     title: 'Tasks',
     role: req.user.role,

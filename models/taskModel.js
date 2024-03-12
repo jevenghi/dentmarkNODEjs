@@ -7,7 +7,11 @@ const dentSchema = new mongoose.Schema({
   orientation: String,
   paintDamaged: String,
   coords: Object,
-  cost: Number,
+  cost: {
+    type: Number,
+    min: [0, 'Value can not be negative'],
+    max: [10000, 'Value can not exceed 10,000'],
+  },
   markerNumber: Number,
   status: String,
   id: String,
@@ -24,7 +28,7 @@ const taskSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Model should be specified'],
       trim: true,
-      maxlength: [50, 'Car model name must not exceed 50 characters'],
+      maxlength: [30, 'Car model name must not exceed 30 characters'],
       minlength: [5, 'Car model name must have at least 4 characters'],
     },
     bodyType: {

@@ -196,6 +196,11 @@ class App {
     const markers = {};
     vehicleImage.addEventListener('click', (event) => {
       event.preventDefault();
+      if (this.#dents.length > 50) {
+        return alert(
+          'You can place maximum 50 markers per vehicle. We will take care of the rest on site',
+        );
+      }
       this.#markerCount++;
       //calculate the percentage values of the x, y relative to the width,
       //height of an image, so that x, y can be recreated on image of another size.
@@ -266,10 +271,10 @@ class App {
       };
 
       this.#dents.push(newObj);
+
       if (!this.#dentsTemp[this.#bodySide]) {
         this.#dentsTemp[this.#bodySide] = [];
       }
-
       this.#dentsTemp[this.#bodySide].push(newObj);
       // let existingSide = this.#dents.find(
       //   (item) => Object.keys(item)[0] === this.#bodySide,
@@ -379,6 +384,10 @@ class App {
         data: { carModel, bodyType, dents },
       });
       if (res.data.status === 'success') {
+        // showAlert(
+        //   'success',
+        //   'Your task is sent successfully! We will contact you soon.',
+        // );
         alert('Your task is sent successfully! We will contact you soon.');
 
         window.setTimeout(() => {

@@ -12,13 +12,15 @@ export const updatedDent = async (taskId, dentId, taskStatus, cost) => {
         cost,
       },
     });
+
     if (res.data.status === 'success') {
-      showAlert('success', `Changes saved successfully!`);
+      showAlert('success', `Saved successfully!`);
     }
   } catch (err) {
     // if (err.response.status === 429) {
     //   showAlert('error', err.response.data);
     // } else {
-    showAlert('error', err);
+    showAlert('error', err.response.data.message);
+    console.log(err);
   }
 };

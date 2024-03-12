@@ -48,6 +48,9 @@ block content
             th Total Cost
             th Date
         tbody
+          if tasks.length === 0
+            tr
+              td(colspan='4') No tasks found
           each task in tasks
             tr
               td: a(href=`/tasks/${task._id}` class='table-link')= task.carModel
@@ -67,6 +70,9 @@ block content
             th Total Cost
             th Date
         tbody
+          if tasks.length === 0
+            tr
+              td(colspan='5') No tasks found
           each task in tasks
             tr
               td: a(href=`/users/${task.user.id}` class='table-link')= task.user.name
