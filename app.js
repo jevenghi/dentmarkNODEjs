@@ -17,6 +17,9 @@ const taskRouter = require('./routes/taskRoutes');
 const userRouter = require('./routes/userRoutes');
 const viewRouter = require('./routes/viewRoutes');
 
+app.set('trust proxy', 1);
+app.get('/ip', (request, response) => response.send(request.ip));
+
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
