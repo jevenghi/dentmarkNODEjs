@@ -22,12 +22,12 @@
 //   .catch((error) =>
 //     console.error('Error checking authentication status:', error),
 //   );
-
 const checkAuth = async () => {
   try {
     const res = await axios({
       method: 'GET',
-      url: 'http://127.0.0.1:5501/api/v1/auth/checkAuth',
+      url: `/api/v1/auth/checkAuth`,
+      // url: 'http://127.0.0.1:5501/api/v1/auth/checkAuth',
     });
     if (!res.data.loggedIn) {
       window.location.href = '/landing';
