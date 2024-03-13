@@ -4,6 +4,7 @@ import { signup, checkFieldAvailability } from './signup';
 import { updatedDent } from './updateDent';
 import { generatePDF } from './generatePDF';
 import { showAlert } from './alerts';
+import { deleteTask } from './deleteTask';
 
 const userDataForm = document.querySelector('.form-user-data');
 const userPasswordForm = document.querySelector('.form-user-password');
@@ -16,9 +17,9 @@ const modal = document.querySelector('.modal');
 const modalLinks = document.querySelectorAll('.modal__link');
 const overlay = document.querySelector('.overlay');
 const downloadReportBtn = document.querySelector('.download-report');
-
+const taskStatusBtn = document.querySelector('.task-status-select');
 const backToTasks = document.querySelector('.back-tasks');
-
+const deleteTaskBtn = document.querySelector('.delete-task');
 const emailInputSignup = document.getElementById('email-signup');
 const paginationBtns = document.querySelector('.pagination-buttons');
 const filterOptions = document.querySelector('.filter-menu');
@@ -203,15 +204,28 @@ if (costInputs) {
     input.addEventListener('change', () => {
       const taskId = input.dataset.taskId;
       const dentId = input.dataset.dentId;
-      const taskStatus = document.querySelector('.task-status-select').value;
+      let taskStatus = document.querySelector('.task-status-select').value;
       const cost = parseFloat(input.value);
       if (isNaN(cost) || cost < 0) {
         return showAlert('error', 'Cost must be a positive number');
       } else if (cost > 10000) {
         return showAlert('error', 'Cost must not exceed 10,000');
       }
-      updatedDent(taskId, dentId, taskStatus, cost);
+      if (taskStatus === 'open') {
+        taskStatus = 'in-progress';
+        updatedDent(taskId, { taskStatus, dentId, cost });
+      } else {
+        updatedDent(taskId, { dentId, cost });
+      }
     });
+  });
+}
+
+if (taskStatusBtn) {
+  taskStatusBtn.addEventListener('change', () => {
+    const taskId = taskStatusBtn.dataset.taskId;
+    const taskStatus = document.querySelector('.task-status-select').value;
+    updatedDent(taskId, { taskStatus });
   });
 }
 
@@ -238,3 +252,9 @@ if (backToTasks) {
 // saveDentChangesBtn.addEventListener('click', async function () {
 //   const taskStatus = document.querySelector('.task-status-select').value;
 // });
+if (deleteTaskBtn) {
+  deleteTaskBtn.addEventListener('click', function () {
+    const taskId = deleteTaskBtn.dataset.taskId;
+    deleteTask(taskId);
+  });
+}

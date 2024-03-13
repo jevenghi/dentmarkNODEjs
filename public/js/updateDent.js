@@ -1,20 +1,17 @@
 import { showAlert } from './alerts.js';
 import axios from 'axios';
 
-export const updatedDent = async (taskId, dentId, taskStatus, cost) => {
+export const updatedDent = async (taskId, data) => {
   try {
     const res = await axios({
       method: 'PATCH',
       url: `http://127.0.0.1:5501/api/v1/tasks/${taskId}`,
-      data: {
-        dentId,
-        taskStatus,
-        cost,
-      },
+      data: data,
     });
 
     if (res.data.status === 'success') {
-      showAlert('success', `Saved successfully!`);
+      // showAlert('success', `Saved successfully!`);
+      location.reload();
     }
   } catch (err) {
     // if (err.response.status === 429) {

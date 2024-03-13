@@ -13,22 +13,23 @@ block content
       a.modal__link(href="/tasks") My tasks
       a.modal__link.logout(href="#") Log out
   .main-container
+    if role === 'admin'  
+      button.delete-task(data-task-id=taskId) Delete Task
     .task-header
       if role === 'admin'
         p Customer: #{customer}
       p Model: #{model}
       p Task created: #{date}
       .task-status-wrapper
-        
         if role === 'admin' 
           p Task status:  
-          select.task-status-select
+          select.task-status-select(data-task-id=taskId)
             option(value="open", selected=taskStatus === "open") Open
             option(value="in-progress", selected=taskStatus === "in-progress") In Progress
             option(value="pending", selected=taskStatus === "pending") Complete/Not paid
-            option(value="complete", selected=taskStatus === "complete") Paid
-        if role === 'user'
-          p Task status: #{taskStatus}
+            option(value="complete", selected=taskStatus === "complete") Paid  
+      if role === 'user'
+        p Task status: #{taskStatus}
     != dentsHTML
     table.task-table
         thead
@@ -47,9 +48,12 @@ block content
               //-     option(value="complete", selected=dent.status === "complete") Complete
               if role === 'admin'
                 td €  
-                  input(type="text", value=dent.cost, name="cost", class='dent-cost', data-dent-id=dent._id, data-task-id=taskId)
+                  input(type="text", placeholder=dent.cost, name="cost", class='dent-cost', data-dent-id=dent._id, data-task-id=taskId)
               if role === 'user'   
                 td= dent.cost
+          td Total:
+          td € 
+            strong= totalCost
     
                        
                    

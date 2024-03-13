@@ -767,6 +767,8 @@ button[type='submit']:hover {
   background-color: #f9f9f9;
   border: 1px solid #ddd;
   padding: 0.5rem;
+  margin-top: 1rem;
+  border-radius: 0.3rem;
 }
 
 .filter-menu h3 {
@@ -804,8 +806,12 @@ button[type='submit']:hover {
 }
 
 .download-report {
+  background-color: rgb(34, 40, 49);
+  color: #fff;
+  border-radius: 0.3rem;
   margin-top: 1rem;
-  padding: 0.1rem;
+  margin-left: 1rem;
+  padding: 0.3rem;
 }
 
 .filter-status {
@@ -815,5 +821,14 @@ button[type='submit']:hover {
 .pagination-buttons {
   margin-top: 1rem;
   display: flex;
-  flex-direction: row;
+  justify-content: space-evenly;
+  gap: 1rem;
+}
+.delete-task {
+  background-color: rgb(255, 87, 34);
+  color: #fff;
+  border-radius: 0.3rem;
+  border: none;
+  margin-top: 1rem;
+  padding: 0.5rem;
 }

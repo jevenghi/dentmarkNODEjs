@@ -31,15 +31,59 @@ exports.getSignupForm = catchAsyncError(async (req, res, next) => {
 });
 
 exports.getUser = catchAsyncError(async (req, res, next) => {
-  const user = await User.findById(req.params.id).populate({
-    path: 'tasks',
-    options: { sort: { createdAt: -1 } },
+  // const user = await User.findById(req.params.id).populate({
+  //   path: 'tasks',
+  //   options: { sort: { createdAt: -1 } },
+  // });
+  // res.status(200).render('user', {
+  //   title: 'User',
+  //   email: user.email,
+  //   name: user.name,
+  //   tasks: user.tasks,
+  // });
+  const user = await User.findById(req.params.id);
+  const page = req.query.page * 1 || 1;
+  const limit = req.query.limit * 1 || RESULTS_LIMIT;
+  let { status, sort, from, to } = req.query;
+  let apiUrl = `http://127.0.0.1:5501/api/v1/tasks?user=${req.params.id}&`;
+
+  if (status) apiUrl += `taskStatus=${status}&`;
+  if (sort) apiUrl += `sort=${sort}&`;
+  if (limit) apiUrl += `limit=${limit}&`;
+  if (page) apiUrl += `page=${page}&`;
+  if (from) apiUrl += `createdAt[gte]=${from}&`;
+
+  if (to) {
+    const toDate = new Date(to);
+    toDate.setDate(toDate.getDate() + 1);
+    const toPlusOneDay = toDate.toISOString().split('T')[0];
+    apiUrl += `createdAt[lt]=${toPlusOneDay}&`;
+  }
+
+  if (apiUrl.endsWith('&')) {
+    apiUrl = apiUrl.slice(0, -1);
+  }
+
+  const response = await axios({
+    method: 'GET',
+    url: apiUrl,
+    headers: {
+      Authorization: `Bearer ${req.cookies.jwt}`,
+    },
   });
+  const { tasks } = response.data;
+  const totalDocCount = response.data.totalTasks;
+  const totalPageCount = Math.ceil(totalDocCount / limit);
   res.status(200).render('user', {
     title: 'User',
     email: user.email,
     name: user.name,
-    tasks: user.tasks,
+    tasks: tasks,
+    status,
+    from,
+    to,
+    page,
+    limit,
   });
 });
 
@@ -117,6 +161,7 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
     dents: taskDents,
     customer: task.user.name,
     dentsHTML: dentsHTML,
+    totalCost: task.totalCost,
   });
 });
 

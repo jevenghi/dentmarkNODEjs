@@ -30,6 +30,7 @@ block content
           option(value='complete' selected=status === "complete") Paid
           option(value='pending' selected=status === "pending") Complete/Not paid
           option(value='in-progress' selected=status === 'in-progress') In Progress
+        button.download-report Download Report  
     table.task-table
         thead
           tr
@@ -43,5 +44,11 @@ block content
               td: a(href=`/tasks/${task._id}` class='table-link')= task.carModel
               td= task.taskStatus
               td= task.totalCost
-              td= task.createdAt.toLocaleDateString('en-GB')
+              td= new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
+    div.pagination-buttons
+    if page > 1
+      button.previous-button() Previous
+      //- if page < totalPageCount
+    if tasks.length === limit
+      button.next-button() Next
   .overlay.hidden            

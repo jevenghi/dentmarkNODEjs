@@ -148,7 +148,7 @@ exports.deleteTask = async (req, res, next) => {
     if (!task)
       return next(new AppError(`Task with this ID does not exist`, 404));
 
-    if (task.user.toHexString() === req.user.id || req.user.id === 'admin') {
+    if (task.user.id === req.user.id || req.user.role === 'admin') {
       await task.deleteOne();
       // Status 200 or 204?
       res.status(200).json({
@@ -239,7 +239,9 @@ exports.updateDents = catchAsyncErr(async (req, res, next) => {
     { $set: { 'dents.$.cost': cost } },
     { new: true, runValidators: true },
   );
-  await Task.findByIdAndUpdate(taskId, { taskStatus });
+  if (taskStatus) {
+    await Task.findByIdAndUpdate(taskId, { taskStatus });
+  }
 
   res.status(200).json({
     status: 'success',

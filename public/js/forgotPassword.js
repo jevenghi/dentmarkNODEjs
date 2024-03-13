@@ -1,4 +1,5 @@
 import { showAlert } from './alerts.js';
+import axios from 'axios';
 
 const forgotPassword = async (email) => {
   try {
