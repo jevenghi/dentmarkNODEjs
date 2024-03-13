@@ -5,7 +5,7 @@ export const deleteTask = async (taskId) => {
   try {
     const res = await axios({
       method: 'DELETE',
-      url: `http://127.0.0.1:5501/api/v1/tasks/${taskId}`,
+      url: `/api/v1/tasks/${taskId}`,
     });
 
     if (res.data.status === 'success') {

@@ -6,7 +6,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const { xss } = require('express-xss-sanitizer');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
-
+const compression = require('compression');
 const app = express();
 const morgan = require('morgan');
 const AppError = require('./utils/appError');
@@ -84,6 +84,8 @@ app.use('/api/v1/users/updateMe', userUpdateLimiter);
 app.use('/api/v1/users/updatePassword', userUpdateLimiter);
 app.use('/api/v1/tasks/sendTask', taskLimiter);
 app.use('/api/v1/auth/resetPassword', passResetLimiter);
+
+app.use(compression());
 
 //BODY PARSER, CONVERTING BODY INTO REQ.BODY
 app.use(express.json({ limit: '10kb' }));

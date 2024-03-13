@@ -18,6 +18,7 @@ env.bak/
 venv.bak/
 
 node_modules/
+.cache/
 .prettierrc
 
 .parcel-cache/

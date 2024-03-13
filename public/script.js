@@ -380,7 +380,7 @@ class App {
     try {
       const res = await axios({
         method: 'POST',
-        url: 'http://127.0.0.1:5501/api/v1/tasks/sendTask',
+        url: '/api/v1/tasks/sendTask',
         data: { carModel, bodyType, dents },
       });
       if (res.data.status === 'success') {
@@ -497,7 +497,7 @@ class App {
   }
 
   _logoutUser() {
-    fetch('http://127.0.0.1:5501/api/v1/users/logout', {
+    fetch('/api/v1/users/logout', {
       method: 'GET',
     })
       .then((response) => {

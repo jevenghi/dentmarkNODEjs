@@ -8,7 +8,7 @@ export const checkFieldAvailability = async (field, endpoint) => {
   try {
     const res = await axios({
       method: 'POST',
-      url: `http://127.0.0.1:5501/api/v1/auth/${endpoint}`,
+      url: `/api/v1/auth/${endpoint}`,
       data: { value },
     });
     const availabilityMessage =
@@ -33,7 +33,7 @@ export const signup = async (name, email, password, passwordConfirm) => {
   try {
     const res = await axios({
       method: 'POST',
-      url: 'http://127.0.0.1:5501/api/v1/auth/register',
+      url: '/api/v1/auth/register',
       data: {
         name,
         email,

@@ -10,7 +10,7 @@ export const login = async (email, password) => {
 
     const res = await axios({
       method: 'POST',
-      url: 'http://127.0.0.1:5501/api/v1/auth/login',
+      url: '/api/v1/auth/login',
       data: {
         email,
         password,
@@ -40,7 +40,7 @@ export const logoutUser = async () => {
   try {
     const res = await axios({
       method: 'GET',
-      url: 'http://127.0.0.1:5501/api/v1/users/logout',
+      url: '/api/v1/users/logout',
     });
     location.assign('/');
   } catch (err) {

@@ -10,7 +10,7 @@ export const generatePDF = async () => {
   try {
     const res = await axios({
       method: 'GET',
-      url: 'http://127.0.0.1:5501/api/v1/tasks/generate-admin-report',
+      url: '/api/v1/tasks/generate-admin-report',
       params: { status, from, to },
       responseType: 'blob',
     });

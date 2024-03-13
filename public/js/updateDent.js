@@ -5,7 +5,7 @@ export const updatedDent = async (taskId, data) => {
   try {
     const res = await axios({
       method: 'PATCH',
-      url: `http://127.0.0.1:5501/api/v1/tasks/${taskId}`,
+      url: `/api/v1/tasks/${taskId}`,
       data: data,
     });
 

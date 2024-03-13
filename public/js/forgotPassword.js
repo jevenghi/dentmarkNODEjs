@@ -5,7 +5,7 @@ const forgotPassword = async (email) => {
   try {
     const res = await axios({
       method: 'POST',
-      url: 'http://127.0.0.1:5501/api/v1/auth/forgotPassword',
+      url: '/api/v1/auth/forgotPassword',
       data: {
         email,
       },
