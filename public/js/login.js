@@ -49,3 +49,34 @@ export const logoutUser = async () => {
     console.log(err.response.data.message);
   }
 };
+
+export const forgotPassword = async (email) => {
+  try {
+    const res = await axios({
+      method: 'POST',
+      url: '/api/v1/auth/forgotPassword',
+      data: {
+        email,
+      },
+    });
+    if (res.data.status === 'success') {
+      showAlert('success', res.data.message, () => {
+        location.href = '/';
+      });
+      // const successMessage = document.createElement('div');
+      // successMessage.classList.add('success-message');
+      // successMessage.innerHTML = `
+      //   <div class="message-box">
+      //     <p>${res.data.message}</p>
+      //   </div>
+      //   `;
+      // document.querySelector('.container').appendChild(successMessage);
+      // document.querySelector('.forgot-pass-form').style.display = 'none';
+    }
+  } catch (err) {
+    // showAlert('error', err.response.data.message);
+    showAlert('error', err.response.data.message);
+    console.log(err.response);
+    // alert(err.response.data.message);
+  }
+};

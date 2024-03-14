@@ -1,5 +1,5 @@
 import { updateSettings } from './updateAccount';
-import { login, logoutUser } from './login';
+import { login, logoutUser, forgotPassword } from './login';
 import { signup, checkFieldAvailability } from './signup';
 import { updatedDent } from './updateDent';
 import { generatePDF } from './generatePDF';
@@ -23,7 +23,16 @@ const deleteTaskBtn = document.querySelector('.delete-task');
 const emailInputSignup = document.getElementById('email-signup');
 const paginationBtns = document.querySelector('.pagination-buttons');
 const filterOptions = document.querySelector('.filter-menu');
+const forgotPassBtn = document.getElementById('forgot-pass');
 let url = new URL(window.location.href);
+
+if (forgotPassBtn) {
+  forgotPassBtn.addEventListener('click', function (e) {
+    e.preventDefault();
+    const email = document.getElementById('email-forgot-pass').value;
+    forgotPassword(email);
+  });
+}
 
 if (paginationBtns) {
   const nextBtn = document.querySelector('.next-button');
@@ -61,7 +70,6 @@ if (filterOptions) {
 
   statusFilter.addEventListener('change', function () {
     const selectedStatus = statusFilter.value;
-    // let status = parseInt(url.searchParams.get('status') || '');
 
     url.searchParams.set('status', selectedStatus);
     window.location.href = url.toString();

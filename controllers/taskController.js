@@ -1,6 +1,5 @@
 /* eslint-disable no-plusplus */
 const generatePDF = require('../utils/generatePDF');
-const pug = require('pug');
 
 const Task = require('../models/taskModel');
 const Dent = require('../models/dentModel');

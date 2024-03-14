@@ -30,6 +30,12 @@ exports.getSignupForm = catchAsyncError(async (req, res, next) => {
   });
 });
 
+exports.getForgotPassForm = catchAsyncError(async (req, res, next) => {
+  res.status(200).render('forgotPassword', {
+    title: 'Forgot password',
+  });
+});
+
 exports.getUser = catchAsyncError(async (req, res, next) => {
   // const user = await User.findById(req.params.id).populate({
   //   path: 'tasks',
@@ -178,7 +184,7 @@ exports.getMyTasks = catchAsyncError(async (req, res, next) => {
   // let role;
   const page = req.query.page * 1 || 1;
   const limit = req.query.limit * 1 || RESULTS_LIMIT;
-  let { status, sort, from, to } = req.query;
+  const { status, sort, from, to } = req.query;
 
   // if (to) {
   //   const toDate = new Date(to);

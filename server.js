@@ -8,37 +8,20 @@ const dotenv = require('dotenv');
 // });
 
 dotenv.config({ path: './config.env' });
+
+const DB = process.env.DATABASE;
+mongoose.connect(DB).then();
 const app = require('./app');
 
 const port = process.env.PORT || 3000;
+const server = app.listen(port, () => {
+  console.log(`App running on port ${port}...`);
+});
 
-// const DB = process.env.DATABASE;
-// mongoose.connect(DB).then();
-
-// const server = app.listen(port, () => {
-//   console.log(`App running on port ${port}...`);
-// });
-
-// process.on('unhandledRejection', (err) => {
-//   console.log(err.name, err.message);
-//   console.log('UNHANDLED REJECTION! 🔴 Shutting Down...');
-//   server.close(() => {
-//     process.exit(1);
-//   });
-// });
-const connectDB = async () => {
-  try {
-    const conn = await mongoose.connect(process.env.DATABASE);
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
-  } catch (error) {
-    console.log(error);
+process.on('unhandledRejection', (err) => {
+  console.log(err.name, err.message);
+  console.log('UNHANDLED REJECTION! 🔴 Shutting Down...');
+  server.close(() => {
     process.exit(1);
-  }
-};
-
-//Connect to the database before listening
-connectDB().then(() => {
-  app.listen(port, () => {
-    console.log('listening for requests');
   });
 });
