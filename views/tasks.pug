@@ -36,9 +36,9 @@ block content
           select#status-filter
             option(value='' selected=taskStatus === '') All
             option(value='open' selected=taskStatus === "open") Open
-            option(value='complete' selected=taskStatus === "complete") Paid
-            option(value='pending' selected=taskStatus === "pending") Complete/Not paid
             option(value='in-progress' selected=taskStatus === 'in-progress') In Progress
+            option(value='pending' selected=taskStatus === "pending") Complete/Not paid
+            option(value='complete' selected=taskStatus === "complete") Paid
           button.download-report Download Summary 
     - if (role === 'user')
       table.task-table
