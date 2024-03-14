@@ -125,6 +125,26 @@ exports.sendTask = catchAsyncErr(async (req, res, next) => {
   });
 });
 
+exports.addDentsToTask = catchAsyncErr(async (req, res, next) => {
+  const taskId = req.params.id;
+  console.log(...req.body.dents);
+  try {
+    const task = await Task.findById(taskId);
+    if (!task)
+      return next(new AppError(`Task with this ID does not exist`, 404));
+    task.dents.push(...req.body.dents);
+    await task.save();
+    res.status(201).json({
+      status: 'success',
+    });
+  } catch (err) {
+    res.status(404).json({
+      status: 'fail',
+      message: err,
+    });
+  }
+});
+
 //REFERENCED DENTS
 // exports.sendTask = catchAsyncErr(async (req, res, next) => {});
 

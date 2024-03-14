@@ -5,6 +5,11 @@ const authController = require('../controllers/authController');
 const router = express.Router();
 
 router.post('/sendTask', authController.protect, taskController.sendTask);
+router.post(
+  '/sendTask/:id',
+  authController.protect,
+  taskController.addDentsToTask,
+);
 
 // Restrict all routes after this middleware to admin & super admin
 router.use(

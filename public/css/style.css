@@ -741,7 +741,7 @@ button[type='submit']:hover {
   border: none;
   border-radius: 5px;
   padding: 10px 20px;
-  font-size: 1rem;
+  font-size: 1.2rem;
   cursor: pointer;
   display: block;
   margin-top: 1.5rem;
@@ -825,11 +825,14 @@ button[type='submit']:hover {
   gap: 1rem;
   margin-bottom: 2rem;
 }
-.delete-task {
+.delete-task,
+.add-dents {
   background-color: rgb(255, 87, 34);
   color: #fff;
   border-radius: 0.3rem;
   border: none;
   margin-top: 1rem;
   padding: 0.5rem;
+  font-size: 1.5rem;
+  text-decoration: none;
 }

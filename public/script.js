@@ -66,7 +66,20 @@ class App {
   #dentShape;
   #dentPaintDamaged;
   constructor() {
-    this.#markerCount = 0;
+    const urlParams = new URLSearchParams(window.location.search);
+    const taskId = urlParams.get('taskId');
+    if (taskId) {
+      this._lastMarkerNumber(taskId)
+        .then((lastNum) => {
+          this.#markerCount = lastNum;
+        })
+        .catch((err) => {
+          console.error('Error:', err);
+        });
+    } else {
+      this.#markerCount = 0;
+    }
+
     logout.addEventListener('click', this._logoutUser);
     overlay.addEventListener('click', this._closeModal);
 
@@ -201,6 +214,7 @@ class App {
           'You can place maximum 50 markers per vehicle. We will take care of the rest on site',
         );
       }
+
       this.#markerCount++;
       //calculate the percentage values of the x, y relative to the width,
       //height of an image, so that x, y can be recreated on image of another size.
@@ -233,12 +247,6 @@ class App {
         coords,
         imageContainer,
       );
-
-      const uniqueId = () => {
-        const dateString = Date.now().toString(36);
-        const randomness = Math.random().toString(36);
-        return dateString + randomness;
-      };
 
       // const dentData = {
       //   shape: this.#dentShape,
@@ -290,15 +298,17 @@ class App {
       e.preventDefault();
       if (this.#dents.length === 0)
         return alert('You have not placed any dent yet');
-
-      const model = vehicleModel.value;
-      if (!model) {
-        return alert('Please enter model name');
+      if (taskId) {
+        await this._addDentsToTask(taskId, this.#dents);
+      } else {
+        const model = vehicleModel.value;
+        if (!model) {
+          return alert('Please enter model name');
+        }
+        document.querySelector('.send-marks').textContent = 'Sending task...';
+        await this._sendTask(model, this.#bodyType, this.#dents);
       }
-      const veh = new Vehicle(model, this.#bodyType, this.#dents);
       this._removeAllMarkers();
-      document.querySelector('.send-marks').textContent = 'Sending task...';
-      await this._sendTask(model, this.#bodyType, this.#dents);
       this.#markerCount = 0;
       document.querySelector('.send-marks').textContent = 'Send task';
 
@@ -376,6 +386,25 @@ class App {
     });
   }
 
+  async _addDentsToTask(taskId, dents) {
+    try {
+      const res = await axios({
+        method: 'POST',
+        url: `/api/v1/tasks/sendTask/${taskId}`,
+        data: { dents },
+      });
+      if (res.data.status === 'success') {
+        alert('Dents successfully added!');
+
+        window.setTimeout(() => {
+          window.scrollTo(0, 0);
+          location.reload();
+        }, 50);
+      }
+    } catch (err) {
+      alert(err.response.data.message);
+    }
+  }
   async _sendTask(carModel, bodyType, dents) {
     try {
       const res = await axios({
@@ -422,6 +451,19 @@ class App {
   //       console.error('Error sending data:', error);
   //     });
   // }
+  async _lastMarkerNumber(taskId) {
+    try {
+      const res = await axios({
+        method: 'GET',
+        url: `/api/v1/tasks/${taskId}`,
+      });
+      // const lastNum = await task.dents[task.dents.length - 1];
+      return res.data.data.dents[res.data.data.dents.length - 1].markerNumber;
+    } catch (err) {
+      alert(err.response.data.message);
+    }
+  }
+
   _closeModal() {
     overlay.classList.add('hidden');
     modal.classList.add('hidden');

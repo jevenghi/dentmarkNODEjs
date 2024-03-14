@@ -20,6 +20,8 @@ block content
         p Customer: #{customer}
       p Model: #{model}
       p Task created: #{date}
+      //- button.add-dents(data-task-id=taskId) Add dents
+
       .task-status-wrapper
         if role === 'admin' 
           p Task status:  
@@ -31,6 +33,7 @@ block content
       if role === 'user'
         p Task status: #{taskStatus}
     != dentsHTML
+    a(href=`/?taskId=${taskId}` class="add-dents") Add dents
     table.task-table
         thead
           tr
