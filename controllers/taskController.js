@@ -127,7 +127,6 @@ exports.sendTask = catchAsyncErr(async (req, res, next) => {
 
 exports.addDentsToTask = catchAsyncErr(async (req, res, next) => {
   const taskId = req.params.id;
-  console.log(...req.body.dents);
   try {
     const task = await Task.findById(taskId);
     if (!task)
