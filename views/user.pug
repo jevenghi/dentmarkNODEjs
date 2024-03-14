@@ -25,11 +25,11 @@ block content
         input(type='date', id='to-date', value=to) 
       .filter-status Status:  
         select#status-filter
-          option(value='' selected=status === '') All
-          option(value='open' selected=status === "open") Open
-          option(value='complete' selected=status === "complete") Paid
-          option(value='pending' selected=status === "pending") Complete/Not paid
-          option(value='in-progress' selected=status === 'in-progress') In Progress
+          option(value='' selected=taskStatus === '') All
+          option(value='open' selected=taskStatus === "open") Open
+          option(value='complete' selected=taskStatus === "complete") Paid
+          option(value='pending' selected=taskStatus === "pending") Complete/Not paid
+          option(value='in-progress' selected=taskStatus === 'in-progress') In Progress
         button.download-report Download Report  
     table.task-table
         thead

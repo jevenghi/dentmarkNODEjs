@@ -38,55 +38,35 @@ exports.getForgotPassForm = catchAsyncError(async (req, res, next) => {
 });
 
 exports.getUser = catchAsyncError(async (req, res, next) => {
-  // const user = await User.findById(req.params.id).populate({
-  //   path: 'tasks',
-  //   options: { sort: { createdAt: -1 } },
-  // });
-  // res.status(200).render('user', {
-  //   title: 'User',
-  //   email: user.email,
-  //   name: user.name,
-  //   tasks: user.tasks,
-  // });
+  let to;
   const user = await User.findById(req.params.id);
   const page = req.query.page * 1 || 1;
   const limit = req.query.limit * 1 || RESULTS_LIMIT;
-  let { status, sort, from, to } = req.query;
-  let apiUrl = `http://127.0.0.1:5501/api/v1/tasks?user=${req.params.id}&`;
+  req.query.user = req.params.id;
+  const { taskStatus, createdAt } = req.query;
+  const from = createdAt ? createdAt.gte : '';
+  const toDate = createdAt ? createdAt.lt : '';
 
-  if (status) apiUrl += `taskStatus=${status}&`;
-  if (sort) apiUrl += `sort=${sort}&`;
-  if (limit) apiUrl += `limit=${limit}&`;
-  if (page) apiUrl += `page=${page}&`;
-  if (from) apiUrl += `createdAt[gte]=${from}&`;
-
-  if (to) {
-    const toDate = new Date(to);
-    toDate.setDate(toDate.getDate() + 1);
-    const toPlusOneDay = toDate.toISOString().split('T')[0];
-    apiUrl += `createdAt[lt]=${toPlusOneDay}&`;
+  if (toDate) {
+    const toPlusOneDay = new Date(toDate);
+    toPlusOneDay.setDate(toPlusOneDay.getDate() - 1);
+    to = toPlusOneDay.toISOString().split('T')[0];
   }
+  const requestQueries = new RequestQueryHandler(Task.find(), req.query)
+    .filter()
+    .sort()
+    .limitFields()
+    .paginate();
+  // totalDocCount = await Task.countDocuments();
 
-  if (apiUrl.endsWith('&')) {
-    apiUrl = apiUrl.slice(0, -1);
-  }
+  const tasks = await requestQueries.query;
 
-  const response = await axios({
-    method: 'GET',
-    url: apiUrl,
-    headers: {
-      Authorization: `Bearer ${req.cookies.jwt}`,
-    },
-  });
-  const { tasks } = response.data;
-  const totalDocCount = response.data.totalTasks;
-  const totalPageCount = Math.ceil(totalDocCount / limit);
   res.status(200).render('user', {
     title: 'User',
     email: user.email,
     name: user.name,
-    tasks: tasks,
-    status,
+    tasks,
+    taskStatus,
     from,
     to,
     page,
