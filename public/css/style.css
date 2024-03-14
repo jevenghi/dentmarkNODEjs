@@ -823,6 +823,7 @@ button[type='submit']:hover {
   display: flex;
   justify-content: space-evenly;
   gap: 1rem;
+  margin-bottom: 2rem;
 }
 .delete-task {
   background-color: rgb(255, 87, 34);
