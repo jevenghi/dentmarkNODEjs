@@ -70,21 +70,37 @@ if (filterOptions) {
 
   statusFilter.addEventListener('change', function () {
     const selectedStatus = statusFilter.value;
-
-    url.searchParams.set('status', selectedStatus);
+    // url.searchParams.set('taskStatus', selectedStatus);
+    if (selectedStatus) {
+      url.searchParams.set('taskStatus', selectedStatus);
+    } else {
+      url.searchParams.delete('taskStatus');
+    }
     window.location.href = url.toString();
   });
+
   fromDateInput.addEventListener('change', function () {
     const fromDate = fromDateInput.value;
-
-    url.searchParams.set('from', fromDate);
+    if (fromDate) {
+      url.searchParams.set('createdAt[gte]', fromDate);
+    } else {
+      url.searchParams.delete('createdAt[gte]');
+    }
 
     window.location.href = url.toString();
   });
-  toDateInput.addEventListener('change', function () {
-    const toDate = toDateInput.value;
 
-    url.searchParams.set('to', toDate);
+  toDateInput.addEventListener('change', function () {
+    const to = toDateInput.value;
+    if (to) {
+      const toDate = new Date(to);
+      toDate.setDate(toDate.getDate() + 1);
+      const toPlusOneDay = toDate.toISOString().split('T')[0];
+      url.searchParams.set('createdAt[lt]', toPlusOneDay);
+    } else {
+      url.searchParams.delete('createdAt[lt]');
+    }
+
     window.location.href = url.toString();
   });
 }

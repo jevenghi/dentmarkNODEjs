@@ -1,5 +1,6 @@
 const axios = require('axios');
 const { RESULTS_LIMIT } = require('../constants/queryConstants');
+const RequestQueryHandler = require('../utils/requestQueryHandler');
 
 const Task = require('../models/taskModel');
 const User = require('../models/userModel');
@@ -180,69 +181,53 @@ exports.getMe = catchAsyncError(async (req, res, next) => {
 });
 
 exports.getMyTasks = catchAsyncError(async (req, res, next) => {
-  // let tasks;
-  // let role;
+  let requestQueries;
+  let totalDocCount;
+  let to;
+
   const page = req.query.page * 1 || 1;
   const limit = req.query.limit * 1 || RESULTS_LIMIT;
-  const { status, sort, from, to } = req.query;
+  const { taskStatus, createdAt } = req.query;
+  const from = createdAt ? createdAt.gte : '';
+  const toDate = createdAt ? createdAt.lt : '';
 
-  // if (to) {
-  //   const toDate = new Date(to);
-  //   toDate.setDate(toDate.getDate() + 1);
-  //   toPlusOneDay = toDate.toISOString().split('T')[0];
-  // }
-
-  // Constructing the API URL with query parameters
-  let apiUrl = `http://127.0.0.1:5501/api/v1/tasks?`;
-
-  if (status) apiUrl += `taskStatus=${status}&`;
-  if (sort) apiUrl += `sort=${sort}&`;
-  if (limit) apiUrl += `limit=${limit}&`;
-  if (page) apiUrl += `page=${page}&`;
-  if (from) apiUrl += `createdAt[gte]=${from}&`;
-
-  if (to) {
-    const toDate = new Date(to);
-    toDate.setDate(toDate.getDate() + 1);
-    const toPlusOneDay = toDate.toISOString().split('T')[0];
-    apiUrl += `createdAt[lt]=${toPlusOneDay}&`;
+  if (toDate) {
+    const toPlusOneDay = new Date(toDate);
+    toPlusOneDay.setDate(toPlusOneDay.getDate() - 1);
+    to = toPlusOneDay.toISOString().split('T')[0];
   }
 
-  if (apiUrl.endsWith('&')) {
-    apiUrl = apiUrl.slice(0, -1);
+  if (req.user.role === 'user') {
+    requestQueries = new RequestQueryHandler(
+      Task.find({ user: req.user.id }),
+      req.query,
+    )
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+    totalDocCount = await Task.countDocuments({ user: req.user.id });
   }
 
-  // if (req.user.role === 'user') {
-  //   tasks = await Task.find({ user: req.user.id })
-  //     // .populate({ path: 'user', select: 'name' })
-  //     .sort({ createdAt: -1 });
+  if (req.user.role === 'admin') {
+    requestQueries = new RequestQueryHandler(Task.find(), req.query)
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+    totalDocCount = await Task.countDocuments();
+  }
 
-  //   role = 'user';
-  // } else if (req.user.role === 'admin') {
-  //   tasks = await Task.find()
-  //     .populate({ path: 'user', select: 'name' })
-  //     .sort({ createdAt: -1 });
-
-  //   role = 'admin';
-  // }
-
-  const response = await axios({
-    method: 'GET',
-    url: apiUrl,
-    headers: {
-      Authorization: `Bearer ${req.cookies.jwt}`,
-    },
-  });
-  const { tasks } = response.data;
-  const totalDocCount = response.data.totalTasks;
-  const totalPageCount = Math.ceil(totalDocCount / limit);
+  const tasks = await requestQueries.query;
+  // const totalDocCount = response.data.totalTasks;
+  // const totalPageCount = Math.ceil(totalDocCount / limit);
   res.status(200).render('tasks', {
     title: 'Tasks',
     role: req.user.role,
     tasks,
     page,
-    totalPageCount,
-    status,
+    // totalPageCount,
+    taskStatus,
     limit,
     from,
     to,
