@@ -130,15 +130,15 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
         if (shape === 'nonagon') {
           markerStyle += 'width: 0.8rem; height: 0.8rem;';
         } else if (shape === 'line') {
-          markerStyle += `width: 1.2rem; border-radius: 0.8rem; transform: rotate(${orientation});`;
+          markerStyle += `width: 1.4rem; border-radius: 0.8rem; transform: rotate(${orientation});`;
         }
       } else if (length === 'big') {
         markerClass += ' big';
         markerStyle += 'background: #e96f4b;';
         if (shape === 'nonagon') {
-          markerStyle += 'width: 1.1rem; height: 1.1rem;';
+          markerStyle += 'width: 1.6rem; height: 1.6rem;';
         } else if (shape === 'line') {
-          markerStyle += `width: 1.5rem; border-radius: 0.8rem; transform: rotate(rotate(${orientation}));`;
+          markerStyle += `width: 2.2rem; height: 0.8rem; border-radius: 0.8rem; transform: rotate(rotate(${orientation}));`;
         }
       }
 
