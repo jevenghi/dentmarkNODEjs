@@ -672,17 +672,19 @@ button[type='submit']:hover {
 .marker-number {
   position: absolute;
   color: #1900ff;
-  font-size: 1.3rem;
+  font-size: 1rem;
   font-weight: bold;
   /* right: 110%; */
-  left: 0;
+  /* left: 0;
   height: 1.3rem;
-  bottom: 0;
+  bottom: 0; */
 
   /* background-color: #fff; */
-  padding: 2px 2px;
+  padding: 2px 1rem;
   /* border: 0.5px solid #000; */
   border-radius: 1px;
+  /* transform: translateX(-50%); */
+  height: 1.3rem;
 }
 .table-container {
   background-color: #ccc;

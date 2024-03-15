@@ -539,8 +539,8 @@ class App {
     if (length === 'medium') {
       marker.style.background = '#faf878';
       if (shape === 'nonagon') {
-        marker.style.width = '1rem';
-        marker.style.height = '1rem';
+        marker.style.width = '0.8rem';
+        marker.style.height = '0.8rem';
       } else if (shape === 'line') {
         marker.style.width = '1.2rem';
         marker.style.borderRadius = '0.8rem';
@@ -550,10 +550,10 @@ class App {
     if (length === 'big') {
       marker.style.background = '#e96f4b';
       if (shape === 'nonagon') {
-        marker.style.width = '1.3rem';
-        marker.style.height = '1.3rem';
+        marker.style.width = '1.1rem';
+        marker.style.height = '1.1rem';
       } else if (shape === 'line') {
-        marker.style.width = '1.6rem';
+        marker.style.width = '1.5rem';
         marker.style.borderRadius = '0.8rem';
         marker.style.transform = `rotate(${orientationDent})`;
       }

@@ -98,21 +98,50 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
         dent;
       let markerStyle = `left: ${coords.x - 1}%; top: ${coords.y - 3}%;`;
       const numberStyle = `left: ${coords.x - 5}%; top: ${coords.y - 5}%;`;
-      if (shape === 'line') {
-        markerStyle += `width: 2rem; border-radius: 0.8rem; transform: rotate(${orientation});`;
-      }
+      // if (shape === 'line') {
+      //   markerStyle += `width: 2rem; border-radius: 0.8rem; transform: rotate(${orientation});`;
+      // }
+      // let markerClass = 'marker';
+      // if (paintDamaged === 'yes') markerClass += ' paint-damaged';
+      // if (length === 'small') {
+      //   markerClass += ' small';
+      //   markerStyle += 'background: #78fa7e;';
+      // } else if (length === 'medium') {
+      //   markerClass += ' medium';
+      //   markerStyle += 'background: #faf878;';
+      // } else if (length === 'big') {
+      //   markerClass += ' big';
+      //   markerStyle += 'background: #e96f4b;';
+      // }
       let markerClass = 'marker';
       if (paintDamaged === 'yes') markerClass += ' paint-damaged';
+
       if (length === 'small') {
         markerClass += ' small';
         markerStyle += 'background: #78fa7e;';
+        if (shape === 'nonagon') {
+          markerStyle += 'width: 0.5rem; height: 0.5rem;';
+        } else if (shape === 'line') {
+          markerStyle += `width: 0.8rem; border-radius: 0.8rem; transform: rotate(${orientation});`;
+        }
       } else if (length === 'medium') {
         markerClass += ' medium';
         markerStyle += 'background: #faf878;';
+        if (shape === 'nonagon') {
+          markerStyle += 'width: 0.8rem; height: 0.8rem;';
+        } else if (shape === 'line') {
+          markerStyle += `width: 1.2rem; border-radius: 0.8rem; transform: rotate(${orientation});`;
+        }
       } else if (length === 'big') {
         markerClass += ' big';
         markerStyle += 'background: #e96f4b;';
+        if (shape === 'nonagon') {
+          markerStyle += 'width: 1.1rem; height: 1.1rem;';
+        } else if (shape === 'line') {
+          markerStyle += `width: 1.5rem; border-radius: 0.8rem; transform: rotate(rotate(${orientation}));`;
+        }
       }
+
       dentsHTML += `
 
         <div class="${markerClass}" style="${markerStyle}">
