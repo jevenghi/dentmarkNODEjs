@@ -512,12 +512,12 @@ class App {
     marker.style.left = `${coords.x - 1}%`;
     marker.style.top = `${coords.y - 3}%`;
 
-    if (shape === 'line') {
-      marker.style.width = '2rem';
-      marker.style.borderRadius = '0.8rem';
+    // if (shape === 'line') {
+    //   marker.style.width = '1rem';
+    //   marker.style.borderRadius = '0.8rem';
 
-      marker.style.transform = `rotate(${orientationDent})`;
-    }
+    //   marker.style.transform = `rotate(${orientationDent})`;
+    // }
 
     if (paintDamaged === 'yes') {
       const markerX = document.createElement('span');
@@ -527,12 +527,36 @@ class App {
 
     if (length === 'small') {
       marker.style.background = '#78fa7e';
+      if (shape === 'nonagon') {
+        marker.style.width = '0.5rem';
+        marker.style.height = '0.5rem';
+      } else if (shape === 'line') {
+        marker.style.width = '0.8rem';
+        marker.style.borderRadius = '0.8rem';
+        marker.style.transform = `rotate(${orientationDent})`;
+      }
     }
     if (length === 'medium') {
       marker.style.background = '#faf878';
+      if (shape === 'nonagon') {
+        marker.style.width = '1rem';
+        marker.style.height = '1rem';
+      } else if (shape === 'line') {
+        marker.style.width = '1.2rem';
+        marker.style.borderRadius = '0.8rem';
+        marker.style.transform = `rotate(${orientationDent})`;
+      }
     }
     if (length === 'big') {
       marker.style.background = '#e96f4b';
+      if (shape === 'nonagon') {
+        marker.style.width = '1.3rem';
+        marker.style.height = '1.3rem';
+      } else if (shape === 'line') {
+        marker.style.width = '1.6rem';
+        marker.style.borderRadius = '0.8rem';
+        marker.style.transform = `rotate(${orientationDent})`;
+      }
     }
 
     image.appendChild(marker);

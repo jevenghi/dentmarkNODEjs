@@ -304,18 +304,26 @@ html {
   /* border: 3px solid rgb(26, 165, 230); */
 }
 
-/* .m_button--shapes {
-  padding: 0;
-  border-radius: 5px;
-} */
+.buttons-shape button {
+  background-color: rgb(255, 255, 255);
+}
+.m_button--shapes {
+  padding: 0.2rem;
+  background-color: #ddd;
+  border: 1px solid rgb(0, 0, 0);
+  /* 
+  width: 5rem;
+  height: 4rem; */
+  /* float: left; */
+}
 
 .buttons button {
-  background-color: rgb(45, 64, 89); /* Green background */
-  border: 1px solid rgb(0, 0, 0); /* Green border */
+  background-color: rgb(45, 64, 89);
+  border: 1px solid rgb(0, 0, 0);
   color: white; /* White text */
-  padding: 10px 24px; /* Some padding */
-  cursor: pointer; /* Pointer/hand icon */
-  float: left; /* Float the buttons side by side */
+  padding: 1rem 2rem;
+  cursor: pointer;
+  float: left;
 }
 
 .buttons:after {
@@ -329,12 +337,12 @@ html {
 }
 
 #circle {
-  width: 3rem;
+  width: 3.5rem;
 }
 
 #strip {
-  width: 3rem;
-  height: 3rem;
+  width: 3.5rem;
+  height: 3.5rem;
   /* padding: 5px; */
 }
 
@@ -368,7 +376,7 @@ html {
 } */
 
 .send-container {
-  background-color: rgb(130, 179, 219);
+  background-color: rgb(34, 40, 49);
   border-radius: 5px;
   padding: 1rem 1.8rem;
   margin-top: 1rem;
@@ -384,6 +392,12 @@ html {
 
   gap: 1rem;
 }
+
+.send-container label {
+  color: #ddd;
+  font-size: 1.3rem;
+}
+
 .send-marks {
   padding: 0.5rem;
 }
@@ -396,8 +410,8 @@ html {
 
 .marker {
   position: absolute;
-  width: 1rem;
-  height: 1rem;
+  width: 0.5rem;
+  height: 0.5rem;
   /* background: radial-gradient(circle at 50% 50%, red, transparent); */
   border-radius: 50%;
   border: 1px solid black;
@@ -658,15 +672,16 @@ button[type='submit']:hover {
 .marker-number {
   position: absolute;
   color: #1900ff;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   font-weight: bold;
-  /* right: 110%;  */
-  left: 110%;
-  height: 1.6rem;
+  /* right: 110%; */
+  left: 0;
+  height: 1.3rem;
   bottom: 0;
-  background-color: #fff;
-  padding: 1px 2px;
-  border: 0.5px solid #000;
+
+  /* background-color: #fff; */
+  padding: 2px 2px;
+  /* border: 0.5px solid #000; */
   border-radius: 1px;
 }
 .table-container {
