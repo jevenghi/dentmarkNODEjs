@@ -34,7 +34,7 @@ const removeLastMarkBtn = document.querySelector('.remove__last');
 
 const buttonsDistance = document.querySelectorAll('.m_button--distance');
 const buttonsShape = document.querySelectorAll('.m_button--shapes');
-const buttonsPaint = document.querySelectorAll('.m_button--paint');
+const paintDamagedCheck = document.getElementById('paint-damaged');
 const overlay = document.querySelector('.overlay');
 
 let sideSelection = document.querySelector('.sides-container');
@@ -51,7 +51,6 @@ class Vehicle {
 class App {
   #lineAngle;
   #shapePressed = false;
-  #paintPressed = false;
   #distancePressed = false;
   #orientationPressed = false;
   #storedCoordinates;
@@ -64,7 +63,7 @@ class App {
 
   #dentLength;
   #dentShape;
-  #dentPaintDamaged;
+  #dentPaintDamaged = false;
   constructor() {
     const urlParams = new URLSearchParams(window.location.search);
     const taskId = urlParams.get('taskId');
@@ -127,6 +126,16 @@ class App {
             });
             this._removeAllMarkers();
 
+            paintDamagedCheck.checked = false;
+            this.#dentPaintDamaged = false;
+
+            buttonsShape.forEach((btn) => btn.classList.remove('pressed'));
+            buttonsDistance.forEach((btn) => btn.classList.remove('pressed'));
+            buttonsOrientation.forEach((btn) =>
+              btn.classList.remove('pressed'),
+            );
+            orientationContainer.classList.add('hidden');
+
             button.style.background =
               'linear-gradient(to right, #e69c6a, #ca580c)';
             this.#bodySide = button.value;
@@ -185,15 +194,8 @@ class App {
       });
     });
 
-    buttonsPaint.forEach((button) => {
-      button.addEventListener('click', () => {
-        buttonsPaint.forEach((btn) => btn.classList.remove('pressed'));
-
-        button.classList.add('pressed');
-        this.#dentPaintDamaged = button.id;
-
-        this.#paintPressed = true;
-      });
+    paintDamagedCheck.addEventListener('click', () => {
+      this.#dentPaintDamaged = this.#dentPaintDamaged ? false : true;
     });
 
     buttonsOrientation.forEach((button) => {
@@ -222,12 +224,8 @@ class App {
         x: (event.offsetX / vehicleImage.clientWidth) * 100,
         y: (event.offsetY / vehicleImage.clientHeight) * 100,
       };
-      if (
-        !this.#shapePressed ||
-        !this.#paintPressed ||
-        !this.#distancePressed
-      ) {
-        alert('Shape, Distance and Paint damage options should be selected');
+      if (!this.#shapePressed || !this.#distancePressed) {
+        alert('Shape and Distance options should be selected');
         return;
       }
 
@@ -519,7 +517,7 @@ class App {
     //   marker.style.transform = `rotate(${orientationDent})`;
     // }
 
-    if (paintDamaged === 'yes') {
+    if (paintDamaged) {
       const markerX = document.createElement('span');
       markerX.textContent = 'X';
       marker.appendChild(markerX);

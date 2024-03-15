@@ -146,7 +146,7 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
 
         <div class="${markerClass}" style="${markerStyle}">
 
-          ${paintDamaged === 'yes' ? '<span>X</span>' : ''}
+          ${paintDamaged ? '<span>X</span>' : ''}
         </div>
       `;
       dentsHTML += `

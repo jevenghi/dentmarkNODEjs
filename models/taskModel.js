@@ -5,7 +5,7 @@ const dentSchema = new mongoose.Schema({
   shape: String,
   length: String,
   orientation: String,
-  paintDamaged: String,
+  paintDamaged: Boolean,
   coords: Object,
   cost: {
     type: Number,

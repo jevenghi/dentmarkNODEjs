@@ -274,6 +274,9 @@ html {
   border-radius: 2px;
   transition: opacity 0.5s ease-in-out;
   width: 300px;
+  position: relative;
+  display: inline-block;
+  font-size: 1.2rem;
 }
 
 .row {
@@ -664,11 +667,6 @@ button[type='submit']:hover {
   color: #ff0000; /* Red color for the message */
 }
 
-.marker-container {
-  position: relative;
-  display: inline-block;
-}
-
 .marker-number {
   position: absolute;
   color: #1900ff;
@@ -852,4 +850,10 @@ button[type='submit']:hover {
   padding: 0.5rem;
   font-size: 1.5rem;
   text-decoration: none;
+}
+.checkbox-paint {
+  display: flex;
+  padding: 1rem;
+  right: 0;
+  justify-content: flex-end;
 }
