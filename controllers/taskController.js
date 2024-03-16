@@ -255,11 +255,14 @@ exports.updateDents = catchAsyncErr(async (req, res, next) => {
     // { _id: taskId, 'dents._id': dentId },
     // { $set: { 'dents.$.cost': cost } },
     { _id: taskId },
-    { totalCost: cost },
+    // { totalCost: cost },
     { $pull: { dents: { _id: dentId } } },
 
     { new: true, runValidators: true },
   );
+  if (cost) {
+    await Task.findByIdAndUpdate(taskId, { totalCost: cost });
+  }
   if (taskStatus) {
     await Task.findByIdAndUpdate(taskId, { taskStatus });
   }
