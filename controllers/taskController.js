@@ -253,8 +253,12 @@ exports.updateDents = catchAsyncErr(async (req, res, next) => {
   const { dentId, cost, taskStatus } = req.body;
   // try {
   const updatedDent = await Task.findOneAndUpdate(
-    { _id: taskId, 'dents._id': dentId },
-    { $set: { 'dents.$.cost': cost } },
+    // { _id: taskId, 'dents._id': dentId },
+    // { $set: { 'dents.$.cost': cost } },
+    { _id: taskId },
+
+    { totalCost: cost },
+
     { new: true, runValidators: true },
   );
   if (taskStatus) {

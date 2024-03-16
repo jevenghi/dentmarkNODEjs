@@ -11,6 +11,7 @@ const userPasswordForm = document.querySelector('.form-user-password');
 const loginForm = document.querySelector('.login-form');
 const signupForm = document.querySelector('.signup-form');
 const costInputs = document.querySelectorAll('.dent-cost');
+const totalCostInput = document.querySelector('.total-cost');
 const myAccBtn = document.querySelector('.nav__el--myacc');
 const logout = document.querySelector('.logout');
 const modal = document.querySelector('.modal');
@@ -242,6 +243,26 @@ if (costInputs) {
         updatedDent(taskId, { dentId, cost });
       }
     });
+  });
+}
+
+if (totalCostInput) {
+  totalCostInput.addEventListener('change', () => {
+    const taskId = totalCostInput.dataset.taskId;
+    const cost = parseFloat(totalCostInput.value);
+    let taskStatus = document.querySelector('.task-status-select').value;
+
+    if (isNaN(cost) || cost < 0) {
+      return showAlert('error', 'Cost must be a positive number');
+    } else if (cost > 10000) {
+      return showAlert('error', 'Cost must not exceed 10,000');
+    }
+    if (taskStatus === 'open') {
+      taskStatus = 'in-progress';
+      updatedDent(taskId, { taskStatus, cost });
+    } else {
+      updatedDent(taskId, { cost });
+    }
   });
 }
 

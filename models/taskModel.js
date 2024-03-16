@@ -61,6 +61,12 @@ const taskSchema = new mongoose.Schema(
     completedAt: {
       type: Date,
     },
+    totalCost: {
+      type: Number,
+      min: [0, 'Cost can not be negative'],
+      max: [10000, 'Cost can not exceed 10,000'],
+      default: 0,
+    },
   },
   {
     toJSON: { virtuals: true },
@@ -76,13 +82,13 @@ taskSchema.pre(/^find/, function (next) {
   next();
 });
 
-taskSchema.virtual('totalCost').get(function () {
-  let totalCost = 0;
-  if (this.dents && this.dents.length > 0) {
-    totalCost = this.dents.reduce((acc, dent) => acc + (dent.cost || 0), 0);
-  }
-  return totalCost;
-});
+// taskSchema.virtual('totalCost').get(function () {
+//   let totalCost = 0;
+//   if (this.dents && this.dents.length > 0) {
+//     totalCost = this.dents.reduce((acc, dent) => acc + (dent.cost || 0), 0);
+//   }
+//   return totalCost;
+// });
 
 // taskSchema.virtual('totalCostDents').get(function () {
 //   let totalCost = 0;

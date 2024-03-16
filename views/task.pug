@@ -29,9 +29,15 @@ block content
             option(value="open", selected=taskStatus === "open") Open
             option(value="in-progress", selected=taskStatus === "in-progress") In Progress
             option(value="pending", selected=taskStatus === "pending") Complete/Not paid
-            option(value="complete", selected=taskStatus === "complete") Paid  
+            option(value="complete", selected=taskStatus === "complete") Paid
+      .task-cost-wrapper
+        if role === 'admin'
+          p Total cost:
+          input(type="text", placeholder=`€${totalCost}`, class="total-cost", data-task-id=taskId)
+             
       if role === 'user'
         p Task status: #{taskStatus}
+        p Total cost: € #{totalCost}
     != dentsHTML
     a(href=`/?taskId=${taskId}` class="add-dents") Add dents
     table.task-table

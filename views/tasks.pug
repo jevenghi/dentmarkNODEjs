@@ -46,7 +46,7 @@ block content
           tr
             th Vehicle Model
             th Task Status
-            th Total Cost
+            th Cost
             th Date
         tbody
           //- if tasks.length === 0
@@ -56,7 +56,7 @@ block content
             tr
               td: a(href=`/tasks/${task._id}` class='table-link')= task.carModel
               td= task.taskStatus
-              td= task.totalCost
+              td= `€ ${task.totalCost}`
               td= new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
     - if (role === 'admin') 
       //- .search-bar
@@ -68,7 +68,7 @@ block content
             th Customer
             th Vehicle Model
             th Task Status
-            th Total Cost
+            th Cost
             th Date
         tbody
           if tasks.length === 0

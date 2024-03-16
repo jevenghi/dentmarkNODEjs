@@ -271,7 +271,6 @@ class App {
         orientation: this.#orientationPressed ? this.#lineAngle : null,
         paintDamaged: this.#dentPaintDamaged,
         coords: this.#storedCoordinates,
-        cost: 0,
         markerNumber: this.#markerCount,
         status: 'open',
       };

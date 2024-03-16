@@ -564,8 +564,9 @@ html {
   /* color: black; */
 }
 
-.dent-cost {
-  width: 3rem;
+.dent-cost,
+.total-cost {
+  width: 4rem;
 }
 
 .back-tasks {
@@ -767,13 +768,19 @@ button[type='submit']:hover {
   background-color: #0056b3;
 }
 
-.task-status-wrapper {
+.task-status-wrapper,
+.task-cost-wrapper {
   display: flex;
   align-items: center;
 }
 
 .task-status-wrapper p {
-  margin-right: 10px;
+  margin-right: 1rem;
+  font-size: 1.2rem;
+}
+
+.task-cost-wrapper p {
+  margin-right: 1.9rem;
   font-size: 1.2rem;
 }
 
