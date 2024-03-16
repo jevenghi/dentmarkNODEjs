@@ -14,7 +14,7 @@ const dentSchema = new mongoose.Schema({
   },
   markerNumber: Number,
   status: String,
-  id: String,
+  // id: String,
 });
 
 const taskSchema = new mongoose.Schema(

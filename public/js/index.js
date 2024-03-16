@@ -25,7 +25,27 @@ const emailInputSignup = document.getElementById('email-signup');
 const paginationBtns = document.querySelector('.pagination-buttons');
 const filterOptions = document.querySelector('.filter-menu');
 const forgotPassBtn = document.getElementById('forgot-pass');
+const vehicleImage = document.getElementById('vehicleImage');
+const markers = document.querySelectorAll('.marker');
 let url = new URL(window.location.href);
+
+// if (vehicleImage) {
+//   vehicleImage.addEventListener('click', (event) => {
+//     const x = (event.offsetX / vehicleImage.clientWidth) * 100;
+//     const y = (event.offsetY / vehicleImage.clientHeight) * 100;
+//     console.log(x, y);
+//   });
+// }
+
+if (markers) {
+  markers.forEach((marker) => {
+    marker.addEventListener('click', () => {
+      const taskId = marker.dataset.taskId;
+      const dentId = marker.id;
+      updatedDent(taskId, { dentId });
+    });
+  });
+}
 
 if (forgotPassBtn) {
   forgotPassBtn.addEventListener('click', function (e) {

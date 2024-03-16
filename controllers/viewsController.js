@@ -94,10 +94,17 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
           <img id="vehicleImage" src="/pics/sides_pics/${side}.png" />
         `;
     dents.forEach((dent) => {
-      const { shape, length, orientation, paintDamaged, coords, markerNumber } =
-        dent;
+      const {
+        shape,
+        length,
+        orientation,
+        paintDamaged,
+        coords,
+        // markerNumber,
+        _id,
+      } = dent;
       let markerStyle = `left: ${coords.x - 1}%; top: ${coords.y - 3}%;`;
-      const numberStyle = `left: ${coords.x - 5}%; top: ${coords.y - 5}%;`;
+      // const numberStyle = `left: ${coords.x - 5}%; top: ${coords.y - 5}%;`;
       // if (shape === 'line') {
       //   markerStyle += `width: 2rem; border-radius: 0.8rem; transform: rotate(${orientation});`;
       // }
@@ -144,17 +151,17 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
 
       dentsHTML += `
 
-        <div class="${markerClass}" style="${markerStyle}">
+        <div class="${markerClass}" style="${markerStyle}" id ="${_id}" data-task-id="${req.params.id}">
 
           ${paintDamaged ? '<span>X</span>' : ''}
         </div>
       `;
-      dentsHTML += `
+      // dentsHTML += `
 
-        <div class="marker-number" style="${numberStyle}">
-          <span>${markerNumber}</span>
-        </div>
-      `;
+      //   <div class="marker-number" style="${numberStyle}">
+      //     <span>${markerNumber}</span>
+      //   </div>
+      // `;
       // dentsHTML += `
 
       //   <div class="${markerClass}" style="${markerStyle}">

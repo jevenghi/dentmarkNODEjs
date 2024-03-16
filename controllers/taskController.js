@@ -249,15 +249,14 @@ exports.getTaskStats = async (req, res) => {
 // });
 exports.updateDents = catchAsyncErr(async (req, res, next) => {
   const taskId = req.params.id;
-
   const { dentId, cost, taskStatus } = req.body;
   // try {
   const updatedDent = await Task.findOneAndUpdate(
     // { _id: taskId, 'dents._id': dentId },
     // { $set: { 'dents.$.cost': cost } },
     { _id: taskId },
-
     { totalCost: cost },
+    { $pull: { dents: { _id: dentId } } },
 
     { new: true, runValidators: true },
   );
@@ -265,7 +264,7 @@ exports.updateDents = catchAsyncErr(async (req, res, next) => {
     await Task.findByIdAndUpdate(taskId, { taskStatus });
   }
 
-  res.status(200).json({
+  res.status(201).json({
     status: 'success',
     data: updatedDent,
   });

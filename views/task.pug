@@ -40,16 +40,15 @@ block content
         p Total cost: € #{totalCost}
     != dentsHTML
     a(href=`/?taskId=${taskId}` class="add-dents") Add dents
-    table.task-table
-        thead
-          tr
-            th Dent number
-            //- th Task Status
-            th Cost
-        tbody
-          each dent in dents
-            tr(data-dent-id=dent._id data-task-id=taskId)
-              td= dent.markerNumber
+    //- table.task-table
+    //-     thead
+    //-       tr
+    //-         th Dent number
+    //-         th Cost
+    //-     tbody
+    //-       each dent in dents
+    //-         tr(data-dent-id=dent._id data-task-id=taskId)
+    //-           td= dent.markerNumber
               //- td
               //-   select(name="status", class="dent-status-select")
               //-     option(value="open", selected=dent.status === "open") Open
