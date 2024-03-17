@@ -125,7 +125,7 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
 
       if (length === 'small') {
         markerClass += ' small';
-        markerStyle += 'background: #78fa7e;';
+        // markerStyle += 'background: #78fa7e;';
         if (shape === 'nonagon') {
           markerStyle += 'width: 0.5rem; height: 0.5rem;';
         } else if (shape === 'line') {
@@ -133,7 +133,7 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
         }
       } else if (length === 'medium') {
         markerClass += ' medium';
-        markerStyle += 'background: #faf878;';
+        // markerStyle += 'background: #faf878;';
         if (shape === 'nonagon') {
           markerStyle += 'width: 0.8rem; height: 0.8rem;';
         } else if (shape === 'line') {
@@ -141,7 +141,7 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
         }
       } else if (length === 'big') {
         markerClass += ' big';
-        markerStyle += 'background: #e96f4b;';
+        // markerStyle += 'background: #e96f4b;';
         if (shape === 'nonagon') {
           markerStyle += 'width: 1.6rem; height: 1.6rem;';
         } else if (shape === 'line') {

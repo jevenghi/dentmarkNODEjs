@@ -523,18 +523,19 @@ class App {
     }
 
     if (length === 'small') {
-      marker.style.background = '#78fa7e';
+      // marker.style.background = '#FF5722';
       if (shape === 'nonagon') {
         marker.style.width = '0.5rem';
         marker.style.height = '0.5rem';
       } else if (shape === 'line') {
         marker.style.width = '0.8rem';
+        marker.style.height = '0.3rem';
         marker.style.borderRadius = '0.8rem';
         marker.style.transform = `rotate(${orientationDent})`;
       }
     }
     if (length === 'medium') {
-      marker.style.background = '#faf878';
+      // marker.style.background = '#FF5722';
       if (shape === 'nonagon') {
         marker.style.width = '0.8rem';
         marker.style.height = '0.8rem';
@@ -545,7 +546,7 @@ class App {
       }
     }
     if (length === 'big') {
-      marker.style.background = '#e96f4b';
+      // marker.style.background = '#FF5722';
       if (shape === 'nonagon') {
         marker.style.width = '1.6rem';
         marker.style.height = '1.6rem';

@@ -42,7 +42,10 @@ if (markers) {
     marker.addEventListener('click', () => {
       const taskId = marker.dataset.taskId;
       const dentId = marker.id;
-      updatedDent(taskId, { dentId });
+      const confirmed = confirm('Are you sure you want to remove this marker?');
+      if (confirmed) {
+        updatedDent(taskId, { dentId });
+      }
     });
   });
 }
