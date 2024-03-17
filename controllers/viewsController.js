@@ -129,7 +129,7 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
         if (shape === 'nonagon') {
           markerStyle += 'width: 0.5rem; height: 0.5rem;';
         } else if (shape === 'line') {
-          markerStyle += `width: 0.8rem; border-radius: 0.8rem; transform: rotate(${orientation});`;
+          markerStyle += `width: 0.8rem; height: 0.3rem; border-radius: 0.8rem; transform: rotate(${orientation});`;
         }
       } else if (length === 'medium') {
         markerClass += ' medium';

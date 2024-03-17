@@ -126,6 +126,9 @@ class App {
             });
             this._removeAllMarkers();
 
+            this.#shapePressed = false;
+            this.#distancePressed = false;
+            this.#orientationPressed = false;
             paintDamagedCheck.checked = false;
             this.#dentPaintDamaged = false;
 
@@ -139,6 +142,9 @@ class App {
             button.style.background =
               'linear-gradient(to right, #e69c6a, #ca580c)';
             this.#bodySide = button.value;
+            // console.log(
+            //   this.isRear(this.#bodySide) || this.isFront(this.#bodySide),
+            // );
             const vehicleImage = document.getElementById('vehicleImage');
 
             vehicleImage.src = `pics/sides_pics/${this.#bodySide}.png`;
@@ -155,6 +161,7 @@ class App {
             if (sideDents && sideDents.length > 0) {
               sideDents.forEach((dent) => {
                 this._placeMarker(
+                  dent.img,
                   dent.shape,
                   dent.length,
                   dent.orientation,
@@ -238,6 +245,7 @@ class App {
       // const { x, y } = this.#storedCoordinates;
       const coords = this.#storedCoordinates;
       this._placeMarker(
+        this.#bodySide,
         this.#dentShape,
         this.#dentLength,
         this.#lineAngle,
@@ -383,6 +391,14 @@ class App {
     });
   }
 
+  _isFront(side) {
+    return side.slice(-2) === 'fr';
+  }
+
+  _isRear(side) {
+    return side.slice(-2) === 're';
+  }
+
   async _addDentsToTask(taskId, dents) {
     try {
       const res = await axios({
@@ -503,11 +519,25 @@ class App {
     sideText.insertAdjacentHTML('afterend', html);
   }
 
-  _placeMarker(shape, length, orientationDent, paintDamaged, coords, image) {
+  _placeMarker(
+    side,
+    shape,
+    length,
+    orientationDent,
+    paintDamaged,
+    coords,
+    image,
+  ) {
     const marker = document.createElement('div');
     marker.className = 'marker';
-    marker.style.left = `${coords.x - 1}%`;
-    marker.style.top = `${coords.y - 3}%`;
+    marker.style.left =
+      this._isFront(side) || this._isRear(side)
+        ? `${coords.x - 4}%`
+        : `${coords.x - 1}%`;
+    marker.style.top =
+      this._isFront(side) || this._isRear(side)
+        ? `${coords.y - 3.5}%`
+        : `${coords.y - 3}%`;
 
     // if (shape === 'line') {
     //   marker.style.width = '1rem';
@@ -525,11 +555,15 @@ class App {
     if (length === 'small') {
       // marker.style.background = '#FF5722';
       if (shape === 'nonagon') {
-        marker.style.width = '0.5rem';
-        marker.style.height = '0.5rem';
+        marker.style.width =
+          this._isFront(side) || this._isRear(side) ? '1.3rem' : '0.5rem';
+        marker.style.height =
+          this._isFront(side) || this._isRear(side) ? '1.3rem' : '0.5rem';
       } else if (shape === 'line') {
-        marker.style.width = '0.8rem';
-        marker.style.height = '0.3rem';
+        marker.style.width =
+          this._isFront(side) || this._isRear(side) ? '1.5rem' : '0.8rem';
+        marker.style.height =
+          this._isFront(side) || this._isRear(side) ? '0.6rem' : '0.3rem';
         marker.style.borderRadius = '0.8rem';
         marker.style.transform = `rotate(${orientationDent})`;
       }
@@ -537,10 +571,15 @@ class App {
     if (length === 'medium') {
       // marker.style.background = '#FF5722';
       if (shape === 'nonagon') {
-        marker.style.width = '0.8rem';
-        marker.style.height = '0.8rem';
+        marker.style.width =
+          this._isFront(side) || this._isRear(side) ? '2rem' : '0.8rem';
+        marker.style.height =
+          this._isFront(side) || this._isRear(side) ? '2rem' : '0.8rem';
       } else if (shape === 'line') {
-        marker.style.width = '1.4rem';
+        marker.style.width =
+          this._isFront(side) || this._isRear(side) ? '2.2rem' : '1.4rem';
+        marker.style.height =
+          this._isFront(side) || this._isRear(side) ? '0.8rem' : '0.5rem';
         marker.style.borderRadius = '0.8rem';
         marker.style.transform = `rotate(${orientationDent})`;
       }
@@ -548,11 +587,15 @@ class App {
     if (length === 'big') {
       // marker.style.background = '#FF5722';
       if (shape === 'nonagon') {
-        marker.style.width = '1.6rem';
-        marker.style.height = '1.6rem';
+        marker.style.width =
+          this._isFront(side) || this._isRear(side) ? '2.6rem' : '1.6rem';
+        marker.style.height =
+          this._isFront(side) || this._isRear(side) ? '2.6rem' : '1.6rem';
       } else if (shape === 'line') {
-        marker.style.width = '2.2rem';
-        marker.style.height = '0.8rem';
+        marker.style.width =
+          this._isFront(side) || this._isRear(side) ? '2.9rem' : '2.2rem';
+        marker.style.height =
+          this._isFront(side) || this._isRear(side) ? '1.2rem' : '0.8rem';
         marker.style.borderRadius = '0.8rem';
         marker.style.transform = `rotate(${orientationDent})`;
       }
