@@ -2,8 +2,9 @@
 import { showAlert } from '../js/alerts.js';
 
 const buttonsBody = document.querySelectorAll('.button--body');
-// const main = document.querySelector(".main-container");
+const bodyContainer = document.querySelector('.body-container');
 const sideText = document.querySelector('.choose__side');
+const chooseBodyText = document.querySelector('.choose__body');
 const myAccBtn = document.querySelector('.nav__el--myacc');
 const logout = document.querySelector('.logout');
 const modal = document.querySelector('.modal');
@@ -103,6 +104,9 @@ class App {
         button.style.background = 'linear-gradient(to right, #e69c6a, #ca580c)';
 
         this.#bodyType = button.value;
+        // bodyContainer.classList.add('hidden');
+        bodyContainer.style.display = 'none';
+        chooseBodyText.style.display = 'none';
 
         markerContainer.classList.add('hidden');
         sendContainer.classList.add('hidden');
@@ -501,14 +505,14 @@ class App {
           <button class="button button--side" value="${bodyType}ls">
             <img src="pics/sides_pics/${bodyType}ls.png" id="${bodyType}ls" />
           </button>
-          <button class="button button--side" value="${bodyType}fr">
-            <img src="pics/sides_pics/${bodyType}fr.png" id="${bodyType}fr" />
+          <button class="button button--side" value="${bodyType}top">
+            <img src="pics/sides_pics/${bodyType}top.png" id="${bodyType}top" />
           </button>
           <button class="button button--side" value="${bodyType}re">
             <img src="pics/sides_pics/${bodyType}re.png" id="${bodyType}re" />
           </button>
-          <button class="button button--side" value="${bodyType}top">
-            <img src="pics/sides_pics/${bodyType}top.png" id="${bodyType}top" />
+          <button class="button button--side" value="${bodyType}fr">
+            <img src="pics/sides_pics/${bodyType}fr.png" id="${bodyType}fr" />
           </button>
         </div>`;
 
