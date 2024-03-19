@@ -173,6 +173,10 @@ html {
   margin: 0 0.5rem;
 }
 
+.button--side {
+  background-color: #ffffff;
+}
+
 .button {
   display: flex;
   flex-flow: column wrap;
