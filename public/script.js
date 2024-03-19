@@ -105,7 +105,8 @@ class App {
         buttonsBody.forEach((btn) => {
           btn.style.background = 'white';
         });
-        removeMarksContainer.classList.add('hidden');
+        // removeMarksContainer.classList.add('hidden');
+        removeMarksContainer.style.display = 'none';
 
         button.style.background = 'linear-gradient(to right, #e69c6a, #ca580c)';
 
@@ -156,7 +157,7 @@ class App {
 
             // button.style.background =
             //   'linear-gradient(to right, #e69c6a, #ca580c)';
-            button.style.border = '0.5rem solid coral';
+            button.style.border = '0.3rem solid coral';
             this.#bodySide = button.value;
 
             const vehicleImage = document.getElementById('vehicleImage');
@@ -232,7 +233,9 @@ class App {
     const markers = {};
     vehicleImage.addEventListener('click', (event) => {
       event.preventDefault();
-      removeMarksContainer.classList.remove('hidden');
+      // removeMarksContainer.classList.remove('hidden');
+      removeMarksContainer.style.display = 'flex';
+
       if (this.#dents.length > 50) {
         return alert(
           'You can place maximum 50 markers per vehicle. We will take care of the rest on site',

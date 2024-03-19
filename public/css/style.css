@@ -96,17 +96,6 @@ html {
     transform 1ms;
 }
 
-/* .arrow {
-  display: inline-block;
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 1rem 1rem 0 1rem;
-  border-color: #ffffff transparent transparent transparent;
-  margin-left: 1rem;
-  transition: transform 0.3s;
-} */
-
 .arrow {
   width: 2rem;
   height: 1.5rem;
@@ -173,7 +162,8 @@ html {
   margin: 0 0.5rem;
 }
 
-.button--side {
+.button--side,
+.button--body {
   background-color: #ffffff;
 }
 
@@ -218,7 +208,7 @@ html {
   flex-flow: column wrap;
   align-items: center;
   justify-content: center;
-  width: 100%;
+  width: 98%;
 
   /* margin-top: 1rem; */
 }
@@ -275,7 +265,7 @@ html {
 /* MARKER CONTAINER */
 
 .remove-container {
-  width: 100%;
+  width: 98%;
   background-color: #ffffff;
   display: flex;
   justify-content: space-between;
@@ -292,15 +282,20 @@ html {
 .remove_mark_btn {
   border: none;
   border-radius: 0.2rem;
+  padding: 0.3rem;
+  margin: 0.5rem;
 }
 
 .remove--marks {
   background-color: #db5555;
+  padding: 0.5rem;
   /* margin-left: 2rem; */
 }
 
 .remove__last {
   background-color: #dfba55;
+  padding: 0.3rem;
+
   /* margin-left: 2rem; */
 }
 
@@ -328,7 +323,7 @@ html {
 .m_button.pressed {
   transform: translateY(1px);
   box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.3);
-  border: 0.3rem solid coral;
+  border: 0.2rem solid coral;
 }
 
 .buttons-shape button {
