@@ -5,6 +5,9 @@ const buttonsBody = document.querySelectorAll('.button--body');
 const bodyContainer = document.querySelector('.body-container');
 const sideText = document.querySelector('.choose__side');
 const chooseBodyText = document.querySelector('.choose__body');
+const arrowBody = document.querySelector('.arrow__body');
+const arrowSide = document.querySelector('.arrow__side');
+
 const myAccBtn = document.querySelector('.nav__el--myacc');
 const logout = document.querySelector('.logout');
 const modal = document.querySelector('.modal');
@@ -18,6 +21,7 @@ const imageContainerSummary = document.querySelector(
 const sendContainer = document.querySelector('.send-container');
 const vehicleImage = document.getElementById('vehicleImage');
 const saveMarksButton = document.querySelector('.save--marks');
+const removeMarksContainer = document.querySelector('.remove-container');
 
 const sendMarksBtn = document.querySelector('.send-marks');
 const vehicleModel = document.querySelector('.form__input--model');
@@ -40,15 +44,6 @@ const overlay = document.querySelector('.overlay');
 
 let sideSelection = document.querySelector('.sides-container');
 
-class Vehicle {
-  constructor(carModel, bodyType, dents) {
-    this.carModel = carModel;
-    this.bodyType = bodyType;
-    // this.difficulty = difficulty;
-    this.dents = dents || {};
-    this.createdAt = new Date();
-  }
-}
 class App {
   #lineAngle;
   #shapePressed = false;
@@ -66,6 +61,16 @@ class App {
   #dentShape;
   #dentPaintDamaged = false;
   constructor() {
+    chooseBodyText.addEventListener('click', () => {
+      bodyContainer.style.display =
+        bodyContainer.style.display === 'none' ? 'grid' : 'none';
+      arrowBody.classList.toggle('rotate');
+    });
+    sideText.addEventListener('click', () => {
+      sideSelection.style.display =
+        sideSelection.style.display === 'none' ? 'grid' : 'none';
+      arrowSide.classList.toggle('rotate');
+    });
     const urlParams = new URLSearchParams(window.location.search);
     const taskId = urlParams.get('taskId');
     if (taskId) {
@@ -100,13 +105,14 @@ class App {
         buttonsBody.forEach((btn) => {
           btn.style.background = 'white';
         });
+        removeMarksContainer.classList.add('hidden');
 
         button.style.background = 'linear-gradient(to right, #e69c6a, #ca580c)';
 
         this.#bodyType = button.value;
         // bodyContainer.classList.add('hidden');
         bodyContainer.style.display = 'none';
-        chooseBodyText.style.display = 'none';
+        arrowBody.classList.toggle('rotate');
 
         markerContainer.classList.add('hidden');
         sendContainer.classList.add('hidden');
@@ -116,6 +122,7 @@ class App {
 
         if (sideSelection) sideSelection.remove();
         if (vehicleImage) vehicleImage.src = '';
+
         this._renderVehicleImage(this.#bodyType);
         sideSelection = document.querySelector('.sides-container');
         setTimeout(function () {
@@ -126,9 +133,13 @@ class App {
         buttonsSide.forEach((button) => {
           button.addEventListener('click', () => {
             buttonsSide.forEach((btn) => {
-              btn.style.background = 'white';
+              btn.style.border = 'none';
             });
             this._removeAllMarkers();
+
+            // sideSelection.style.display =
+            //   sideSelection.style.display === 'none' ? 'grid' : 'none';
+            // arrowSide.classList.toggle('rotate');
 
             this.#shapePressed = false;
             this.#distancePressed = false;
@@ -143,12 +154,11 @@ class App {
             );
             orientationContainer.classList.add('hidden');
 
-            button.style.background =
-              'linear-gradient(to right, #e69c6a, #ca580c)';
+            // button.style.background =
+            //   'linear-gradient(to right, #e69c6a, #ca580c)';
+            button.style.border = '0.5rem solid coral';
             this.#bodySide = button.value;
-            // console.log(
-            //   this.isRear(this.#bodySide) || this.isFront(this.#bodySide),
-            // );
+
             const vehicleImage = document.getElementById('vehicleImage');
 
             vehicleImage.src = `pics/sides_pics/${this.#bodySide}.png`;
@@ -222,6 +232,7 @@ class App {
     const markers = {};
     vehicleImage.addEventListener('click', (event) => {
       event.preventDefault();
+      removeMarksContainer.classList.remove('hidden');
       if (this.#dents.length > 50) {
         return alert(
           'You can place maximum 50 markers per vehicle. We will take care of the rest on site',
@@ -383,15 +394,22 @@ class App {
     });
 
     removeMarksBtn.addEventListener('click', () => {
-      this._removeAllMarkers();
-      this.#dentsTemp = {};
-      this.#dents = [];
+      const confirmed = confirm('Remove all markers?');
+      if (confirmed) {
+        this._removeAllMarkers();
+        this.#dentsTemp = {};
+        this.#dents = [];
+      }
     });
 
     removeLastMarkBtn.addEventListener('click', () => {
       this._removeLastMarker();
-      this.#dentsTemp[this.#bodySide].pop();
-      this.#dents.pop();
+      if (this.#dentsTemp[this.#bodySide]) {
+        this.#dentsTemp[this.#bodySide].pop();
+      }
+      if (this.#dents) {
+        this.#dents.pop();
+      }
     });
   }
 

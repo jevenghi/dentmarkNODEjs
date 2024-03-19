@@ -49,6 +49,7 @@
     <div class="main-container" style="display: none">
       <div class="choose choose__body">
         <h1>Choose body type</h1>
+        <span class="arrow arrow__body"></span>
       </div>
 
       <div class="body-container">
@@ -71,9 +72,9 @@
         <button class="button button--body" value="cuv">
           <img src="pics/body_pics/cuv.png" alt="Cuv" id="cuv" />
         </button>
-        <button class="button button--body" value="suv">
+        <!-- <button class="button button--body" value="suv">
           <img src="pics/body_pics/suv.png" alt="Suv" id="suv" />
-        </button>
+        </button> -->
         <button class="button button--body" value="pickup">
           <img src="pics/body_pics/pickup.png" alt="Pickup" id="pickup" />
         </button>
@@ -87,6 +88,7 @@
 
       <div class="choose choose__side hidden">
         <h1>Choose side</h1>
+        <span class="arrow arrow__side"></span>
       </div>
 
       <div class="marker-container hidden">
@@ -134,12 +136,7 @@
             <button class="m_button m_button--distance" id="big">10+</button>
           </div>
         </div>
-        <!-- <div class="row"> -->
-        <!-- <label class="paint">Paint damaged?</label>
-          <div class="buttons">
-            <button class="m_button m_button--paint" id="yes">Yes</button>
-            <button class="m_button m_button--paint" id="no">No</button>
-          </div> -->
+
         <div class="checkbox-paint">
           <label
             >Paint damaged
@@ -150,18 +147,25 @@
             />
           </label>
         </div>
-        <!-- </div> -->
-      </div>
+        <!-- <div class="remove__buttons">
+          <button class="m_button remove__last">Remove last marker</button>
 
+          <button class="m_button remove--marks">Remove all markers</button>
+        </div> -->
+      </div>
+      <div class="remove-container hidden">
+        <button class="remove_mark_btn remove__last">Undo</button>
+        <button class="remove_mark_btn remove--marks">Clear All Marks</button>
+      </div>
       <div class="image-container">
         <img id="vehicleImage" src="" />
         <div id="marker"></div>
       </div>
 
       <div class="save-marks-container hidden">
-        <button class="form__btn remove__last">Remove last mark</button>
+        <!-- <button class="remove_mark_btn remove__last">Undo</button>
 
-        <button class="form__btn remove--marks">Remove all marks</button>
+        <button class="remove_mark_btn remove--marks">Clear All</button> -->
       </div>
 
       <div class="send-container hidden">
@@ -169,7 +173,7 @@
         <input type="text" class="form__input form__input--model" />
 
         <div class="form__row form__row--button">
-          <button class="form__btn send-marks">Send task</button>
+          <button class="form__btn send-marks">Send Task</button>
         </div>
       </div>
     </div>

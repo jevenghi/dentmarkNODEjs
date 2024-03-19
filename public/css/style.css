@@ -55,6 +55,12 @@ html {
   box-sizing: border-box;
 }
 
+.choose {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 0.5rem;
+}
+
 .choose h1 {
   margin-bottom: 5px;
   margin-top: 10px;
@@ -75,38 +81,44 @@ html {
 }
 
 .body-container {
-  /* position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-  
-    height: 100vh;
-    margin-top: 1rem; */
-  /* position: relative; */
   margin: 0 0.5rem;
-
-  /* background-color: #2e2a66; */
   border-radius: 5px;
-  /* padding: 0.5rem 0.5rem; */
-  /* margin-bottom: 1rem; */
-
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   justify-content: space-between;
   align-content: center;
-  /* align-items: center; */
   gap: 0.3rem 0.3rem;
-  /* align-items: stretch; */
-
   max-width: 100%;
   box-sizing: border-box;
-  /* height: 100vh; */
 
-  /* height: 6rem; */
   transition:
     all 0.2s,
     transform 1ms;
+}
+
+/* .arrow {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 1rem 1rem 0 1rem;
+  border-color: #ffffff transparent transparent transparent;
+  margin-left: 1rem;
+  transition: transform 0.3s;
+} */
+
+.arrow {
+  width: 2rem;
+  height: 1.5rem;
+  background-image: url('../pics/down-arrow.png'); /* Replace 'path/to/your/arrow-icon.png' with the path to your arrow icon */
+  background-size: contain;
+  background-repeat: no-repeat;
+  margin-left: 0.8rem;
+  transition: transform 0.3s;
+}
+
+.rotate {
+  transform: rotate(180deg); /* Rotate the arrow */
 }
 
 .header {
@@ -139,7 +151,6 @@ html {
   font-size: 1.5rem;
 }
 .nav__el--myacc {
-  /* background-color: rgb(45, 64, 89); */
   border-radius: 10%; /* Make the button round */
   width: 3.5rem; /* Adjust the width and height according to your icon size */
   height: 3.5rem;
@@ -155,6 +166,7 @@ html {
 .sides-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+
   gap: 0.3rem 0.3rem;
   opacity: 0;
   transition: opacity 0.5s ease-in-out;
@@ -202,7 +214,7 @@ html {
   flex-flow: column wrap;
   align-items: center;
   justify-content: center;
-  background-color: blue;
+  width: 100%;
 
   /* margin-top: 1rem; */
 }
@@ -258,22 +270,44 @@ html {
 }
 /* MARKER CONTAINER */
 
-.marker-container {
-  /* background-color: #3498db;
+.remove-container {
+  width: 100%;
+  background-color: #ffffff;
   display: flex;
-  flex-direction: column;
-  margin-top: 1rem;
-  opacity: 0;
-  transition: opacity 0.5s ease-in-out;
-  margin: 0 0.5rem; */
+  justify-content: space-between;
+}
+
+.remove__buttons {
+  display: flex;
+  justify-content: space-evenly;
+  margin-right: 2rem;
+  margin-bottom: 1rem;
+  padding: 0.2rem;
+}
+
+.remove_mark_btn {
+  border: none;
+  border-radius: 0.2rem;
+}
+
+.remove--marks {
+  background-color: #db5555;
+  /* margin-left: 2rem; */
+}
+
+.remove__last {
+  background-color: #dfba55;
+  /* margin-left: 2rem; */
+}
+
+.marker-container {
   margin: 0.5rem;
   opacity: 0;
-  /* background-color: rgb(238, 238, 238); */
-  background-image: linear-gradient(to right, rgb(238, 238, 238), #68615d);
-  /* border: 1px solid #ffffff; */
+  background-color: #ddd;
+  /* background-image: linear-gradient(to right, rgb(238, 238, 238), #68615d); */
   border-radius: 2px;
   transition: opacity 0.5s ease-in-out;
-  width: 300px;
+  width: 98%;
   position: relative;
   display: inline-block;
   font-size: 1.2rem;
@@ -287,56 +321,30 @@ html {
   justify-content: space-between;
 }
 
-/* .buttons {
-  display: inline-flex;
-  justify-content: center;
-  gap: 1rem;
-} */
-
-/* .m_button {
-  margin: 0.3rem;
-  padding: 1.3rem;
-  border-radius: 5px;
-  background-color: white;
-} */
-
 .m_button.pressed {
   transform: translateY(1px);
   box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.3);
-  background-color: rgb(143, 140, 140);
-  /* border: 3px solid rgb(26, 165, 230); */
+  border: 0.3rem solid coral;
 }
 
 .buttons-shape button {
-  background-color: rgb(255, 255, 255);
+  background-color: #ddd;
 }
 .m_button--shapes {
   padding: 0.2rem;
   background-color: #ddd;
-  border: 1px solid rgb(0, 0, 0);
-  /* 
-  width: 5rem;
-  height: 4rem; */
-  /* float: left; */
+  border: none;
 }
 
 .buttons button {
-  background-color: rgb(45, 64, 89);
-  border: 1px solid rgb(0, 0, 0);
-  color: white; /* White text */
-  padding: 1rem 2rem;
+  padding: 0.5rem 2rem;
   cursor: pointer;
-  float: left;
 }
 
 .buttons:after {
   content: '';
   clear: both;
   display: table;
-}
-
-.buttons button:not(:last-child) {
-  border-right: none; /* Prevent double borders */
 }
 
 #circle {
@@ -358,6 +366,7 @@ html {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  gap: 0.1rem;
 }
 .row--orientation.hidden {
   display: none;
@@ -368,24 +377,15 @@ html {
 }
 
 /* MEASUREMENT BUTTONS */
-/* #small {
-  background-color: #78fa7e; 
-
-#medium {
-  background-color: #faf878; 
-}
-#big {
-  background-color: #e96f4b; 
-} */
 
 .send-container {
-  background-color: rgb(34, 40, 49);
+  /* background-color: rgb(34, 40, 49); */
   border-radius: 5px;
   padding: 1rem 1.8rem;
-  margin-top: 1rem;
+  margin-top: 0;
   max-width: 100%;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   /* margin-bottom: 10rem; */
 
@@ -402,7 +402,10 @@ html {
 }
 
 .send-marks {
-  padding: 0.5rem;
+  padding: 0.4rem 0.5rem;
+  background-color: coral;
+  border: none;
+  border-radius: 0.3rem;
 }
 .shapes-container {
   display: flex;
@@ -447,37 +450,12 @@ html {
 }
 
 .save-marks-container {
-  padding: 1rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0;
 }
-/* .orientation-buttons {
-    display: flex;
-    flex-direction: row;
-  
-    justify-content: center;
-    gap: 1rem;
-  }
-  
-  .button--orientation {
-    width: 4rem;
-    height: 4rem;
-    font-size: 1rem; 
-  } */
 
 .visible {
   opacity: 1;
-}
-.remove--marks {
-  background-color: #db5555;
-  margin-left: 2rem;
-  padding: 0.5rem;
-  border-radius: 5px;
-}
-
-.remove__last {
-  background-color: #dfba55;
-  margin-left: 2rem;
-  padding: 0.5rem;
-  border-radius: 5px;
 }
 
 .overlay-text {
