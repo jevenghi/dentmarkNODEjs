@@ -305,7 +305,7 @@ html {
 .marker-container {
   margin: 0.5rem;
   opacity: 0;
-  background-color: #ddd;
+  background-color: #ffffff;
   /* background-image: linear-gradient(to right, rgb(238, 238, 238), #68615d); */
   border-radius: 2px;
   transition: opacity 0.5s ease-in-out;
@@ -330,11 +330,11 @@ html {
 }
 
 .buttons-shape button {
-  background-color: #ddd;
+  background-color: #ffffff;
 }
 .m_button--shapes {
   padding: 0.2rem;
-  background-color: #ddd;
+  background-color: #ffffff;
   border: none;
 }
 
