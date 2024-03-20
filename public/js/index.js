@@ -5,6 +5,7 @@ import { updatedDent } from './updateDent';
 import { generatePDF } from './generatePDF';
 import { showAlert } from './alerts';
 import { deleteTask } from './deleteTask';
+import { placeMarker } from './placeMarker';
 
 const userDataForm = document.querySelector('.form-user-data');
 const userPasswordForm = document.querySelector('.form-user-password');
@@ -31,9 +32,10 @@ let url = new URL(window.location.href);
 
 // if (vehicleImage) {
 //   vehicleImage.addEventListener('click', (event) => {
+//     const side = vehicleImage.dataset.side;
+//     console.log(side);
 //     const x = (event.offsetX / vehicleImage.clientWidth) * 100;
 //     const y = (event.offsetY / vehicleImage.clientHeight) * 100;
-//     console.log(x, y);
 //   });
 // }
 
@@ -129,32 +131,6 @@ if (filterOptions) {
   });
 }
 
-// toDateInput.addEventListener('change', filterTasks);
-
-// const dateString = row.querySelector('td:nth-child(4)').textContent;
-// const taskStatus = row
-//   .querySelector('td:nth-child(3)')
-//   .textContent.toLowerCase();
-
-// const [day, month, year] = dateString.split('/').map(Number);
-
-// Create a Date object using the parsed components
-// const taskDate = new Date(year, month - 1, day);
-
-// const dateMatch =
-//   (!fromDate || taskDate >= fromDate) && (!toDate || taskDate <= toDate);
-//       const statusMatch =
-//         selectedStatus === '' || taskStatus === selectedStatus;
-
-//       if (statusMatch) {
-//         row.style.display = 'table-row';
-//       } else {
-//         row.style.display = 'none';
-//       }
-//     });
-//   }
-// }
-
 if (overlay) {
   overlay.addEventListener('click', () => {
     overlay.classList.add('hidden');
@@ -234,19 +210,6 @@ if (userPasswordForm) {
   });
 }
 
-// if (saveDentChangesBtn) {
-//   saveDentChangesBtn.addEventListener('click', async function () {
-//     const taskId = this.dataset.taskId;
-//     const taskStatus = document.querySelector('.task-status-select').value;
-//     console.log(taskStatus);
-//     document.querySelectorAll('tbody tr').forEach((row) => {
-//       const dentId = row.dataset.dentId;
-//       console.log(dentId);
-//       const cost = row.querySelector('.dent-cost').value;
-//       updatedDent(taskId, dentId, taskStatus, cost);
-//     });
-//   });
-// }
 if (costInputs) {
   costInputs.forEach((input) => {
     input.addEventListener('change', () => {
@@ -302,24 +265,7 @@ if (backToTasks) {
     window.location.href = '/tasks';
   });
 }
-// document.querySelectorAll('tbody tr').forEach((row) => {
-//   const costInput = row.querySelector('.dent-cost');
-//   const taskId = row.dataset.taskId;
-//   const dentId = row.dataset.dentId;
-//   const taskStatus = document.querySelector('.task-status-select').value;
-//   costInput.addEventListener('change', () => {
-//     const cost = parseFloat(row.querySelector('.dent-cost').value);
-//     if (isNaN(cost) || cost < 0) {
-//       return showAlert('error', 'Cost must be a positive number');
-//     } else if (cost > 10000) {
-//       return showAlert('error', 'Cost must not exceed 10,000');
-//     }
-//     updatedDent(taskId, dentId, taskStatus, cost);
-//   });
-// });
-// saveDentChangesBtn.addEventListener('click', async function () {
-//   const taskStatus = document.querySelector('.task-status-select').value;
-// });
+
 if (deleteTaskBtn) {
   deleteTaskBtn.addEventListener('click', function () {
     const taskId = deleteTaskBtn.dataset.taskId;

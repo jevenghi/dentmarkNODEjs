@@ -55,8 +55,6 @@ class App {
   #dents = [];
   #dentsTemp = {};
 
-  #markerCount;
-
   #dentLength;
   #dentShape;
   #dentPaintDamaged = false;
@@ -73,17 +71,6 @@ class App {
     });
     const urlParams = new URLSearchParams(window.location.search);
     const taskId = urlParams.get('taskId');
-    if (taskId) {
-      this._lastMarkerNumber(taskId)
-        .then((lastNum) => {
-          this.#markerCount = lastNum;
-        })
-        .catch((err) => {
-          console.error('Error:', err);
-        });
-    } else {
-      this.#markerCount = 0;
-    }
 
     logout.addEventListener('click', this._logoutUser);
     overlay.addEventListener('click', this._closeModal);
@@ -242,7 +229,6 @@ class App {
         );
       }
 
-      this.#markerCount++;
       //calculate the percentage values of the x, y relative to the width,
       //height of an image, so that x, y can be recreated on image of another size.
       this.#storedCoordinates = {
@@ -297,7 +283,6 @@ class App {
         orientation: this.#orientationPressed ? this.#lineAngle : null,
         paintDamaged: this.#dentPaintDamaged,
         coords: this.#storedCoordinates,
-        markerNumber: this.#markerCount,
         status: 'open',
       };
 
@@ -332,7 +317,6 @@ class App {
         await this._sendTask(model, this.#bodyType, this.#dents);
       }
       this._removeAllMarkers();
-      this.#markerCount = 0;
       document.querySelector('.send-marks').textContent = 'Send task';
 
       // window.scrollTo(0, 0);
@@ -466,32 +450,12 @@ class App {
     }
   }
 
-  //   fetch('http://127.0.0.1:5501/api/v1/tasks/sendTask', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify(obj),
-  //   })
-  //     .then((res) => {
-  //       if (res.status === 201) {
-  //         console.log(res.json());
-  //         alert('Your task is sent successfully! We will contact you soon.');
-  //       } else {
-  //         console.log(res);
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.error('Error sending data:', error);
-  //     });
-  // }
   async _lastMarkerNumber(taskId) {
     try {
       const res = await axios({
         method: 'GET',
         url: `/api/v1/tasks/${taskId}`,
       });
-      // const lastNum = await task.dents[task.dents.length - 1];
       return res.data.data.dents[res.data.data.dents.length - 1].markerNumber;
     } catch (err) {
       alert(err.response.data.message);

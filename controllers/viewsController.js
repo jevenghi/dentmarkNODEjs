@@ -95,66 +95,18 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
   Object.entries(groupedDents).forEach(([side, dents]) => {
     dentsHTML += `
         <div class="image-container__summary">
-          <img id="vehicleImage" src="/pics/sides_pics/${side}.png" />
+          <img id="vehicleImage" src="/pics/sides_pics/${side}.png" data-side="${side}" />
         `;
     dents.forEach((dent) => {
-      const {
-        img,
-        shape,
-        length,
-        orientation,
-        paintDamaged,
-        coords,
-        // markerNumber,
-        _id,
-      } = dent;
+      const { img, shape, length, orientation, paintDamaged, coords, _id } =
+        dent;
       let markerStyle = isFrontOrRear(img)
         ? `left: ${coords.x - 4}%; top: ${coords.y - 3.5}%;`
         : `left: ${coords.x - 1}%; top: ${coords.y - 3}%;`;
-      // const numberStyle = `left: ${coords.x - 5}%; top: ${coords.y - 5}%;`;
-      // if (shape === 'line') {
-      //   markerStyle += `width: 2rem; border-radius: 0.8rem; transform: rotate(${orientation});`;
-      // }
-      // let markerClass = 'marker';
-      // if (paintDamaged === 'yes') markerClass += ' paint-damaged';
-      // if (length === 'small') {
-      //   markerClass += ' small';
-      //   markerStyle += 'background: #78fa7e;';
-      // } else if (length === 'medium') {
-      //   markerClass += ' medium';
-      //   markerStyle += 'background: #faf878;';
-      // } else if (length === 'big') {
-      //   markerClass += ' big';
-      //   markerStyle += 'background: #e96f4b;';
-      // }
+
       let markerClass = 'marker';
       if (paintDamaged === 'yes') markerClass += ' paint-damaged';
 
-      // if (length === 'small') {
-      //   markerClass += ' small';
-      //   // markerStyle += 'background: #78fa7e;';
-      //   if (shape === 'nonagon') {
-      //     markerStyle += 'width: 0.5rem; height: 0.5rem;';
-      //   } else if (shape === 'line') {
-      //     markerStyle += `width: 0.8rem; height: 0.3rem; border-radius: 0.8rem; transform: rotate(${orientation});`;
-      //   }
-      // } else if (length === 'medium') {
-      //   markerClass += ' medium';
-      //   // markerStyle += 'background: #faf878;';
-      //   if (shape === 'nonagon') {
-      //     markerStyle += 'width: 0.8rem; height: 0.8rem;';
-      //   } else if (shape === 'line') {
-      //     markerStyle += `width: 1.4rem; border-radius: 0.8rem; transform: rotate(${orientation});`;
-      //   }
-      // } else if (length === 'big') {
-      //   markerClass += ' big';
-      //   // markerStyle += 'background: #e96f4b;';
-      //   if (shape === 'nonagon') {
-      //     markerStyle += 'width: 1.6rem; height: 1.6rem;';
-      //   } else if (shape === 'line') {
-      //     markerStyle += `width: 2.2rem; height: 0.8rem; border-radius: 0.8rem; transform: rotate(rotate(${orientation}));`;
-      //   }
-      // }
       if (length === 'small') {
         markerClass += ' small';
         if (shape === 'nonagon') {
@@ -184,20 +136,6 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
           ${paintDamaged ? '<span>X</span>' : ''}
         </div>
       `;
-      // dentsHTML += `
-
-      //   <div class="marker-number" style="${numberStyle}">
-      //     <span>${markerNumber}</span>
-      //   </div>
-      // `;
-      // dentsHTML += `
-
-      //   <div class="${markerClass}" style="${markerStyle}">
-
-      //     ${paintDamaged === 'yes' ? '<span>X</span>' : ''}
-      //     <span class="marker-number">${markerNumber}</span>
-      //   </div>
-      // `;
     });
     dentsHTML += `</div>`;
   });
