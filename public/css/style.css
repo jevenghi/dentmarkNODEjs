@@ -275,15 +275,15 @@ html {
   display: flex;
   justify-content: space-evenly;
   margin-right: 2rem;
-  margin-bottom: 1rem;
-  padding: 0.2rem;
+  padding: 0.5rem;
 }
 
 .remove_mark_btn {
   border: none;
   border-radius: 0.2rem;
-  padding: 0.3rem;
-  margin: 0.5rem;
+  padding: 1rem;
+  margin: 1rem;
+  margin-bottom: 2rem;
 }
 
 .remove--marks {
@@ -369,6 +369,7 @@ html {
   flex-direction: row;
   justify-content: space-between;
   gap: 0.1rem;
+  background-color: #ffffff;
 }
 .row--orientation.hidden {
   display: none;
