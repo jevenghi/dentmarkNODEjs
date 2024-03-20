@@ -105,8 +105,8 @@ class App {
         buttonsBody.forEach((btn) => {
           btn.style.background = 'white';
         });
-        // removeMarksContainer.classList.add('hidden');
-        removeMarksContainer.style.display = 'none';
+        removeMarksContainer.classList.add('hidden');
+        // removeMarksContainer.style.display = 'none';
 
         button.style.background = 'linear-gradient(to right, #e69c6a, #ca580c)';
 
@@ -163,6 +163,7 @@ class App {
             const vehicleImage = document.getElementById('vehicleImage');
 
             vehicleImage.src = `pics/sides_pics/${this.#bodySide}.png`;
+            removeMarksContainer.classList.remove('hidden');
 
             sendContainer.classList.remove('hidden');
             markerContainer.classList.remove('hidden');
@@ -233,8 +234,7 @@ class App {
     const markers = {};
     vehicleImage.addEventListener('click', (event) => {
       event.preventDefault();
-      // removeMarksContainer.classList.remove('hidden');
-      removeMarksContainer.style.display = 'flex';
+      // removeMarksContainer.style.display = 'flex';
 
       if (this.#dents.length > 50) {
         return alert(

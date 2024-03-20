@@ -289,12 +289,15 @@ html {
 .remove--marks {
   background-color: #db5555;
   padding: 0.5rem;
+  color: #ffffff;
+
   /* margin-left: 2rem; */
 }
 
 .remove__last {
-  background-color: #dfba55;
+  background-color: rgb(34, 40, 49);
   padding: 0.3rem;
+  color: #ffffff;
 
   /* margin-left: 2rem; */
 }
@@ -402,9 +405,10 @@ html {
 
 .send-marks {
   padding: 0.4rem 0.5rem;
-  background-color: coral;
+  background-color: rgb(255, 87, 34);
   border: none;
   border-radius: 0.3rem;
+  color: #ffffff;
 }
 .shapes-container {
   display: flex;
