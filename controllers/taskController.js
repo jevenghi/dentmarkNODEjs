@@ -149,17 +149,6 @@ exports.addDentsToTask = catchAsyncErr(async (req, res, next) => {
 
 exports.updateTask = factory.updateOne(Task);
 
-// exports.updateTask = catchAsyncErr(async (req, res) => {
-//   const updatedTask = await Task.findByIdAndUpdate(req.params.id, req.body, {
-//     new: true,
-//     runValidators: true,
-//   });
-//   res.status(201).json({
-//     status: 'success',
-//     data: { task: updatedTask },
-//   });
-// });
-
 exports.deleteTask = async (req, res, next) => {
   try {
     const task = await Task.findById(req.params.id);
@@ -213,40 +202,7 @@ exports.getTaskStats = async (req, res) => {
     });
   }
 };
-// get use info and tasks via get user route /users/:userid
 
-// exports.getUserTasks = catchAsyncErr(async (req, res, next) => {
-//   const user = await User.findById(req.params.userId);
-//   if (!user) {
-//     return next(new AppError('No user exists with this id', 404));
-//   }
-//   const userTasks = await Task.find({ user: user });
-
-//   res.status(200).json({
-//     status: 'success',
-//     data: { userTasks },
-//   });
-// });
-
-//WITH DENTS: [{side: [dentschema]}]
-// exports.getDents = catchAsyncErr(async (req, res, next) => {
-//   const { id, dentId } = req.params;
-//   const { cost, status } = req.body;
-//   console.log(cost);
-//   const updatedTask = await Task.findByIdAndUpdate(
-//     { _id: id },
-//     { $set: { 'dents.$[].sedanls.$[inner].cost': cost } },
-//     {
-//       arrayFilters: [{ 'inner.id': dentId }],
-//       new: true,
-//     },
-//   );
-
-//   res.status(200).json({
-//     status: 'success',
-//     task: updatedTask,
-//   });
-// });
 exports.updateDents = catchAsyncErr(async (req, res, next) => {
   const taskId = req.params.id;
   const { dentId, cost, taskStatus } = req.body;

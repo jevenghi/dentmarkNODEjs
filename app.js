@@ -73,7 +73,7 @@ const passResetLimiter = rateLimit({
 });
 
 const taskLimiter = rateLimit({
-  max: 15,
+  max: 100,
   windowMs: 60 * 60 * 1000,
   data: {
     message: 'Too many tasks sent from this IP, please try again in one hour.',

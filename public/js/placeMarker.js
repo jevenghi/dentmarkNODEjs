@@ -85,6 +85,7 @@ export const addDentsToTask = async (taskId, dents) => {
       }, 50);
     }
   } catch (err) {
+    console.log(err);
     alert(err);
   }
 };

@@ -48,7 +48,7 @@ const taskSchema = new mongoose.Schema(
       type: String,
       default: 'open',
       enum: {
-        values: ['open', 'complete-not-paid', 'in-progress', 'paid'],
+        values: ['open', 'complete', 'in-progress', 'paid'],
       },
     },
     images: [String],
