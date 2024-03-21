@@ -5,7 +5,7 @@ import { updatedDent } from './updateDent';
 import { generatePDF } from './generatePDF';
 import { showAlert } from './alerts';
 import { deleteTask } from './deleteTask';
-import { placeMarker } from './placeMarker';
+import { placeMarker, addDentsToTask } from './placeMarker';
 
 const userDataForm = document.querySelector('.form-user-data');
 const userPasswordForm = document.querySelector('.form-user-password');
@@ -26,8 +26,21 @@ const emailInputSignup = document.getElementById('email-signup');
 const paginationBtns = document.querySelector('.pagination-buttons');
 const filterOptions = document.querySelector('.filter-menu');
 const forgotPassBtn = document.getElementById('forgot-pass');
-const vehicleImage = document.getElementById('vehicleImage');
+// const vehicleImage = document.getElementById('vehicleImage');
+// const vehicleImages = document.querySelectorAll('#vehicleImage');
+
 const markers = document.querySelectorAll('.marker');
+const markerContainer = document.querySelector('.marker-container');
+const addDents = document.querySelector('.add-dents');
+
+const buttonsDistance = document.querySelectorAll('.m_button--distance');
+const buttonsShape = document.querySelectorAll('.m_button--shapes');
+const paintDamagedCheck = document.getElementById('paint-damaged');
+const buttonsOrientation = document.querySelectorAll('.m_button--orientation');
+const orientationContainer = document.querySelector('.row--orientation');
+const imageContainer = document.querySelector('.image-container__summary');
+const imageContainers = document.querySelectorAll('.image-container__summary');
+
 let url = new URL(window.location.href);
 
 // if (vehicleImage) {
@@ -36,8 +49,117 @@ let url = new URL(window.location.href);
 //     console.log(side);
 //     const x = (event.offsetX / vehicleImage.clientWidth) * 100;
 //     const y = (event.offsetY / vehicleImage.clientHeight) * 100;
+
+//     // placeMarker(side);
 //   });
 // }
+
+// if (addDents) {
+//   addDents.addEventListener('click', () => {
+//     markerContainer.style.display = 'inline-block';
+//     setTimeout(function () {
+//       markerContainer.classList.add('visible');
+//     }, 50);
+//   });
+// }
+if (markerContainer) {
+  let storedCoordinates;
+  let distancePressed = false;
+  let shapePressed = false;
+  let orientationPressed = false;
+  const dents = [];
+
+  let dentPaintDamaged = false;
+  let dentLength;
+  let dentShape;
+  let lineAngle;
+  buttonsDistance.forEach((button) => {
+    button.addEventListener('click', () => {
+      buttonsDistance.forEach((btn) => btn.classList.remove('pressed'));
+      distancePressed = true;
+
+      button.classList.add('pressed');
+      dentLength = button.id;
+    });
+  });
+  buttonsShape.forEach((button) => {
+    button.addEventListener('click', () => {
+      buttonsShape.forEach((btn) => btn.classList.remove('pressed'));
+
+      button.classList.add('pressed');
+      shapePressed = true;
+      dentShape = button.id;
+      if (dentShape === 'line') {
+        orientationContainer.classList.remove('hidden');
+      } else {
+        orientationContainer.classList.add('hidden');
+      }
+    });
+  });
+  paintDamagedCheck.addEventListener('click', () => {
+    dentPaintDamaged = dentPaintDamaged ? false : true;
+  });
+
+  buttonsOrientation.forEach((button) => {
+    button.addEventListener('click', () => {
+      buttonsOrientation.forEach((btn) => btn.classList.remove('pressed'));
+
+      button.classList.add('pressed');
+      orientationPressed = true;
+      lineAngle = button.id;
+    });
+  });
+  if (imageContainers) {
+    imageContainers.forEach((imageContainer) => {
+      const vehicleImage = imageContainer.querySelector('#vehicleImage');
+      vehicleImage.addEventListener('click', (event) => {
+        event.preventDefault();
+
+        const side = vehicleImage.dataset.side;
+        storedCoordinates = {
+          x: (event.offsetX / vehicleImage.clientWidth) * 100,
+          y: (event.offsetY / vehicleImage.clientHeight) * 100,
+        };
+
+        if (!shapePressed || !distancePressed) {
+          alert('Shape and Distance options should be selected');
+          return;
+        }
+
+        if (dentShape === 'line') {
+          if (!orientationPressed) {
+            alert('Choose the orientation of the dent');
+            return;
+          }
+        }
+        const coords = storedCoordinates;
+        placeMarker(
+          side,
+          dentShape,
+          dentLength,
+          lineAngle,
+          dentPaintDamaged,
+          coords,
+          imageContainer,
+        );
+        const newObj = {
+          img: side,
+          shape: dentShape,
+          length: dentLength,
+          orientation: orientationPressed ? lineAngle : null,
+          paintDamaged: dentPaintDamaged,
+          coords: storedCoordinates,
+        };
+
+        dents.push(newObj);
+      });
+    });
+  }
+  addDents.addEventListener('click', () => {
+    const taskId = addDents.dataset.taskId;
+    addDentsToTask(taskId, dents);
+  });
+}
 
 if (markers) {
   markers.forEach((marker) => {

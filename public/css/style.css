@@ -154,7 +154,7 @@ html {
 
 .sides-container {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(5, 1fr);
 
   gap: 0.3rem 0.3rem;
   opacity: 0;
@@ -304,9 +304,8 @@ html {
 
 .marker-container {
   margin: 0.5rem;
-  opacity: 0;
+  /* opacity: 0; */
   background-color: #ffffff;
-  /* background-image: linear-gradient(to right, rgb(238, 238, 238), #68615d); */
   border-radius: 2px;
   transition: opacity 0.5s ease-in-out;
   width: 98%;
@@ -510,6 +509,7 @@ html {
   background-color: rgb(238, 238, 238);
   /* padding: 1rem; */
   margin: 1rem;
+  margin-bottom: 0;
 }
 
 .task-header p {

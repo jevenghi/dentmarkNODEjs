@@ -38,33 +38,41 @@ block content
       if role === 'user'
         p Task status: #{taskStatus}
         p Total cost: € #{totalCost}
-        
+    //- .marker-container(style="display: none")
+    .marker-container
+      .row.row--shapes
+        label Shape:
+        .buttons-shape
+          button.m_button.m_button--shapes#nonagon
+            img(src="../pics/button_pics/nonagon.png" alt="nonagon" id="circle")
+          button.m_button.m_button--shapes#line
+            img(src="../pics/button_pics/strip2.png" alt="strip" id="strip")
+      .row.row--orientation.hidden
+        label Orientation:
+        .orientation-buttons
+          button.m_button.m_button--orientation#0deg
+            img(src="../pics/button_pics/0deg.png" alt="0deg" id="flat")
+          button.m_button.m_button--orientation#90deg
+            img(src="../pics/button_pics/90deg.png" alt="90deg" id="flat")
+          button.m_button.m_button--orientation#135deg
+            img(src="../pics/button_pics/135deg.png" alt="135deg" id="flat")
+          button.m_button.m_button--orientation#45deg
+            img(src="../pics/button_pics/45deg.png" alt="45deg" id="flat")
+      .row
+        label Distance:
+        .buttons
+          button.m_button.m_button--distance#small 0 - 5
+          button.m_button.m_button--distance#medium 5-10
+          button.m_button.m_button--distance#big 10+
+      .checkbox-paint
+        label
+          | Paint damaged
+          input(type="checkbox" class="m_checkbox m_checkbox--paint" id="paint-damaged")    
     != dentsHTML
-    a(href=`/?taskId=${taskId}` class="add-dents") Add dents
-    //- table.task-table
-    //-     thead
-    //-       tr
-    //-         th Dent number
-    //-         th Cost
-    //-     tbody
-    //-       each dent in dents
-    //-         tr(data-dent-id=dent._id data-task-id=taskId)
-    //-           td= dent.markerNumber
-              //- td
-              //-   select(name="status", class="dent-status-select")
-              //-     option(value="open", selected=dent.status === "open") Open
-              //-     option(value="in-progress", selected=dent.status === "in-progress") In Progress
-              //-     option(value="complete", selected=dent.status === "complete") Complete
-              if role === 'admin'
-                td €  
-                  input(type="text", placeholder=dent.cost, name="cost", class='dent-cost', data-dent-id=dent._id, data-task-id=taskId)
-              if role === 'user'   
-                td= dent.cost
-          td Total:
-          td € 
-            strong= totalCost
-    
-                       
+    //- a(href=`/?taskId=${taskId}` class="add-dents") Add dents
+    button(type="button" class="add-dents" data-task-id=taskId) Add dents
+
+
                    
     button(type="button" class='back-tasks') Back to tasks           
   .overlay.hidden

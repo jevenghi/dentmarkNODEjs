@@ -258,24 +258,6 @@ class App {
         imageContainer,
       );
 
-      // const dentData = {
-      //   shape: this.#dentShape,
-      //   length: this.#dentLength,
-      //   orientation: this.#orientationPressed ? this.#lineAngle : null,
-      //   paintDamaged: this.#dentPaintDamaged,
-      //   coords: this.#storedCoordinates,
-      //   cost: 0,
-      //   markerNumber: this.#markerCount,
-      //   status: 'open',
-      //   id: uniqueId(),
-      // };
-
-      // if (!this.#dents[this.#bodySide]) {
-      //   this.#dents[this.#bodySide] = [];
-      // }
-
-      // this.#dents[this.#bodySide].push(dentData);
-
       const newObj = {
         img: this.#bodySide,
         shape: this.#dentShape,
@@ -318,66 +300,6 @@ class App {
       }
       this._removeAllMarkers();
       document.querySelector('.send-marks').textContent = 'Send task';
-
-      // window.scrollTo(0, 0);
-      // setTimeout(() => {
-      //   location.reload();
-      // }, 50);
-
-      // fetch('http://127.0.0.1:5501/api/v1/tasks/sendTask', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify(veh),
-      // })
-      //   .then((response) => {
-      //     if (!response.ok) {
-      //       throw new Error('Network response was not ok');
-      //     }
-      //     return response.json();
-      //   })
-      //   .then(() => {
-      //     alert('Your task is sent successfully! We will contact you soon.');
-      //   })
-      //   .catch((error) => {
-      //     console.error('Error sending data:', error);
-      //   });
-
-      //TASK RECREATE
-      // Object.entries(veh.dents).forEach(([side, dents]) => {
-      //   let html = `
-      //     <div class="image-container__summary">
-      //       <div class="overlay-text model-text">${veh.carModel}</div>
-      //       <div class="overlay-text customer-text">${veh.user}</div>
-      //       <div class="overlay-text date-text">${veh.createdAt}</div>
-      //       <img id="vehicleImage" src="pics/sides_pics/${side}.png" />
-      //       <div id="marker"></div>
-      //     </div>
-      //   `;
-
-      //   sendContainer.insertAdjacentHTML('afterend', html);
-
-      //   dents.forEach((entry) => {
-      //     const { shape, length, orientation, paintDamaged, coords } = entry;
-      //     const imageContainerSummary = document.querySelector(
-      //       '.image-container__summary',
-      //     );
-      //     this._placeMarker(
-      //       shape,
-      //       length,
-      //       orientation,
-      //       paintDamaged,
-      //       coords,
-      //       imageContainerSummary,
-      //     );
-      //   });
-      // });
-
-      // window.scrollTo(0, 0);
-      // setTimeout(() => {
-      //   location.reload();
-      // }, 50);
     });
 
     removeMarksBtn.addEventListener('click', () => {
