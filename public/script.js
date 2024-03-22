@@ -78,8 +78,6 @@ class App {
     myAccBtn.addEventListener('click', () => {
       modal.classList.toggle('hidden');
       overlay.classList.toggle('hidden');
-
-      // modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
     });
     modalLinks.forEach((button) => {
       button.addEventListener('click', () => {
@@ -93,12 +91,10 @@ class App {
           btn.style.background = 'white';
         });
         removeMarksContainer.classList.add('hidden');
-        // removeMarksContainer.style.display = 'none';
 
         button.style.background = 'linear-gradient(to right, #e69c6a, #ca580c)';
 
         this.#bodyType = button.value;
-        // bodyContainer.classList.add('hidden');
         bodyContainer.style.display = 'none';
         arrowBody.classList.toggle('rotate');
 

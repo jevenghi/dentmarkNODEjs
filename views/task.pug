@@ -2,6 +2,8 @@ extends base
 
 block styles
   link(rel="stylesheet" href="/css/style.css")
+  link(href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz@9..40&family=Tourney:wght@100&display=swap&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+      rel="stylesheet")
 block content
   header.header
       button.nav__el.nav__el--myacc
@@ -67,7 +69,17 @@ block content
       .checkbox-paint
         label
           | Paint damaged
-          input(type="checkbox" class="m_checkbox m_checkbox--paint" id="paint-damaged")    
+          input(type="checkbox" class="m_checkbox m_checkbox--paint" id="paint-damaged")
+    
+    div.choose.choose__side
+      h1 Add another side
+      //- span.arrow.arrow__side
+    .sides-container.visible
+      each side in sidesLeft
+        button.button.button--side(value=`${side}`)
+          img(src=`../pics/sides_pics/${side}.png`, id=`${side}`)
+        
+             
     != dentsHTML
     //- a(href=`/?taskId=${taskId}` class="add-dents") Add dents
     button(type="button" class="add-dents" data-task-id=taskId) Add dents

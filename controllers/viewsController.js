@@ -80,7 +80,9 @@ const isFrontOrRear = function (side) {
 
 exports.getTask = catchAsyncError(async (req, res, next) => {
   const task = await Task.findById(req.params.id);
+  const { bodyType } = task;
   let dentsHTML = '';
+  let sidesLeft = ['re', 'ls', 'rs', 'fr', 'top'].map((el) => bodyType + el);
 
   const taskDents = task.dents.toObject();
   let groupedDents = taskDents.reduce((acc, obj) => {
@@ -93,6 +95,8 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
   }, {});
 
   Object.entries(groupedDents).forEach(([side, dents]) => {
+    sidesLeft = sidesLeft.filter((el) => el !== side);
+
     dentsHTML += `
         <div class="image-container__summary">
           <img id="vehicleImage" src="/pics/sides_pics/${side}.png" data-side="${side}" />
@@ -139,7 +143,6 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
     });
     dentsHTML += `</div>`;
   });
-
   res.status(200).render('task', {
     title: 'Task',
     taskId: req.params.id,
@@ -151,6 +154,7 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
     customer: task.user.name,
     dentsHTML: dentsHTML,
     totalCost: task.totalCost,
+    sidesLeft,
   });
 });
 
