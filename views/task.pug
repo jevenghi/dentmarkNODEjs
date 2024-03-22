@@ -77,7 +77,7 @@ block content
     div.choose.choose__side
       h1 Add another side
       span.arrow.arrow__side
-    .sides-container.visible
+    .sides-container.visible(style="display: none")
       each side in sidesLeft
         button.button.button--side(value=`${side}`)
           img(src=`../pics/sides_pics/${side}.png`, id=`${side}`)
