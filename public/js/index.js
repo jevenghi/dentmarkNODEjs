@@ -43,6 +43,10 @@ const orientationContainer = document.querySelector('.row--orientation');
 const imageContainer = document.querySelector('.image-container__summary');
 const buttonsSide = document.querySelectorAll('.button--side');
 const sidesContainer = document.querySelector('.sides-container');
+const markerParameters = document.querySelector('.choose-marker');
+
+const arrowParams = document.querySelector('.arrow__params');
+const arrowSide = document.querySelector('.arrow__side');
 
 let url = new URL(window.location.href);
 
@@ -65,6 +69,14 @@ let url = new URL(window.location.href);
 //     }, 50);
 //   });
 // }
+if (markerParameters) {
+  markerParameters.addEventListener('click', () => {
+    arrowParams.classList.toggle('rotate');
+    markerContainer.style.display =
+      markerContainer.style.display === 'none' ? 'inline-block' : 'none';
+  });
+}
+
 if (markerContainer) {
   let distancePressed = false;
   let shapePressed = false;

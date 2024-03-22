@@ -41,7 +41,10 @@ block content
         p Task status: #{taskStatus}
         p Total cost: € #{totalCost}
     //- .marker-container(style="display: none")
-    .marker-container
+    .choose.choose-marker
+      h1 Marker settings
+      span.arrow.arrow__params
+    .marker-container(style="display: none")
       .row.row--shapes
         label Shape:
         .buttons-shape
@@ -73,7 +76,7 @@ block content
     
     div.choose.choose__side
       h1 Add another side
-      //- span.arrow.arrow__side
+      span.arrow.arrow__side
     .sides-container.visible
       each side in sidesLeft
         button.button.button--side(value=`${side}`)
