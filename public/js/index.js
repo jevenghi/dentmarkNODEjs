@@ -178,8 +178,9 @@ if (markerContainer) {
   buttonsSide.forEach((button) => {
     button.addEventListener('click', () => {
       const img = button.value;
+      const taskId = button.dataset.taskId;
       const imageHTML = `<div class="image-container">
-      <img id="vehicleImage" src="../pics/sides_pics/${img}.png" data-side="${img}" /></div>`;
+      <img id="vehicleImage" src="../pics/sides_pics/${img}.png" data-side="${img}" data-task-id="${taskId}" /></div>`;
       sidesContainer.insertAdjacentHTML('afterend', imageHTML);
       imageContainers = document.querySelectorAll('.image-container');
       imageContainers.forEach((imageContainer) => {

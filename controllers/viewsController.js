@@ -84,8 +84,8 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
   let dentsHTML = '';
   let sidesLeft = ['re', 'ls', 'rs', 'fr', 'top'].map((el) => bodyType + el);
 
-  const taskDents = task.dents.toObject();
-  let groupedDents = taskDents.reduce((acc, obj) => {
+  const taskDents = task.dents.toObject().reverse();
+  const groupedDents = taskDents.reduce((acc, obj) => {
     const { img } = obj;
     if (!acc[img]) {
       acc[img] = [];
@@ -96,7 +96,6 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
 
   Object.entries(groupedDents).forEach(([side, dents]) => {
     sidesLeft = sidesLeft.filter((el) => el !== side);
-    //<div class="image-container__summary">
     dentsHTML += `
         <div class="image-container">
           <img id="vehicleImage" src="/pics/sides_pics/${side}.png" data-side="${side}" data-task-id="${req.params.id}"/>

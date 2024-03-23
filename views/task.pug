@@ -40,11 +40,11 @@ block content
       if role === 'user'
         p Task status: #{taskStatus}
         p Total cost: € #{totalCost}
+    //- .choose.choose-marker
+    //-   h1 Marker settings
+    //-   span.arrow.arrow__params
     //- .marker-container(style="display: none")
-    .choose.choose-marker
-      h1 Marker settings
-      span.arrow.arrow__params
-    .marker-container(style="display: none")
+    .marker-container
       .row.row--shapes
         label Shape:
         .buttons-shape
@@ -79,7 +79,7 @@ block content
       span.arrow.arrow__side
     .sides-container.visible(style="display: none")
       each side in sidesLeft
-        button.button.button--side(value=`${side}`)
+        button.button.button--side(value=`${side}` data-task-id=`${taskId}`)
           img(src=`../pics/sides_pics/${side}.png`, id=`${side}`)
         
     //- .remove-container
