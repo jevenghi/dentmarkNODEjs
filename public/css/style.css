@@ -211,7 +211,7 @@ html {
   justify-content: center;
   width: 98%;
 
-  /* margin-top: 1rem; */
+  margin-top: 0.5rem;
 }
 
 .image-container__summary {
@@ -832,7 +832,8 @@ button[type='submit']:hover {
   margin-bottom: 2rem;
 }
 .delete-task,
-.add-dents {
+.add-dents,
+.back-tasks {
   background-color: rgb(255, 87, 34);
   color: #fff;
   border-radius: 0.3rem;
@@ -842,6 +843,7 @@ button[type='submit']:hover {
   font-size: 1.5rem;
   text-decoration: none;
 }
+
 .checkbox-paint {
   display: flex;
   padding: 1rem;
