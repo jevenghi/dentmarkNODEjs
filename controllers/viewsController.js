@@ -96,16 +96,16 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
 
   Object.entries(groupedDents).forEach(([side, dents]) => {
     sidesLeft = sidesLeft.filter((el) => el !== side);
-
+    //<div class="image-container__summary">
     dentsHTML += `
-        <div class="image-container__summary">
-          <img id="vehicleImage" src="/pics/sides_pics/${side}.png" data-side="${side}" />
+        <div class="image-container">
+          <img id="vehicleImage" src="/pics/sides_pics/${side}.png" data-side="${side}" data-task-id="${req.params.id}"/>
         `;
     dents.forEach((dent) => {
       const { img, shape, length, orientation, paintDamaged, coords, _id } =
         dent;
       let markerStyle = isFrontOrRear(img)
-        ? `left: ${coords.x - 4}%; top: ${coords.y - 3.5}%;`
+        ? `left: ${coords.x - 2}%; top: ${coords.y - 3.5}%;`
         : `left: ${coords.x - 1}%; top: ${coords.y - 3}%;`;
 
       let markerClass = 'marker';

@@ -434,7 +434,7 @@ class App {
     const marker = document.createElement('div');
     marker.className = 'marker';
     marker.style.left = this._isFrontOrRear(side)
-      ? `${coords.x - 4}%`
+      ? `${coords.x - 2}%`
       : `${coords.x - 1}%`;
     marker.style.top = this._isFrontOrRear(side)
       ? `${coords.y - 3.5}%`

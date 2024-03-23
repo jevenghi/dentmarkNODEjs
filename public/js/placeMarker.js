@@ -17,7 +17,7 @@ export const placeMarker = (
   const marker = document.createElement('div');
   marker.className = 'marker';
   marker.style.left = isFrontOrRear(side)
-    ? `${coords.x - 4}%`
+    ? `${coords.x - 2}%`
     : `${coords.x - 1}%`;
   marker.style.top = isFrontOrRear(side)
     ? `${coords.y - 3.5}%`
@@ -77,8 +77,7 @@ export const addDentsToTask = async (taskId, dents) => {
       data: { dents },
     });
     if (res.data.status === 'success') {
-      alert('Dents successfully added!');
-
+      // alert('Dents successfully added!');
       window.setTimeout(() => {
         window.scrollTo(0, 0);
         location.reload();
