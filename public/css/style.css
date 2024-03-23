@@ -284,7 +284,6 @@ html {
   border-radius: 0.2rem;
   padding: 1rem;
   margin: 1rem;
-  margin-bottom: 2rem;
 }
 
 .remove--marks {
@@ -323,10 +322,17 @@ html {
   justify-content: space-between;
 }
 
+.m_button {
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  border-width: 0.01rem;
+}
+
 .m_button.pressed {
   transform: translateY(1px);
-  box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.3);
+  /* box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.3); */
   border: 0.2rem solid coral;
+  border-radius: 0.5rem;
 }
 
 .buttons-shape button {
