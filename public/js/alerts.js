@@ -11,5 +11,5 @@ export const showAlert = (type, msg, callback) => {
   window.setTimeout(() => {
     hideAlert();
     if (callback) callback(); // Execute the callback if provided
-  }, 5000);
+  }, 3000);
 };

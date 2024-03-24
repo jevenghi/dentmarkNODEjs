@@ -57,16 +57,14 @@ let markers = getMarkers();
 if (addAnotherSide) {
   addAnotherSide.addEventListener('click', () => {
     arrowSide.classList.toggle('rotate');
-    sidesContainer.style.display =
-      sidesContainer.style.display === 'none' ? 'grid' : 'none';
+    sidesContainer.style.display = sidesContainer.style.display === 'none' ? 'grid' : 'none';
   });
 }
 
 if (markerParameters) {
   markerParameters.addEventListener('click', () => {
     arrowParams.classList.toggle('rotate');
-    markerContainer.style.display =
-      markerContainer.style.display === 'none' ? 'inline-block' : 'none';
+    markerContainer.style.display = markerContainer.style.display === 'none' ? 'inline-block' : 'none';
   });
 }
 
@@ -105,15 +103,7 @@ if (markerContainer) {
       }
 
       const coords = storedCoordinates;
-      placeMarker(
-        side,
-        dentShape,
-        dentLength,
-        lineAngle,
-        dentPaintDamaged,
-        coords,
-        imageContainer,
-      );
+      placeMarker(side, dentShape, dentLength, lineAngle, dentPaintDamaged, coords, imageContainer);
       const newObj = {
         img: side,
         shape: dentShape,
@@ -181,7 +171,7 @@ if (markerContainer) {
       const taskId = button.dataset.taskId;
       const imageHTML = `<div class="image-container">
       <img id="vehicleImage" src="../pics/sides_pics/${img}.png" data-side="${img}" data-task-id="${taskId}" /></div>`;
-      sidesContainer.insertAdjacentHTML('afterend', imageHTML);
+      backToTasks.insertAdjacentHTML('beforebegin', imageHTML);
       imageContainers = document.querySelectorAll('.image-container');
       imageContainers.forEach((imageContainer) => {
         handleImageContainerClick(imageContainer);
@@ -322,9 +312,7 @@ if (modalLinks) {
 }
 
 if (emailInputSignup) {
-  emailInputSignup.addEventListener('input', () =>
-    checkFieldAvailability('email-signup', 'checkEmail'),
-  );
+  emailInputSignup.addEventListener('input', () => checkFieldAvailability('email-signup', 'checkEmail'));
 }
 
 if (signupForm) {
@@ -362,12 +350,8 @@ if (userPasswordForm) {
     e.preventDefault();
     const oldPassword = document.getElementById('oldPassword').value;
     const newPassword = document.getElementById('newPassword').value;
-    const newPasswordConfirm =
-      document.getElementById('confirmNewPassword').value;
-    updateSettings(
-      { oldPassword, newPassword, newPasswordConfirm },
-      'password',
-    );
+    const newPasswordConfirm = document.getElementById('confirmNewPassword').value;
+    updateSettings({ oldPassword, newPassword, newPasswordConfirm }, 'password');
   });
 }
 
@@ -429,7 +413,10 @@ if (backToTasks) {
 
 if (deleteTaskBtn) {
   deleteTaskBtn.addEventListener('click', function () {
-    const taskId = deleteTaskBtn.dataset.taskId;
-    deleteTask(taskId);
+    const confirmed = confirm('Delete this task?');
+    if (confirmed) {
+      const taskId = deleteTaskBtn.dataset.taskId;
+      deleteTask(taskId);
+    }
   });
 }

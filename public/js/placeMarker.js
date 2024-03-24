@@ -100,7 +100,7 @@ export const addDentsToTask = async (taskId, dents) => {
     if (res.data.status === 'success') {
       // alert('Dents successfully added!');
       window.setTimeout(() => {
-        window.scrollTo(0, 0);
+        // window.scrollTo(0, 0);
         location.reload();
       }, 50);
     }
