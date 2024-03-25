@@ -205,8 +205,8 @@ class App {
       event.preventDefault();
       // removeMarksContainer.style.display = 'flex';
 
-      if (this.#dents.length > 50) {
-        return alert('You can place maximum 50 markers per vehicle. We will take care of the rest on site');
+      if (this.#dents.length > 100) {
+        return alert('You can place maximum 100 markers per vehicle. We will take care of the rest on site');
       }
 
       //calculate the percentage values of the x, y relative to the width,

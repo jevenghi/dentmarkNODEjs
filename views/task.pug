@@ -23,7 +23,6 @@ block content
       p Model: #{model}
       p Task created: #{date}
       //- button.add-dents(data-task-id=taskId) Add dents
-
       .task-status-wrapper
         if role === 'admin' 
           p Task status:  
@@ -85,13 +84,9 @@ block content
         
     //- .remove-container
     //-     button.remove_mark_btn.remove__last Undo 
-            
     != dentsHTML
     //- a(href=`/?taskId=${taskId}` class="add-dents") Add dents
     //- button(type="button" class="add-dents" data-task-id=taskId) Add dents
-
-
-                   
     button(type="button" class='back-tasks') Back to tasks           
   .overlay.hidden
             
