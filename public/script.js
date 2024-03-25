@@ -180,8 +180,7 @@ class App {
             this._removeAllMarkers();
             this._customerFieldVisible();
 
-            // sideSelection.style.display =
-            //   sideSelection.style.display === 'none' ? 'grid' : 'none';
+            // sideSelection.style.display =//   sideSelection.style.display === 'none' ? 'grid' : 'none';
             // arrowSide.classList.toggle('rotate');
 
             this.#shapePressed = false;
