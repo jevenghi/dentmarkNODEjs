@@ -26,27 +26,12 @@ router.patch('/updateMe', userController.updateMe);
 router.delete('/deleteMe', userController.deleteMe);
 router.get('/logout', authController.logout);
 
-router.get(
-  '/',
-  authController.restrictTo('admin', 'superAdmin'),
-  userController.getAllUsers,
-);
+router.get('/', authController.restrictTo('admin', 'superAdmin'), userController.getAllUsers);
 
-router.get(
-  '/suggestUser',
-  authController.restrictTo('admin', 'superAdmin'),
-  userController.suggestUser,
-);
+router.get('/suggestUser', authController.restrictTo('admin', 'superAdmin'), userController.suggestUser);
 
-router.get(
-  '/generateReport',
-  authController.restrictTo('admin'),
-  userController.generateReport,
-);
+router.get('/generateReport', authController.restrictTo('admin'), userController.generateReport);
 
-router
-  .route('/:id')
-  .get(authController.restrictTo('admin', 'superAdmin'), userController.getUser)
-  .patch(authController.restrictTo('superAdmin'), userController.updateUser);
+router.route('/:id').get(authController.restrictTo('admin', 'superAdmin'), userController.getUser).patch(authController.restrictTo('superAdmin'), userController.updateUser);
 
 module.exports = router;

@@ -85,7 +85,8 @@ exports.suggestUser = catchAsyncErr(async (req, res, next) => {
     const results = await User.find({
       name: { $regex: query, $options: 'i' },
     }).limit(5);
-    res.json(results);
+    const names = results.map((obj) => obj.name);
+    res.json(names);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Internal server error' });

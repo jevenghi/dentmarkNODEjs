@@ -42,6 +42,11 @@ const overlay = document.querySelector('.overlay');
 
 let sideSelection = document.querySelector('.sides-container');
 
+const searchBar = document.querySelector('.search-bar');
+
+const searchInput = document.getElementById('search-input');
+const searchResults = document.getElementById('search-results');
+
 class App {
   #lineAngle;
   #shapePressed = false;
@@ -57,6 +62,63 @@ class App {
   #dentShape;
   #dentPaintDamaged = false;
   constructor() {
+    let customer;
+
+    if (searchInput) {
+      searchInput.addEventListener('input', async function () {
+        const userInput = searchInput.value.trim();
+        if (userInput.length > 0) {
+          try {
+            const response = await axios.get('/api/v1/users/suggestUser', {
+              params: {
+                q: userInput,
+              },
+            });
+            displayResults(response.data);
+          } catch (error) {
+            console.error(error);
+          }
+        } else {
+          clearResults();
+        }
+      });
+
+      function displayResults(results) {
+        clearResults();
+
+        if (results.length > 0) {
+          results.forEach(function (result) {
+            const link = document.createElement('a');
+            link.textContent = result;
+            searchResults.appendChild(link);
+          });
+          searchResults.style.display = 'block';
+        } else {
+          searchResults.style.display = 'none';
+        }
+      }
+
+      function clearResults() {
+        while (searchResults.firstChild) {
+          searchResults.removeChild(searchResults.firstChild);
+        }
+        searchResults.style.display = 'none';
+      }
+
+      searchResults.addEventListener('click', function (event) {
+        if (event.target.tagName === 'A') {
+          searchInput.value = customer = event.target.textContent;
+          searchResults.style.display = 'none';
+        }
+      });
+
+      document.addEventListener('click', function (event) {
+        if (!searchInput.contains(event.target) && !searchResults.contains(event.target)) {
+          searchResults.style.display = 'none';
+        }
+      });
+    }
+
     chooseBodyText.addEventListener('click', () => {
       bodyContainer.style.display = bodyContainer.style.display === 'none' ? 'grid' : 'none';
       arrowBody.classList.toggle('rotate');
@@ -116,6 +178,7 @@ class App {
               btn.style.border = 'none';
             });
             this._removeAllMarkers();
+            this._customerFieldVisible();
 
             // sideSelection.style.display =
             //   sideSelection.style.display === 'none' ? 'grid' : 'none';
@@ -267,7 +330,7 @@ class App {
           return alert('Please enter model name');
         }
         document.querySelector('.send-marks').textContent = 'Sending task...';
-        await this._sendTask(model, this.#bodyType, this.#dents);
+        await this._sendTask(customer, model, this.#bodyType, this.#dents);
       }
       this._removeAllMarkers();
       document.querySelector('.send-marks').textContent = 'Send task';
@@ -316,12 +379,12 @@ class App {
       alert(err.response.data.message);
     }
   }
-  async _sendTask(carModel, bodyType, dents) {
+  async _sendTask(customer = null, carModel, bodyType, dents) {
     try {
       const res = await axios({
         method: 'POST',
         url: '/api/v1/tasks/sendTask',
-        data: { carModel, bodyType, dents },
+        data: { user: customer, carModel, bodyType, dents },
       });
       if (res.data.status === 'success') {
         // showAlert(
@@ -342,7 +405,23 @@ class App {
       // alert(err.response.data.message);
     }
   }
+  async _isAdmin() {
+    try {
+      const res = await axios({
+        method: 'GET',
+        url: `/api/v1/auth/isAdmin`,
+      });
+      return res.data;
+    } catch (err) {
+      alert(err);
+      return false;
+    }
+  }
+  async _customerFieldVisible() {
+    const isAdmin = await this._isAdmin();
 
+    if (isAdmin) searchBar.style.display = 'block';
+  }
   async _lastMarkerNumber(taskId) {
     try {
       const res = await axios({

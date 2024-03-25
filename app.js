@@ -7,6 +7,7 @@ const { xss } = require('express-xss-sanitizer');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
+
 const app = express();
 const morgan = require('morgan');
 const AppError = require('./utils/appError');
