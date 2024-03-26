@@ -42,7 +42,7 @@ body {
 }
 .main-container {
   width: 100%;
-  max-width: 450px;
+  max-width: 850px;
   margin: 0 auto;
   display: flex;
   flex-flow: column;
@@ -216,6 +216,12 @@ html {
   margin-top: 0.5rem;
 }
 
+/* @media screen and (orientation: landscape) {
+  .marker-container {
+    width: 40rem;
+  }
+} */
+
 .image-container__summary {
   position: relative;
 }
@@ -322,8 +328,10 @@ html {
 .row {
   display: flex;
   align-items: center;
-  margin: 0.5rem;
-  padding: 0.5rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  /* margin: 0.5rem;
+  padding: 0.5rem; */
   justify-content: space-between;
 }
 
