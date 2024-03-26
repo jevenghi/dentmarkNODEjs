@@ -6,6 +6,7 @@ body {
   /* background-image: linear-gradient(to right, rgb(45, 64, 89), rgb(45, 64, 89)); */
 
   overflow-y: auto;
+
   /* display: flex;
   flex-direction: column;
   justify-content: center;
@@ -209,8 +210,8 @@ html {
   flex-flow: column wrap;
   align-items: center;
   justify-content: center;
-  /* width: 98%; */
-  width: 600px;
+  width: 98%;
+  /* width: 600px; */
 
   margin-top: 0.5rem;
 }
