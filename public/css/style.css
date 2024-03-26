@@ -209,7 +209,8 @@ html {
   flex-flow: column wrap;
   align-items: center;
   justify-content: center;
-  width: 98%;
+  /* width: 98%; */
+  width: 600px;
 
   margin-top: 0.5rem;
 }
@@ -266,6 +267,7 @@ html {
 /* MARKER CONTAINER */
 
 .remove-container {
+  margin-top: 1rem;
   width: 98%;
   background-color: #ffffff;
   display: flex;
