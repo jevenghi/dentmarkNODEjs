@@ -172,7 +172,7 @@ exports.getMe = catchAsyncError(async (req, res, next) => {
 
 exports.getMyTasks = catchAsyncError(async (req, res, next) => {
   let requestQueries;
-  let totalDocCount;
+  // let totalDocCount;
   let to;
 
   const page = req.query.page * 1 || 1;
@@ -189,23 +189,24 @@ exports.getMyTasks = catchAsyncError(async (req, res, next) => {
 
   if (req.user.role === 'user') {
     requestQueries = new RequestQueryHandler(Task.find({ user: req.user.id }), req.query).filter().sort().limitFields().paginate();
-    totalDocCount = await Task.countDocuments({ user: req.user.id });
+    // totalDocCount = await Task.countDocuments({ user: req.user.id });
   }
 
   if (req.user.role === 'admin') {
     requestQueries = new RequestQueryHandler(Task.find(), req.query).filter().sort().limitFields().paginate();
-    totalDocCount = await Task.countDocuments();
+    // totalDocCount = await Task.countDocuments();
   }
 
   const tasks = await requestQueries.query;
-  // const totalDocCount = response.data.totalTasks;
-  const totalPageCount = Math.ceil(totalDocCount / limit);
+  // const totalDocCount = tasks.length;
+  // console.log(totalDocCount);
+  // const totalPageCount = Math.ceil(totalDocCount / limit);
   res.status(200).render('tasks', {
     title: 'Tasks',
     role: req.user.role,
     tasks,
     page,
-    totalPageCount,
+    // totalPageCount,
     taskStatus,
     limit,
     from,

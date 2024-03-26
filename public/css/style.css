@@ -309,9 +309,11 @@ html {
   border-radius: 2px;
   transition: opacity 0.5s ease-in-out;
   width: 98%;
-  position: relative;
+  /* position: relative; */
   display: inline-block;
   font-size: 1.2rem;
+  position: fixed;
+  width: 100%;
 }
 
 .row {

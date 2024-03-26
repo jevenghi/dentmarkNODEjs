@@ -247,23 +247,20 @@ exports.generateAdminReport = catchAsyncErr(async (req, res, next) => {
       {
         $match: matchStage,
       },
-      {
-        $unwind: '$dents',
-      },
+
       {
         $group: {
           _id: null,
-          totalCost: { $sum: '$dents.cost' },
+          totalCost: { $sum: '$totalCost' },
         },
       },
-      {
-        $project: {
-          _id: 0,
-          totalCost: 1,
-        },
-      },
+      // {
+      //   $project: {
+      //     _id: 0,
+      //     totalCost: 1,
+      //   },
+      // },
     ]);
-
     const pdf = await generatePDF({ tasks, totalCostAggregate });
     res.setHeader('Content-Disposition', 'attachment; filename="report.pdf"');
     res.setHeader('Content-Type', 'application/pdf');

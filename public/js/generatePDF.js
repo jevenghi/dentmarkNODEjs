@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export const generatePDF = async () => {
   const urlParams = new URLSearchParams(window.location.search);
-  const status = urlParams.get('status');
+  const status = urlParams.get('taskStatus');
   const from = urlParams.get('from');
   const to = urlParams.get('to');
 
