@@ -270,12 +270,22 @@ class App {
       if (this.#dents.length > 100) {
         return alert('You can place maximum 100 markers per vehicle. We will take care of the rest on site');
       }
+      const imageRect = vehicleImage.getBoundingClientRect();
+      console.log(imageRect);
 
       //calculate the percentage values of the x, y relative to the width,
       //height of an image, so that x, y can be recreated on image of another size.
+      // this.#storedCoordinates = {
+      //   x: (event.offsetX / vehicleImage.clientWidth) * 100,
+      //   y: (event.offsetY / vehicleImage.clientHeight) * 100,
+      // };
+      const relativeX = ((event.clientX - imageRect.left) / imageRect.width) * 100;
+      const relativeY = ((event.clientY - imageRect.top) / imageRect.height) * 100;
+      console.log(relativeX, relativeY);
+      console.log(event.clientX, event.clientY);
       this.#storedCoordinates = {
-        x: (event.offsetX / vehicleImage.clientWidth) * 100,
-        y: (event.offsetY / vehicleImage.clientHeight) * 100,
+        x: event.offsetX,
+        y: event.offsetY,
       };
       if (!this.#shapePressed || !this.#distancePressed) {
         alert('Shape and Distance options should be selected');
@@ -489,23 +499,23 @@ class App {
       if (shape === 'nonagon') {
         this._markerStyle('nonagon', marker, side, coords, null, '1.3rem', '0.5rem', '1.3rem', '0.5rem', 2, 0.8, 2.6, 2.6);
       } else if (shape === 'line') {
-        this._markerStyle('line', marker, side, coords, orientationDent, '1.5rem', '0.8rem', '0.6rem', '0.3rem', 2, 1, 1.5, 1.8);
+        this._markerStyle('line', marker, side, coords, orientationDent, '1.5rem', '0.8rem', '0.6rem', '0.3rem', 2, 3, 1.5, 1.8);
       }
     }
 
     if (length === 'medium') {
       if (shape === 'nonagon') {
-        this._markerStyle('nonagon', marker, side, coords, null, '2rem', '0.8rem', '2rem', '0.8rem', 2.6, 1, 3.6, 3);
+        this._markerStyle('nonagon', marker, side, coords, null, '2rem', '0.8rem', '2rem', '0.8rem', 2.6, 2, 3.6, 3);
       } else if (shape === 'line') {
-        this._markerStyle('line', marker, side, coords, orientationDent, '2.2rem', '1.4rem', '0.8rem', '0.5rem', 3.2, 2, 1.8, 2.6);
+        this._markerStyle('line', marker, side, coords, orientationDent, '2.2rem', '1.4rem', '0.8rem', '0.5rem', 3.2, 6, 1.8, 2.6);
       }
     }
 
     if (length === 'big') {
       if (shape === 'nonagon') {
-        this._markerStyle('nonagon', marker, side, coords, null, '2.6rem', '1.6rem', '2.6rem', '1.6rem', 3.4, 2, 5, 5.3);
+        this._markerStyle('nonagon', marker, side, coords, null, '2.6rem', '1.6rem', '2.6rem', '1.6rem', 3.4, 6, 5, 7);
       } else if (shape === 'line') {
-        this._markerStyle('line', marker, side, coords, orientationDent, '2.9rem', '2.2rem', '1.2rem', '0.8rem', 3.8, 3.2, 2.5, 4.2);
+        this._markerStyle('line', marker, side, coords, orientationDent, '2.9rem', '2.2rem', '1.2rem', '0.8rem', 3.8, 10, 2.5, 4.2);
       }
     }
 
@@ -522,8 +532,10 @@ class App {
     marker.style.width = this._isFrontOrRear(side) ? w1 : w2;
     marker.style.height = this._isFrontOrRear(side) ? h1 : h2;
 
-    marker.style.left = this._isFrontOrRear(side) ? `${coords.x - x1}%` : `${coords.x - x2}%`;
-    marker.style.top = this._isFrontOrRear(side) ? `${coords.y - y1}%` : `${coords.y - y2}%`;
+    // marker.style.left = this._isFrontOrRear(side) ? `${coords.x - x1}%` : `${coords.x - x2}%`;
+    // marker.style.top = this._isFrontOrRear(side) ? `${coords.y - y1}%` : `${coords.y - y2}%`;
+    marker.style.left = this._isFrontOrRear(side) ? `${coords.x - x1}px` : `${coords.x - x2}px`;
+    marker.style.top = this._isFrontOrRear(side) ? `${coords.y - y1}px` : `${coords.y - y2}px`;
     if (shape === 'line') {
       marker.style.borderRadius = '0.8rem';
       marker.style.transform = `rotate(${orientationDent})`;
