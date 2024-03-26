@@ -85,8 +85,9 @@ block content
     div.pagination-buttons
       if page > 1
         button.previous-button() Prev
-        //- if page < totalPageCount
-      if tasks.length === limit
+      if page < totalPageCount
+        button.next-button() Next
+      //- if tasks.length === limit
         button.next-button() Next
     //- button.download-report Download Report
 

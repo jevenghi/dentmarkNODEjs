@@ -40,6 +40,7 @@ export const generatePDF = async () => {
     window.URL.revokeObjectURL(url);
   } catch (err) {
     showAlert('error', err);
+    console.log(err);
     // alert(err.response.data.message);
   }
 };

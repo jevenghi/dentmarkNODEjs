@@ -199,13 +199,13 @@ exports.getMyTasks = catchAsyncError(async (req, res, next) => {
 
   const tasks = await requestQueries.query;
   // const totalDocCount = response.data.totalTasks;
-  // const totalPageCount = Math.ceil(totalDocCount / limit);
+  const totalPageCount = Math.ceil(totalDocCount / limit);
   res.status(200).render('tasks', {
     title: 'Tasks',
     role: req.user.role,
     tasks,
     page,
-    // totalPageCount,
+    totalPageCount,
     taskStatus,
     limit,
     from,
