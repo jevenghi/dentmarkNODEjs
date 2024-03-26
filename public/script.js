@@ -200,6 +200,8 @@ class App {
             this.#bodySide = button.value;
 
             const vehicleImage = document.getElementById('vehicleImage');
+            // if (this._isFrontOrRear(this.#bodySide)) vehicleImage.style.width = '500px';
+            vehicleImage.style.width = this._isFrontOrRear(this.#bodySide) ? '500px' : '1000px';
 
             vehicleImage.src = `pics/sides_pics/${this.#bodySide}.png`;
             removeMarksContainer.classList.remove('hidden');
@@ -283,6 +285,7 @@ class App {
       const relativeY = ((event.clientY - imageRect.top) / imageRect.height) * 100;
       console.log(relativeX, relativeY);
       console.log(event.clientX, event.clientY);
+      console.log(event.offsetX, event.offsetY);
       this.#storedCoordinates = {
         x: event.offsetX,
         y: event.offsetY,
