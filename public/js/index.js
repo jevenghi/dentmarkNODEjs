@@ -57,14 +57,16 @@ let markers = getMarkers();
 if (addAnotherSide) {
   addAnotherSide.addEventListener('click', () => {
     arrowSide.classList.toggle('rotate');
-    sidesContainer.style.display = sidesContainer.style.display === 'none' ? 'grid' : 'none';
+    sidesContainer.style.display =
+      sidesContainer.style.display === 'none' ? 'grid' : 'none';
   });
 }
 
 if (markerParameters) {
   markerParameters.addEventListener('click', () => {
     arrowParams.classList.toggle('rotate');
-    markerContainer.style.display = markerContainer.style.display === 'none' ? 'inline-block' : 'none';
+    markerContainer.style.display =
+      markerContainer.style.display === 'none' ? 'inline-block' : 'none';
   });
 }
 
@@ -88,8 +90,8 @@ if (markerContainer) {
       const side = vehicleImage.dataset.side;
       const taskId = vehicleImage.dataset.taskId;
       storedCoordinates = {
-        x: (event.offsetX / vehicleImage.clientWidth) * 100,
-        y: (event.offsetY / vehicleImage.clientHeight) * 100,
+        relativeX: (event.offsetX / vehicleImage.clientWidth) * 100,
+        relativeY: (event.offsetY / vehicleImage.clientHeight) * 100,
       };
 
       if (!shapePressed || !distancePressed) {
@@ -103,7 +105,15 @@ if (markerContainer) {
       }
 
       const coords = storedCoordinates;
-      placeMarker(side, dentShape, dentLength, lineAngle, dentPaintDamaged, coords, imageContainer);
+      placeMarker(
+        side,
+        dentShape,
+        dentLength,
+        lineAngle,
+        dentPaintDamaged,
+        coords,
+        imageContainer,
+      );
       const newObj = {
         img: side,
         shape: dentShape,
@@ -312,7 +322,9 @@ if (modalLinks) {
 }
 
 if (emailInputSignup) {
-  emailInputSignup.addEventListener('input', () => checkFieldAvailability('email-signup', 'checkEmail'));
+  emailInputSignup.addEventListener('input', () =>
+    checkFieldAvailability('email-signup', 'checkEmail'),
+  );
 }
 
 if (signupForm) {
@@ -350,8 +362,12 @@ if (userPasswordForm) {
     e.preventDefault();
     const oldPassword = document.getElementById('oldPassword').value;
     const newPassword = document.getElementById('newPassword').value;
-    const newPasswordConfirm = document.getElementById('confirmNewPassword').value;
-    updateSettings({ oldPassword, newPassword, newPasswordConfirm }, 'password');
+    const newPasswordConfirm =
+      document.getElementById('confirmNewPassword').value;
+    updateSettings(
+      { oldPassword, newPassword, newPasswordConfirm },
+      'password',
+    );
   });
 }
 

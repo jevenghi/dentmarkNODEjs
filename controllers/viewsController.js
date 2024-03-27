@@ -52,7 +52,11 @@ exports.getUser = catchAsyncError(async (req, res, next) => {
     toPlusOneDay.setDate(toPlusOneDay.getDate() - 1);
     to = toPlusOneDay.toISOString().split('T')[0];
   }
-  const requestQueries = new RequestQueryHandler(Task.find(), req.query).filter().sort().limitFields().paginate();
+  const requestQueries = new RequestQueryHandler(Task.find(), req.query)
+    .filter()
+    .sort()
+    .limitFields()
+    .paginate();
   // totalDocCount = await Task.countDocuments();
 
   const tasks = await requestQueries.query;
@@ -99,7 +103,8 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
           <img id="vehicleImage" src="/pics/sides_pics/${side}.png" data-side="${side}" data-task-id="${req.params.id}"/>
         `;
     dents.forEach((dent) => {
-      const { img, shape, length, orientation, paintDamaged, coords, _id } = dent;
+      const { img, shape, length, orientation, paintDamaged, coords, _id } =
+        dent;
       // let markerStyle = isFrontOrRear(img) ? `left: ${coords.x - 2}%; top: ${coords.y - 3.5}%;` : `left: ${coords.x - 1}%; top: ${coords.y - 3}%;`;
       let markerStyle = '';
 
@@ -109,31 +114,40 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
       if (length === 'small') {
         markerClass += ' small';
         if (shape === 'nonagon') {
-          // markerStyle += `width: ${isFrontOrRear(side) ? '1.3rem' : '0.5rem'}; height: ${isFrontOrRear(side) ? '1.3rem' : '0.5rem'}; ${isFrontOrRear(side) ? `left: ${coords.x - 2}%; top: ${coords.y - 2.6}%;` : `left: ${coords.x - 0.8}%; top: ${coords.y - 2.6}%`};`;
-
           markerStyle += `width: ${isFrontOrRear(side) ? '1.3rem' : '0.5rem'}; height: ${isFrontOrRear(side) ? '1.3rem' : '0.5rem'};`;
-          markerStyle += isFrontOrRear(img) ? `left: ${coords.x - 2}%; top: ${coords.y - 2.6}%;` : `left: ${coords.x - 0.8}%; top: ${coords.y - 2.6}%;`;
+          markerStyle += isFrontOrRear(img)
+            ? `left: ${coords.relativeX - 2}%; top: ${coords.relativeY - 2.6}%;`
+            : `left: ${coords.relativeX - 0.8}%; top: ${coords.relativeY - 2.6}%;`;
         } else if (shape === 'line') {
-          // markerStyle += `${isFrontOrRear(side) ? `left: ${coords.x - 2}%; top: ${coords.y - 1.5}%;` : `left: ${coords.x - 1}%; top: ${coords.y - 1.8}%;`} width: ${isFrontOrRear(side) ? '1.5rem' : '0.8rem'}; height: ${isFrontOrRear(side) ? '0.6rem' : '0.3rem'}; border-radius: 0.8rem; transform: rotate(${orientation});`;
-          markerStyle += isFrontOrRear(img) ? `left: ${coords.x - 2}%; top: ${coords.y - 1.5}%;` : `left: ${coords.x - 1}%; top: ${coords.y - 1.8}%;`;
+          markerStyle += isFrontOrRear(img)
+            ? `left: ${coords.relativeX - 2}%; top: ${coords.relativeY - 1.5}%;`
+            : `left: ${coords.relativeX - 1}%; top: ${coords.relativeY - 1.8}%;`;
           markerStyle += `width: ${isFrontOrRear(side) ? '1.5rem' : '0.8rem'}; height: ${isFrontOrRear(side) ? '0.6rem' : '0.3rem'}; border-radius: 0.8rem; transform: rotate(${orientation});`;
         }
       } else if (length === 'medium') {
         markerClass += ' medium';
         if (shape === 'nonagon') {
-          markerStyle += isFrontOrRear(img) ? `left: ${coords.x - 2.6}%; top: ${coords.y - 3.6}%;` : `left: ${coords.x - 1}%; top: ${coords.y - 3}%;`;
+          markerStyle += isFrontOrRear(img)
+            ? `left: ${coords.relativeX - 2.6}%; top: ${coords.relativeY - 3.6}%;`
+            : `left: ${coords.relativeX - 1}%; top: ${coords.relativeY - 3}%;`;
           markerStyle += `width: ${isFrontOrRear(side) ? '2rem' : '0.8rem'}; height: ${isFrontOrRear(side) ? '2rem' : '0.8rem'};`;
         } else if (shape === 'line') {
-          markerStyle += isFrontOrRear(img) ? `left: ${coords.x - 3.2}%; top: ${coords.y - 1.8}%;` : `left: ${coords.x - 2}%; top: ${coords.y - 2.6}%;`;
+          markerStyle += isFrontOrRear(img)
+            ? `left: ${coords.relativeX - 3.2}%; top: ${coords.relativeY - 1.8}%;`
+            : `left: ${coords.relativeX - 2}%; top: ${coords.relativeY - 2.6}%;`;
           markerStyle += `width: ${isFrontOrRear(side) ? '2.2rem' : '1.4rem'}; height: ${isFrontOrRear(side) ? '0.8rem' : '0.5rem'}; border-radius: 0.8rem; transform: rotate(${orientation});`;
         }
       } else if (length === 'big') {
         markerClass += ' big';
         if (shape === 'nonagon') {
-          markerStyle += isFrontOrRear(img) ? `left: ${coords.x - 3.4}%; top: ${coords.y - 5}%;` : `left: ${coords.x - 2}%; top: ${coords.y - 5.3}%;`;
+          markerStyle += isFrontOrRear(img)
+            ? `left: ${coords.relativeX - 3.4}%; top: ${coords.relativeY - 5}%;`
+            : `left: ${coords.relativeX - 2}%; top: ${coords.relativeY - 5.3}%;`;
           markerStyle += `width: ${isFrontOrRear(side) ? '2.6rem' : '1.6rem'}; height: ${isFrontOrRear(side) ? '2.6rem' : '1.6rem'};`;
         } else if (shape === 'line') {
-          markerStyle += isFrontOrRear(img) ? `left: ${coords.x - 3.8}%; top: ${coords.y - 2.5}%;` : `left: ${coords.x - 3.2}%; top: ${coords.y - 4.2}%;`;
+          markerStyle += isFrontOrRear(img)
+            ? `left: ${coords.relativeX - 3.8}%; top: ${coords.relativeY - 2.5}%;`
+            : `left: ${coords.relativeX - 3.2}%; top: ${coords.relativeY - 4.2}%;`;
           markerStyle += `width: ${isFrontOrRear(side) ? '2.9rem' : '2.2rem'}; height: ${isFrontOrRear(side) ? '1.2rem' : '0.8rem'}; border-radius: 0.8rem; transform: rotate(${orientation});`;
         }
       }
@@ -188,12 +202,23 @@ exports.getMyTasks = catchAsyncError(async (req, res, next) => {
   }
 
   if (req.user.role === 'user') {
-    requestQueries = new RequestQueryHandler(Task.find({ user: req.user.id }), req.query).filter().sort().limitFields().paginate();
+    requestQueries = new RequestQueryHandler(
+      Task.find({ user: req.user.id }),
+      req.query,
+    )
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
     // totalDocCount = await Task.countDocuments({ user: req.user.id });
   }
 
   if (req.user.role === 'admin') {
-    requestQueries = new RequestQueryHandler(Task.find(), req.query).filter().sort().limitFields().paginate();
+    requestQueries = new RequestQueryHandler(Task.find(), req.query)
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
     // totalDocCount = await Task.countDocuments();
   }
 

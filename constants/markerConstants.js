@@ -1,0 +1,5 @@
+const CIRCLE_SMALL_SIDES = '1.2rem';
+const CIRCLE_MEDIUM_SIDES = '2.4rem';
+const CIRCLE_LARGE_SIDES = '5rem';
+
+module.exports = { CIRCLE_SMALL_SIDES, CIRCLE_MEDIUM_SIDES, CIRCLE_LARGE_SIDES };

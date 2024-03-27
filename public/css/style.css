@@ -202,8 +202,8 @@ html {
 
 #vehicleImage {
   display: block;
-  /* width: 100%; */
-  width: 1000px;
+  width: 100%;
+  /* width: 1000px; */
 }
 .image-container {
   position: relative;
@@ -211,8 +211,8 @@ html {
   flex-flow: column wrap;
   align-items: center;
   justify-content: center;
-  /* width: 98%; */
-  width: 400px;
+  width: 98%;
+  /* width: 400px; */
   overflow-x: auto; /* Enable horizontal scrolling */
   white-space: nowrap;
   margin-top: 0.5rem;
