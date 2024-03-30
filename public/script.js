@@ -7,6 +7,7 @@ const sideText = document.querySelector('.choose__side');
 const chooseBodyText = document.querySelector('.choose__body');
 const arrowBody = document.querySelector('.arrow__body');
 const arrowSide = document.querySelector('.arrow__side');
+const arrowUpload = document.querySelector('.arrow__upload');
 
 const myAccBtn = document.querySelector('.nav__el--myacc');
 const logout = document.querySelector('.logout');
@@ -14,9 +15,7 @@ const modal = document.querySelector('.modal');
 const modalLinks = document.querySelectorAll('.modal__link');
 
 const imageContainer = document.querySelector('.image-container');
-const imageContainerSummary = document.querySelector(
-  '.image-container__summary',
-);
+const imageContainerSummary = document.querySelector('.image-container__summary');
 
 const sendContainer = document.querySelector('.send-container');
 const vehicleImage = document.getElementById('vehicleImage');
@@ -40,6 +39,7 @@ const removeLastMarkBtn = document.querySelector('.remove__last');
 const buttonsDistance = document.querySelectorAll('.m_button--distance');
 const buttonsShape = document.querySelectorAll('.m_button--shapes');
 const paintDamagedCheck = document.getElementById('paint-damaged');
+const hailDamageCheck = document.getElementById('hail-damaged');
 const overlay = document.querySelector('.overlay');
 
 let sideSelection = document.querySelector('.sides-container');
@@ -48,6 +48,10 @@ const searchBar = document.querySelector('.search-bar');
 
 const searchInput = document.getElementById('search-input');
 const searchResults = document.getElementById('search-results');
+
+const uploadPhotoText = document.querySelector('.choose__photo');
+const uploadPhoto = document.querySelector('.upload_photo');
+const photoUploadContainer = document.querySelector('.photo-upload_container');
 
 const CIRCLE_SMALL_SIDES = '1.2rem';
 const CIRCLE_MEDIUM_SIDES = '2.4rem';
@@ -80,9 +84,12 @@ const LINE_MEDIUM_Y_CORR = 6;
 const LINE_LARGE_X_CORR = 25;
 const LINE_LARGE_Y_CORR = 8;
 
+const UPLOADED_IMAGE_WIDTH = '800px';
+
 class App {
   #lineAngle;
   #shapePressed = false;
+  #ownImageUploaded = false;
   #distancePressed = false;
   #orientationPressed = false;
   #storedCoordinates;
@@ -90,12 +97,75 @@ class App {
   #bodySide;
   #dents = [];
   #dentsTemp = {};
-
+  #uploadedImages = [];
   #dentLength;
   #dentShape;
   #dentPaintDamaged = false;
+  #hailDamage = false;
   constructor() {
     let customer;
+    uploadPhotoText.addEventListener('click', () => {
+      // photoUploadContainer.classList.remove('hidden');
+      photoUploadContainer.style.display = photoUploadContainer.style.display === 'none' ? 'block' : 'none';
+
+      arrowUpload.classList.toggle('rotate');
+    });
+    uploadPhoto.addEventListener('click', async (e) => {
+      e.preventDefault();
+      uploadPhoto.textContent = 'Uploading...';
+      const form = new FormData();
+      const images = document.getElementById('photo').files;
+      Array.from(images).forEach((file) => {
+        form.append('images', file);
+      });
+      try {
+        // const images = await this._uploadPhotos(form);
+        const imagesProcessed = await this._uploadPhotos(form);
+        this.#uploadedImages.push(...imagesProcessed);
+      } catch (error) {
+        alert(error);
+      }
+      this._renderVehicleImageFromUploads();
+      uploadPhoto.textContent = 'Upload';
+      sideText.classList.remove('hidden');
+      photoUploadContainer.style.display = photoUploadContainer.style.display === 'none' ? 'block' : 'none';
+
+      arrowUpload.classList.toggle('rotate');
+
+      this.#ownImageUploaded = true;
+      sideSelection = document.querySelector('.sides-container');
+
+      setTimeout(function () {
+        sideSelection.classList.add('visible');
+      }, 50);
+      this._placeMarkersOnSide(this.#ownImageUploaded);
+
+      // const buttonsSide = document.querySelectorAll('.button--side');
+      // buttonsSide.forEach((button) => {
+      //   button.addEventListener('click', () => {
+      //     const vehicleImage = document.getElementById('vehicleImage');
+      //     this.#bodySide = button.value;
+
+      //     vehicleImage.src = `pics/tasks/${this.#bodySide}`;
+      //   });
+      // });
+
+      // const reader = new FileReader();
+      // const vehicleImage = document.getElementById('vehicleImage');
+      // reader.onload = function (event) {
+      //   vehicleImage.src = event.target.result;
+      //   vehicleImage.style.width = '1000px';
+      //   vehicleImage.style.height = '300px';
+      // };
+      // markerContainer.classList.remove('hidden');
+      // reader.readAsDataURL(image);
+
+      // for (const entry of form.entries()) {
+      //   console.log(entry);
+      // }
+
+      // this._sendTask(null, null, null, null, form);
+    });
 
     if (searchInput) {
       searchInput.addEventListener('input', async function () {
@@ -146,23 +216,18 @@ class App {
       });
 
       document.addEventListener('click', function (event) {
-        if (
-          !searchInput.contains(event.target) &&
-          !searchResults.contains(event.target)
-        ) {
+        if (!searchInput.contains(event.target) && !searchResults.contains(event.target)) {
           searchResults.style.display = 'none';
         }
       });
     }
 
     chooseBodyText.addEventListener('click', () => {
-      bodyContainer.style.display =
-        bodyContainer.style.display === 'none' ? 'grid' : 'none';
+      bodyContainer.style.display = bodyContainer.style.display === 'none' ? 'grid' : 'none';
       arrowBody.classList.toggle('rotate');
     });
     sideText.addEventListener('click', () => {
-      sideSelection.style.display =
-        sideSelection.style.display === 'none' ? 'grid' : 'none';
+      sideSelection.style.display = sideSelection.style.display === 'none' ? 'grid' : 'none';
       arrowSide.classList.toggle('rotate');
     });
     const urlParams = new URLSearchParams(window.location.search);
@@ -187,6 +252,7 @@ class App {
           btn.style.background = 'white';
         });
         removeMarksContainer.classList.add('hidden');
+        this.#ownImageUploaded = false;
 
         button.style.background = 'linear-gradient(to right, #e69c6a, #ca580c)';
 
@@ -204,74 +270,63 @@ class App {
         if (vehicleImage) vehicleImage.src = '';
 
         this._renderVehicleImage(this.#bodyType);
+
         sideSelection = document.querySelector('.sides-container');
         setTimeout(function () {
           sideSelection.classList.add('visible');
         }, 50);
+        this._placeMarkersOnSide(this.#ownImageUploaded);
+        // const buttonsSide = document.querySelectorAll('.button--side');
+        // buttonsSide.forEach((button) => {
+        //   button.addEventListener('click', () => {
+        //     buttonsSide.forEach((btn) => {
+        //       btn.style.border = 'none';
+        //     });
+        //     this._removeAllMarkers();
+        //     this._customerFieldVisible();
 
-        const buttonsSide = document.querySelectorAll('.button--side');
-        buttonsSide.forEach((button) => {
-          button.addEventListener('click', () => {
-            buttonsSide.forEach((btn) => {
-              btn.style.border = 'none';
-            });
-            this._removeAllMarkers();
-            this._customerFieldVisible();
+        //     // sideSelection.style.display =//   sideSelection.style.display === 'none' ? 'grid' : 'none';
+        //     // arrowSide.classList.toggle('rotate');
 
-            // sideSelection.style.display =//   sideSelection.style.display === 'none' ? 'grid' : 'none';
-            // arrowSide.classList.toggle('rotate');
+        //     this.#shapePressed = false;
+        //     this.#distancePressed = false;
+        //     this.#orientationPressed = false;
+        //     paintDamagedCheck.checked = false;
+        //     this.#dentPaintDamaged = false;
 
-            this.#shapePressed = false;
-            this.#distancePressed = false;
-            this.#orientationPressed = false;
-            paintDamagedCheck.checked = false;
-            this.#dentPaintDamaged = false;
+        //     buttonsShape.forEach((btn) => btn.classList.remove('pressed'));
+        //     buttonsDistance.forEach((btn) => btn.classList.remove('pressed'));
+        //     buttonsOrientation.forEach((btn) => btn.classList.remove('pressed'));
+        //     orientationContainer.classList.add('hidden');
 
-            buttonsShape.forEach((btn) => btn.classList.remove('pressed'));
-            buttonsDistance.forEach((btn) => btn.classList.remove('pressed'));
-            buttonsOrientation.forEach((btn) =>
-              btn.classList.remove('pressed'),
-            );
-            orientationContainer.classList.add('hidden');
+        //     // button.style.background =
+        //     //   'linear-gradient(to right, #e69c6a, #ca580c)';
+        //     button.style.border = '0.3rem solid coral';
+        //     this.#bodySide = button.value;
 
-            // button.style.background =
-            //   'linear-gradient(to right, #e69c6a, #ca580c)';
-            button.style.border = '0.3rem solid coral';
-            this.#bodySide = button.value;
+        //     const vehicleImage = document.getElementById('vehicleImage');
+        //     // if (this._isFrontOrRear(this.#bodySide)) vehicleImage.style.width = '500px';
+        //     vehicleImage.style.width = this._isFrontOrRear(this.#bodySide) ? IMAGE_WIDTH_FR_REAR : IMAGE_WIDTH_SIDE;
 
-            const vehicleImage = document.getElementById('vehicleImage');
-            // if (this._isFrontOrRear(this.#bodySide)) vehicleImage.style.width = '500px';
-            vehicleImage.style.width = this._isFrontOrRear(this.#bodySide)
-              ? IMAGE_WIDTH_FR_REAR
-              : IMAGE_WIDTH_SIDE;
+        //     vehicleImage.src = `pics/sides_pics/${this.#bodySide}.png`;
+        //     removeMarksContainer.classList.remove('hidden');
 
-            vehicleImage.src = `pics/sides_pics/${this.#bodySide}.png`;
-            removeMarksContainer.classList.remove('hidden');
+        //     sendContainer.classList.remove('hidden');
+        //     markerContainer.classList.remove('hidden');
+        //     saveMarksContainer.classList.remove('hidden');
+        //     setTimeout(function () {
+        //       markerContainer.classList.add('visible');
+        //     }, 50);
 
-            sendContainer.classList.remove('hidden');
-            markerContainer.classList.remove('hidden');
-            saveMarksContainer.classList.remove('hidden');
-            setTimeout(function () {
-              markerContainer.classList.add('visible');
-            }, 50);
+        //     const sideDents = this.#dentsTemp[this.#bodySide];
 
-            const sideDents = this.#dentsTemp[this.#bodySide];
-
-            if (sideDents && sideDents.length > 0) {
-              sideDents.forEach((dent) => {
-                this._placeMarker(
-                  dent.img,
-                  dent.shape,
-                  dent.length,
-                  dent.orientation,
-                  dent.paintDamaged,
-                  dent.coords,
-                  imageContainer,
-                );
-              });
-            }
-          });
-        });
+        //     if (sideDents && sideDents.length > 0) {
+        //       sideDents.forEach((dent) => {
+        //         this._placeMarker(dent.img, dent.shape, dent.length, dent.orientation, dent.paintDamaged, dent.coords, imageContainer);
+        //       });
+        //     }
+        //   });
+        // });
       });
     });
 
@@ -299,7 +354,12 @@ class App {
         }
       });
     });
-
+    hailDamageCheck.addEventListener('click', (e) => {
+      if (!this.#ownImageUploaded) {
+        e.preventDefault();
+        return alert('Please upload photos');
+      }
+    });
     paintDamagedCheck.addEventListener('click', () => {
       this.#dentPaintDamaged = this.#dentPaintDamaged ? false : true;
     });
@@ -320,9 +380,7 @@ class App {
       // removeMarksContainer.style.display = 'flex';
 
       if (this.#dents.length > 100) {
-        return alert(
-          'You can place maximum 100 markers per vehicle. We will take care of the rest on site',
-        );
+        return alert('You can place maximum 100 markers per vehicle. We will take care of the rest on site');
       }
       const imageRect = vehicleImage.getBoundingClientRect();
 
@@ -353,15 +411,7 @@ class App {
       // const { x, y } = this.#storedCoordinates;
       const coords = this.#storedCoordinates;
 
-      this._placeMarker(
-        this.#bodySide,
-        this.#dentShape,
-        this.#dentLength,
-        this.#lineAngle,
-        this.#dentPaintDamaged,
-        coords,
-        imageContainer,
-      );
+      this._placeMarker(this.#bodySide, this.#dentShape, this.#dentLength, this.#lineAngle, this.#dentPaintDamaged, coords, imageContainer);
 
       const newObj = {
         img: this.#bodySide,
@@ -391,8 +441,7 @@ class App {
 
     sendMarksBtn.addEventListener('click', async (e) => {
       e.preventDefault();
-      if (this.#dents.length === 0)
-        return alert('You have not placed any dent yet');
+      if (this.#dents.length === 0) return alert('You have not placed any dent yet');
       if (taskId) {
         await this._addDentsToTask(taskId, this.#dents);
       } else {
@@ -427,6 +476,60 @@ class App {
     });
   }
 
+  _placeMarkersOnSide(onOwnImage) {
+    const buttonsSide = document.querySelectorAll('.button--side');
+    buttonsSide.forEach((button) => {
+      button.addEventListener('click', () => {
+        buttonsSide.forEach((btn) => {
+          btn.style.border = 'none';
+        });
+        this._removeAllMarkers();
+        this._customerFieldVisible();
+
+        this.#shapePressed = false;
+        this.#distancePressed = false;
+        this.#orientationPressed = false;
+        paintDamagedCheck.checked = false;
+        this.#dentPaintDamaged = false;
+
+        buttonsShape.forEach((btn) => btn.classList.remove('pressed'));
+        buttonsDistance.forEach((btn) => btn.classList.remove('pressed'));
+        buttonsOrientation.forEach((btn) => btn.classList.remove('pressed'));
+        orientationContainer.classList.add('hidden');
+
+        button.style.border = '0.3rem solid coral';
+        this.#bodySide = button.value;
+
+        let vehicleImage = document.getElementById('vehicleImage');
+        if (!onOwnImage) {
+          vehicleImage.style.width = this._isFrontOrRear(this.#bodySide) ? IMAGE_WIDTH_FR_REAR : IMAGE_WIDTH_SIDE;
+
+          vehicleImage.src = `pics/sides_pics/${this.#bodySide}.png`;
+        } else {
+          vehicleImage.style.width = UPLOADED_IMAGE_WIDTH;
+          vehicleImage.src = `pics/tasks/${this.#bodySide}`;
+        }
+
+        removeMarksContainer.classList.remove('hidden');
+
+        sendContainer.classList.remove('hidden');
+        markerContainer.classList.remove('hidden');
+        saveMarksContainer.classList.remove('hidden');
+        setTimeout(function () {
+          markerContainer.classList.add('visible');
+        }, 50);
+
+        const sideDents = this.#dentsTemp[this.#bodySide];
+
+        if (sideDents && sideDents.length > 0) {
+          sideDents.forEach((dent) => {
+            this._placeMarker(dent.img, dent.shape, dent.length, dent.orientation, dent.paintDamaged, dent.coords, imageContainer);
+          });
+        }
+      });
+    });
+  }
+
   _isFrontOrRear(side) {
     return side.slice(-2) === 'fr' || side.slice(-2) === 're';
   }
@@ -450,12 +553,21 @@ class App {
       alert(err.response.data.message);
     }
   }
-  async _sendTask(customer = null, carModel, bodyType, dents) {
+  async _sendTask(customer = '', carModel, bodyType, dents, formData = null) {
     try {
+      if (!formData) {
+        formData = new FormData();
+        formData.append('user', customer);
+        formData.append('carModel', carModel);
+        formData.append('bodyType', bodyType);
+        formData.append('dents', JSON.stringify(dents));
+      }
+
       const res = await axios({
         method: 'POST',
         url: '/api/v1/tasks/sendTask',
-        data: { user: customer, carModel, bodyType, dents },
+        // data: { user: customer, carModel, bodyType, dents },
+        data: formData,
       });
       if (res.data.status === 'success') {
         // showAlert(
@@ -524,6 +636,24 @@ class App {
     }
   }
 
+  _renderVehicleImageFromUploads() {
+    const sidesContainer = document.querySelector('.sides-container');
+    if (sidesContainer) sidesContainer.remove();
+    let html = '<div class="sides-container">';
+    this.#uploadedImages.forEach((image) => {
+      html += `
+            <button class="button button--side" value="${image}">
+                <img src="pics/tasks/${image}" id="${image}" />
+            </button>`;
+    });
+    html += '</div>';
+    sideText.insertAdjacentHTML('afterend', html);
+
+    // Now you can use the generated HTML as you need.
+    // For example, if you want to append it to an existing container:
+    // document.querySelector('.container').innerHTML = html;
+  }
+
   _renderVehicleImage(bodyType) {
     let html = `
         <div class="sides-container">
@@ -547,15 +677,7 @@ class App {
     sideText.insertAdjacentHTML('afterend', html);
   }
 
-  _placeMarker(
-    side,
-    shape,
-    length,
-    orientationDent,
-    paintDamaged,
-    coords,
-    image,
-  ) {
+  _placeMarker(side, shape, length, orientationDent, paintDamaged, coords, image) {
     const marker = document.createElement('div');
     marker.className = 'marker';
 
@@ -567,155 +689,61 @@ class App {
 
     if (length === 'small') {
       if (shape === 'nonagon') {
-        this._markerStyle(
-          'nonagon',
-          marker,
-          side,
-          coords,
-          null,
-          CIRCLE_SMALL_FR_REAR,
-          CIRCLE_SMALL_SIDES,
-          CIRCLE_SMALL_FR_REAR,
-          CIRCLE_SMALL_SIDES,
-          CIRCLE_SMALL_X_CORR,
-          CIRCLE_SMALL_X_CORR,
-          CIRCLE_SMALL_Y_CORR,
-          CIRCLE_SMALL_Y_CORR,
-        );
+        this._markerStyle('nonagon', marker, side, coords, null, CIRCLE_SMALL_FR_REAR, CIRCLE_SMALL_SIDES, CIRCLE_SMALL_FR_REAR, CIRCLE_SMALL_SIDES, CIRCLE_SMALL_X_CORR, CIRCLE_SMALL_X_CORR, CIRCLE_SMALL_Y_CORR, CIRCLE_SMALL_Y_CORR);
       } else if (shape === 'line') {
-        this._markerStyle(
-          'line',
-          marker,
-          side,
-          coords,
-          orientationDent,
-          LINE_SMALL_W,
-          LINE_SMALL_W,
-          LINE_SMALL_H,
-          LINE_SMALL_H,
-          LINE_SMALL_X_CORR,
-          LINE_SMALL_X_CORR,
-          LINE_SMALL_Y_CORR,
-          LINE_SMALL_Y_CORR,
-        );
+        this._markerStyle('line', marker, side, coords, orientationDent, LINE_SMALL_W, LINE_SMALL_W, LINE_SMALL_H, LINE_SMALL_H, LINE_SMALL_X_CORR, LINE_SMALL_X_CORR, LINE_SMALL_Y_CORR, LINE_SMALL_Y_CORR);
       }
     }
 
     if (length === 'medium') {
       if (shape === 'nonagon') {
-        this._markerStyle(
-          'nonagon',
-          marker,
-          side,
-          coords,
-          null,
-          CIRCLE_MEDIUM_FR_REAR,
-          CIRCLE_MEDIUM_SIDES,
-          CIRCLE_MEDIUM_FR_REAR,
-          CIRCLE_MEDIUM_SIDES,
-          CIRCLE_MEDIUM_X_CORR,
-          CIRCLE_MEDIUM_X_CORR,
-          CIRCLE_MEDIUM_Y_CORR,
-          CIRCLE_MEDIUM_Y_CORR,
-        );
+        this._markerStyle('nonagon', marker, side, coords, null, CIRCLE_MEDIUM_FR_REAR, CIRCLE_MEDIUM_SIDES, CIRCLE_MEDIUM_FR_REAR, CIRCLE_MEDIUM_SIDES, CIRCLE_MEDIUM_X_CORR, CIRCLE_MEDIUM_X_CORR, CIRCLE_MEDIUM_Y_CORR, CIRCLE_MEDIUM_Y_CORR);
       } else if (shape === 'line') {
-        this._markerStyle(
-          'line',
-          marker,
-          side,
-          coords,
-          orientationDent,
-          LINE_MEDIUM_W,
-          LINE_MEDIUM_W,
-          LINE_MEDIUM_H,
-          LINE_MEDIUM_H,
-          LINE_MEDIUM_X_CORR,
-          LINE_MEDIUM_X_CORR,
-          LINE_MEDIUM_Y_CORR,
-          LINE_MEDIUM_Y_CORR,
-        );
+        this._markerStyle('line', marker, side, coords, orientationDent, LINE_MEDIUM_W, LINE_MEDIUM_W, LINE_MEDIUM_H, LINE_MEDIUM_H, LINE_MEDIUM_X_CORR, LINE_MEDIUM_X_CORR, LINE_MEDIUM_Y_CORR, LINE_MEDIUM_Y_CORR);
       }
     }
 
     if (length === 'big') {
       if (shape === 'nonagon') {
-        this._markerStyle(
-          'nonagon',
-          marker,
-          side,
-          coords,
-          null,
-          CIRCLE_LARGE_FR_REAR,
-          CIRCLE_LARGE_SIDES,
-          CIRCLE_LARGE_FR_REAR,
-          CIRCLE_LARGE_SIDES,
-          CIRCLE_LARGE_X_CORR,
-          CIRCLE_LARGE_X_CORR,
-          CIRCLE_LARGE_Y_CORR,
-          CIRCLE_LARGE_Y_CORR,
-        );
+        this._markerStyle('nonagon', marker, side, coords, null, CIRCLE_LARGE_FR_REAR, CIRCLE_LARGE_SIDES, CIRCLE_LARGE_FR_REAR, CIRCLE_LARGE_SIDES, CIRCLE_LARGE_X_CORR, CIRCLE_LARGE_X_CORR, CIRCLE_LARGE_Y_CORR, CIRCLE_LARGE_Y_CORR);
       } else if (shape === 'line') {
-        this._markerStyle(
-          'line',
-          marker,
-          side,
-          coords,
-          orientationDent,
-          LINE_LARGE_W,
-          LINE_LARGE_W,
-          LINE_LARGE_H,
-          LINE_LARGE_H,
-          LINE_LARGE_X_CORR,
-          LINE_LARGE_X_CORR,
-          LINE_LARGE_Y_CORR,
-          LINE_LARGE_Y_CORR,
-        );
+        this._markerStyle('line', marker, side, coords, orientationDent, LINE_LARGE_W, LINE_LARGE_W, LINE_LARGE_H, LINE_LARGE_H, LINE_LARGE_X_CORR, LINE_LARGE_X_CORR, LINE_LARGE_Y_CORR, LINE_LARGE_Y_CORR);
       }
     }
     image.appendChild(marker);
   }
 
   _circleMarkerStyle(marker, side, coords, w1, w2, x1, x2, y1, y2) {
-    marker.style.width = marker.style.height = this._isFrontOrRear(side)
-      ? w1
-      : w2;
-    marker.style.left = this._isFrontOrRear(side)
-      ? `${coords.x - x1}%`
-      : `${coords.x - x2}%`;
-    marker.style.top = this._isFrontOrRear(side)
-      ? `${coords.y - y1}%`
-      : `${coords.y - y2}%`;
+    marker.style.width = marker.style.height = this._isFrontOrRear(side) ? w1 : w2;
+    marker.style.left = this._isFrontOrRear(side) ? `${coords.x - x1}%` : `${coords.x - x2}%`;
+    marker.style.top = this._isFrontOrRear(side) ? `${coords.y - y1}%` : `${coords.y - y2}%`;
   }
 
-  _markerStyle(
-    shape,
-    marker,
-    side,
-    coords,
-    orientationDent,
-    w1,
-    w2,
-    h1,
-    h2,
-    x1,
-    x2,
-    y1,
-    y2,
-  ) {
+  _markerStyle(shape, marker, side, coords, orientationDent, w1, w2, h1, h2, x1, x2, y1, y2) {
     marker.style.width = this._isFrontOrRear(side) ? w1 : w2;
     marker.style.height = this._isFrontOrRear(side) ? h1 : h2;
 
     // marker.style.left = this._isFrontOrRear(side) ? `${coords.x - x1}%` : `${coords.x - x2}%`;
     // marker.style.top = this._isFrontOrRear(side) ? `${coords.y - y1}%` : `${coords.y - y2}%`;
-    marker.style.left = this._isFrontOrRear(side)
-      ? `${coords.x - x1}px`
-      : `${coords.x - x2}px`;
-    marker.style.top = this._isFrontOrRear(side)
-      ? `${coords.y - y1}px`
-      : `${coords.y - y2}px`;
+    marker.style.left = this._isFrontOrRear(side) ? `${coords.x - x1}px` : `${coords.x - x2}px`;
+    marker.style.top = this._isFrontOrRear(side) ? `${coords.y - y1}px` : `${coords.y - y2}px`;
     if (shape === 'line') {
       marker.style.borderRadius = '1rem';
       marker.style.transform = `rotate(${orientationDent})`;
+    }
+  }
+  async _uploadPhotos(images) {
+    try {
+      const res = await axios({
+        method: 'POST',
+        url: `/api/v1/photos/uploadPhotos`,
+        data: images,
+      });
+      if (res.data.status === 'success') {
+        return res.data.images;
+      }
+    } catch (err) {
+      alert(err);
     }
   }
 

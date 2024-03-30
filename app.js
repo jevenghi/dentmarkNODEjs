@@ -17,6 +17,7 @@ const authRouter = require('./routes/authRoutes');
 const taskRouter = require('./routes/taskRoutes');
 const userRouter = require('./routes/userRoutes');
 const viewRouter = require('./routes/viewRoutes');
+const imageRouter = require('./routes/imageRoutes');
 
 app.set('trust proxy', 1);
 app.get('/ip', (request, response) => response.send(request.ip));
@@ -128,6 +129,7 @@ app.use((req, res, next) => {
 
 // app.use('/overview', viewRouter);
 app.use('/', viewRouter);
+app.use('/api/v1/photos', imageRouter);
 app.use('/api/v1/tasks', taskRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/auth', authRouter);

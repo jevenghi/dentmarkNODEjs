@@ -24,7 +24,7 @@ const taskSchema = new mongoose.Schema(
     },
     carModel: {
       type: String,
-      required: [true, 'Model should be specified'],
+      // required: [true, 'Model should be specified'],
       trim: true,
       maxlength: [30, 'Car model name must not exceed 30 characters'],
       minlength: [5, 'Car model name must have at least 4 characters'],

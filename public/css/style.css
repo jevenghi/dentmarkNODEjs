@@ -70,6 +70,10 @@ html {
   color: #ffffff;
 }
 
+input[type='file'] {
+  color: rgb(255, 255, 255);
+}
+
 .loading-message {
   display: flex;
   justify-content: center;
@@ -855,7 +859,8 @@ button[type='submit']:hover {
 }
 .delete-task,
 .add-dents,
-.back-tasks {
+.back-tasks,
+.upload_photo {
   background-color: rgb(255, 87, 34);
   color: #fff;
   border-radius: 0.3rem;
@@ -872,7 +877,10 @@ button[type='submit']:hover {
   right: 0;
   justify-content: flex-end;
 }
-
+.m_checkbox {
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
 /*CUSTOMER NAMES SUGGESTIONS*/
 .dropdown-content {
   display: none;

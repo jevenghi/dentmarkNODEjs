@@ -1,5 +1,6 @@
 /* eslint-disable no-plusplus */
 const generatePDF = require('../utils/generatePDF');
+const sharp = require('sharp');
 const User = require('../models/userModel');
 const Task = require('../models/taskModel');
 const Dent = require('../models/dentModel');
@@ -9,18 +10,44 @@ const factory = require('./handlerFactory');
 const AppError = require('../utils/appError');
 const multer = require('multer');
 
-const multerStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'public/pics/tasks');
-  },
-  filename: (req, file, cb) => {
-    const ext = file.mimetype.split('/')[1];
-    cb(null, 'public/pics/tasks');
-  },
-});
-const upload = multer({ dest: 'public/pics/tasks' });
+// const multerStorage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, 'public/pics/tasks');
+//   },
+//   filename: (req, file, cb) => {
+//     const ext = file.mimetype.split('/')[1];
+//     cb(null, `user-${req.user.id}-${Date.now()}.${ext}`);
+//   },
+// });
+const multerStorage = multer.memoryStorage();
 
-exports.uploadTaskPhoto = upload.single('photo');
+const multerFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image')) {
+    cb(null, true);
+  } else {
+    cb(new AppError('Only images can be uploaded', 400));
+  }
+};
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter,
+});
+exports.uploadTaskPhotos = upload.fields([{ name: 'images', maxCount: 5 }]);
+
+exports.resizeTaskPhotos = catchAsyncErr(async (req, res, next) => {
+  if (!req.files.images) {
+    return next();
+  }
+  req.body.images = [];
+  await Promise.all(
+    req.files.images.map(async (file, i) => {
+      const filename = `user-${req.user.id}-${Date.now()}-${i + 1}.png`;
+      await sharp(file.buffer).resize(1000).toFormat('png').png({ quality: 90 }).toFile(`public/pics/tasks/${filename}`);
+      req.body.images.push(filename);
+    }),
+  );
+  next();
+});
 // Counts occurrences of dents' 'length' and 'paintDamaged' values
 // to use it for determining task's difficulty
 const accumulateValues = function (arr) {
@@ -72,22 +99,11 @@ exports.getAllTasks = catchAsyncErr(async (req, res, next) => {
   let totalDocCount;
 
   if (req.user.role === 'user') {
-    requestQueries = new RequestQueryHandler(
-      Task.find({ user: req.user.id }),
-      req.query,
-    )
-      .filter()
-      .sort()
-      .limitFields()
-      .paginate();
+    requestQueries = new RequestQueryHandler(Task.find({ user: req.user.id }), req.query).filter().sort().limitFields().paginate();
     totalDocCount = await Task.countDocuments({ user: req.user.id });
   }
   if (req.user.role === 'admin') {
-    requestQueries = new RequestQueryHandler(Task.find(), req.query)
-      .filter()
-      .sort()
-      .limitFields()
-      .paginate();
+    requestQueries = new RequestQueryHandler(Task.find(), req.query).filter().sort().limitFields().paginate();
     totalDocCount = await Task.countDocuments();
   }
   const tasks = await requestQueries.query;
@@ -117,7 +133,7 @@ exports.getTask = factory.getOne(Task, { path: 'user', select: 'name' });
 
 //ORIGINAL SEND TASK
 exports.sendTask = catchAsyncErr(async (req, res, next) => {
-  console.log(req.file);
+  console.log(req.body.user);
   if (req.body.user && req.user.role === 'admin') {
     const customer = await User.findOne({ name: req.body.user });
     req.body.user = customer.id;
@@ -137,7 +153,7 @@ exports.sendTask = catchAsyncErr(async (req, res, next) => {
   //   ...taskData,
   //   dents: formattedDents,
   // };
-
+  req.body.dents = JSON.parse(req.body.dents);
   await Task.create(req.body);
   res.status(201).json({
     status: 'success',
@@ -148,8 +164,7 @@ exports.addDentsToTask = catchAsyncErr(async (req, res, next) => {
   const taskId = req.params.id;
   try {
     const task = await Task.findById(taskId);
-    if (!task)
-      return next(new AppError(`Task with this ID does not exist`, 404));
+    if (!task) return next(new AppError(`Task with this ID does not exist`, 404));
     task.dents.push(...req.body.dents);
     await task.save();
     res.status(201).json({
@@ -171,8 +186,7 @@ exports.updateTask = factory.updateOne(Task);
 exports.deleteTask = async (req, res, next) => {
   try {
     const task = await Task.findById(req.params.id);
-    if (!task)
-      return next(new AppError(`Task with this ID does not exist`, 404));
+    if (!task) return next(new AppError(`Task with this ID does not exist`, 404));
 
     if (task.user.id === req.user.id || req.user.role === 'admin') {
       await task.deleteOne();
@@ -182,9 +196,7 @@ exports.deleteTask = async (req, res, next) => {
         message: 'Task succesfully deleted',
       });
     } else {
-      return next(
-        new AppError('Only task creator or an admin can delete the task.', 403),
-      );
+      return next(new AppError('Only task creator or an admin can delete the task.', 403));
     }
   } catch (err) {
     res.status(404).json({
