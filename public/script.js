@@ -359,6 +359,7 @@ class App {
         e.preventDefault();
         return alert('Please upload photos');
       }
+      this.#hailDamage = true;
     });
     paintDamagedCheck.addEventListener('click', () => {
       this.#dentPaintDamaged = this.#dentPaintDamaged ? false : true;
@@ -441,7 +442,15 @@ class App {
 
     sendMarksBtn.addEventListener('click', async (e) => {
       e.preventDefault();
-      if (this.#dents.length === 0) return alert('You have not placed any dent yet');
+      if (this.#hailDamage) {
+        const model = vehicleModel.value;
+        if (!model) {
+          return alert('Please enter model name');
+        }
+        document.querySelector('.send-marks').textContent = 'Sending task...';
+        await this._sendTask(customer, model, null, null);
+      }
+      if (this.#dents.length === 0 && !this.#hailDamage) return alert('You have not placed any dent yet');
       if (taskId) {
         await this._addDentsToTask(taskId, this.#dents);
       } else {
