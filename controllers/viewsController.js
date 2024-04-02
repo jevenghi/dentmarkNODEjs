@@ -94,7 +94,7 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
 
   Object.entries(groupedDents).forEach(([side, dents]) => {
     const src = side.startsWith('user') ? `/pics/tasks/${side}` : `/pics/sides_pics/${side}.png`;
-    if (side.startsWith('user')) sidesLeft = sidesLeft.filter((el) => el !== side);
+    if (!side.startsWith('user')) sidesLeft = sidesLeft.filter((el) => el !== side);
     dentsHTML += `
         <div class="image-container">
           <img id="vehicleImage" src="${src}" data-side="${side}" data-task-id="${req.params.id}"/>
@@ -112,6 +112,9 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
         if (shape === 'nonagon') {
           markerStyle += `width: ${isFrontOrRear(side) ? '1.3rem' : '0.5rem'}; height: ${isFrontOrRear(side) ? '1.3rem' : '0.5rem'};`;
           markerStyle += isFrontOrRear(img) ? `left: ${coords.relativeX - 2}%; top: ${coords.relativeY - 2.6}%;` : `left: ${coords.relativeX - 0.8}%; top: ${coords.relativeY - 2.6}%;`;
+          // markerStyle += `width: ${isFrontOrRear(side) ? '1.3rem' : '1.2rem'}; height: ${isFrontOrRear(side) ? '1.3rem' : '1.2rem'};`;
+
+          // markerStyle += isFrontOrRear(img) ? `left: ${coords.x - 2}px; top: ${coords.y - 2.6}px;` : `left: ${coords.x - 6.5}px; top: ${coords.y - 6}px;`;
         } else if (shape === 'line') {
           markerStyle += isFrontOrRear(img) ? `left: ${coords.relativeX - 2}%; top: ${coords.relativeY - 1.5}%;` : `left: ${coords.relativeX - 1}%; top: ${coords.relativeY - 1.8}%;`;
           markerStyle += `width: ${isFrontOrRear(side) ? '1.5rem' : '0.8rem'}; height: ${isFrontOrRear(side) ? '0.6rem' : '0.3rem'}; border-radius: 0.8rem; transform: rotate(${orientation});`;

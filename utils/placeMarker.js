@@ -1,11 +1,4 @@
-const placeMarker = function (
-  shape,
-  length,
-  orientationDent,
-  paintDamaged,
-  coords,
-  image,
-) {
+const placeMarker = function (shape, length, orientationDent, paintDamaged, coords, image) {
   const marker = document.createElement('div');
   marker.className = 'marker';
   marker.style.left = `${coords.x - 1}%`;

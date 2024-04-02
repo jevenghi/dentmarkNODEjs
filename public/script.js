@@ -53,8 +53,8 @@ const uploadPhotoText = document.querySelector('.choose__photo');
 const uploadPhoto = document.querySelector('.upload_photo');
 const photoUploadContainer = document.querySelector('.photo-upload_container');
 
-const CIRCLE_SMALL_SIDES = '1.2rem';
-const CIRCLE_MEDIUM_SIDES = '2.4rem';
+const CIRCLE_SMALL_SIDES = '1rem';
+const CIRCLE_MEDIUM_SIDES = '2rem';
 const CIRCLE_LARGE_SIDES = '5rem';
 
 const CIRCLE_SMALL_FR_REAR = '1.2rem';
@@ -84,7 +84,7 @@ const LINE_MEDIUM_Y_CORR = 6;
 const LINE_LARGE_X_CORR = 25;
 const LINE_LARGE_Y_CORR = 8;
 
-const UPLOADED_IMAGE_WIDTH = '800px';
+const UPLOADED_IMAGE_WIDTH = '1000px';
 
 class App {
   #lineAngle;
@@ -123,7 +123,7 @@ class App {
         const imagesProcessed = await this._uploadPhotos(form);
         this.#uploadedImages.push(...imagesProcessed);
       } catch (error) {
-        alert(error);
+        console.error(error);
       }
       this._renderVehicleImageFromUploads();
       uploadPhoto.textContent = 'Upload';
@@ -252,6 +252,7 @@ class App {
           btn.style.background = 'white';
         });
         removeMarksContainer.classList.add('hidden');
+        uploadPhotoText.style.display = uploadPhotoText.style.display === 'none' ? 'flex' : 'none';
         this.#ownImageUploaded = false;
 
         button.style.background = 'linear-gradient(to right, #e69c6a, #ca580c)';
@@ -442,10 +443,11 @@ class App {
 
     sendMarksBtn.addEventListener('click', async (e) => {
       e.preventDefault();
+      // this._transferFiles(this.#uploadedImages);
       if (this.#hailDamage) {
         const model = vehicleModel.value;
-        if (!model) {
-          return alert('Please enter model name');
+        if (model.length < 5) {
+          return alert('Model name must have at least 5 characters');
         }
         document.querySelector('.send-marks').textContent = 'Sending task...';
         await this._sendTask(customer, model, null, null);
@@ -455,8 +457,8 @@ class App {
         await this._addDentsToTask(taskId, this.#dents);
       } else {
         const model = vehicleModel.value;
-        if (!model) {
-          return alert('Please enter model name');
+        if (model.length < 5) {
+          return alert('Model name must have at least 5 characters');
         }
         document.querySelector('.send-marks').textContent = 'Sending task...';
         await this._sendTask(customer, model, this.#bodyType, this.#dents);
@@ -542,7 +544,7 @@ class App {
   _isFrontOrRear(side) {
     return side.slice(-2) === 'fr' || side.slice(-2) === 're';
   }
-
+  _transferFiles(fileNames) {}
   async _addDentsToTask(taskId, dents) {
     try {
       const res = await axios({
@@ -756,6 +758,20 @@ class App {
     }
   }
 
+  async _transferFiles(fileNames) {
+    try {
+      const res = await axios({
+        method: 'POST',
+        url: `/api/v1/photos/transferPhotos`,
+        data: fileNames,
+      });
+      // if (res.data.status === 'success') {
+      //   return res.data.images;
+      // }
+    } catch (err) {
+      alert(err);
+    }
+  }
   _logoutUser() {
     fetch('/api/v1/users/logout', {
       method: 'GET',
