@@ -133,7 +133,6 @@ exports.getTask = factory.getOne(Task, { path: 'user', select: 'name' });
 
 //ORIGINAL SEND TASK
 exports.sendTask = catchAsyncErr(async (req, res, next) => {
-  console.log(req.body.user);
   if (req.body.user && req.user.role === 'admin') {
     const customer = await User.findOne({ name: req.body.user });
     req.body.user = customer.id;
@@ -153,7 +152,9 @@ exports.sendTask = catchAsyncErr(async (req, res, next) => {
   //   ...taskData,
   //   dents: formattedDents,
   // };
+  req.body.images = JSON.parse(req.body.images);
   req.body.dents = JSON.parse(req.body.dents);
+  // req.body.images = JSON.parse(req.body.images);
   await Task.create(req.body);
   res.status(201).json({
     status: 'success',

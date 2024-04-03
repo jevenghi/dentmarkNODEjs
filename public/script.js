@@ -113,6 +113,7 @@ class App {
     uploadPhoto.addEventListener('click', async (e) => {
       e.preventDefault();
       uploadPhoto.textContent = 'Uploading...';
+      if (vehicleImage) vehicleImage.src = '';
       const form = new FormData();
       const images = document.getElementById('photo').files;
       Array.from(images).forEach((file) => {
@@ -376,7 +377,6 @@ class App {
       });
     });
 
-    const markers = {};
     vehicleImage.addEventListener('click', (event) => {
       event.preventDefault();
       // removeMarksContainer.style.display = 'flex';
@@ -444,24 +444,24 @@ class App {
     sendMarksBtn.addEventListener('click', async (e) => {
       e.preventDefault();
       // this._transferFiles(this.#uploadedImages);
+      if (this.#dents.length === 0 && !this.#hailDamage) return alert('You have not placed any dent yet');
+      // if (taskId) {
+      //   await this._addDentsToTask(taskId, this.#dents);
+      // }
       if (this.#hailDamage) {
         const model = vehicleModel.value;
         if (model.length < 5) {
           return alert('Model name must have at least 5 characters');
         }
         document.querySelector('.send-marks').textContent = 'Sending task...';
-        await this._sendTask(customer, model, null, null);
-      }
-      if (this.#dents.length === 0 && !this.#hailDamage) return alert('You have not placed any dent yet');
-      if (taskId) {
-        await this._addDentsToTask(taskId, this.#dents);
+        await this._sendTask(customer, model, this.#bodyType, this.#dents, this.#uploadedImages);
       } else {
         const model = vehicleModel.value;
         if (model.length < 5) {
           return alert('Model name must have at least 5 characters');
         }
         document.querySelector('.send-marks').textContent = 'Sending task...';
-        await this._sendTask(customer, model, this.#bodyType, this.#dents);
+        await this._sendTask(customer, model, this.#bodyType, this.#dents, null);
       }
       this._removeAllMarkers();
       document.querySelector('.send-marks').textContent = 'Send task';
@@ -564,14 +564,17 @@ class App {
       alert(err.response.data.message);
     }
   }
-  async _sendTask(customer = '', carModel, bodyType, dents, formData = null) {
+  async _sendTask(customer = '', carModel, bodyType, dents, images, formData = null) {
     try {
       if (!formData) {
         formData = new FormData();
         formData.append('user', customer);
         formData.append('carModel', carModel);
         formData.append('bodyType', bodyType);
+        formData.append('images', JSON.stringify(images));
+
         formData.append('dents', JSON.stringify(dents));
+        // formData.append('images', images);
       }
 
       const res = await axios({
