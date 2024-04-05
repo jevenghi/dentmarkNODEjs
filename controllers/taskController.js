@@ -275,6 +275,7 @@ exports.generateUserReport = catchAsyncErr(async (req, res, next) => {
 
 exports.generateAdminReport = catchAsyncErr(async (req, res, next) => {
   const { status, from, to } = req.query;
+  console.log(status, from, to);
   try {
     let matchStage = {}; // Default empty match stage
 
@@ -302,11 +303,16 @@ exports.generateAdminReport = catchAsyncErr(async (req, res, next) => {
       //   },
       // },
     ]);
-    const pdf = await generatePDF({ tasks, totalCostAggregate });
-    res.setHeader('Content-Disposition', 'attachment; filename="report.pdf"');
-    res.setHeader('Content-Type', 'application/pdf');
-    res.send(pdf);
+    // const pdf = await generatePDF({ tasks, totalCostAggregate });
+    // const pdf = generatePDF();
 
+    // res.setHeader('Content-Disposition', 'attachment; filename="report.pdf"');
+    // res.setHeader('Content-Type', 'application/pdf');
+    // res.send(pdf);
+    res.status(200).json({
+      status: 'success',
+      tasks,
+    });
     // Create PDF
   } catch (err) {
     console.error('Error generating PDF:', err);

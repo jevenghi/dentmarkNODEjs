@@ -36,6 +36,7 @@
     "ndb": "^0.2.4",
     "nodemailer": "^6.9.9",
     "pdf-lib": "^1.17.1",
+    "pdfmake": "^0.2.10",
     "pug": "^3.0.2",
     "sharp": "^0.33.3",
     "ssh2-sftp-client": "^10.0.3",

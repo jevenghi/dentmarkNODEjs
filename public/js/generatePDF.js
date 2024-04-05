@@ -1,46 +1,127 @@
 import { showAlert } from './alerts.js';
 import axios from 'axios';
+const pdfFonts = require('pdfmake/build/vfs_fonts.js');
+const pdfMake = require('pdfmake/build/pdfmake.js');
 
-export const generatePDF = async () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const status = urlParams.get('taskStatus');
-  const from = urlParams.get('from');
-  const to = urlParams.get('to');
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
+const fs = require('fs');
+// export const generatePDF = async () => {
+//   const urlParams = new URLSearchParams(window.location.search);
+//   const status = urlParams.get('taskStatus');
+//   const from = urlParams.get('from');
+//   const to = urlParams.get('to');
+
+//   try {
+//     const res = await axios({
+//       method: 'GET',
+//       url: '/api/v1/tasks/generate-admin-report',
+//       params: { status, from, to },
+//       responseType: 'blob',
+//     });
+//     // if (res.data.status === 'success') {
+//     //   console.log(res);
+//     // } else {
+//     //   showAlert('error', res.data.message);
+//     // }
+//     const blob = new Blob([res.data], { type: 'application/pdf' });
+
+//     // Create a URL for the blob object
+//     const url = window.URL.createObjectURL(blob);
+
+//     // Create a link element
+//     const link = document.createElement('a');
+//     link.href = url;
+//     link.setAttribute('download', 'report.pdf');
+
+//     // Append the link to the document body
+//     document.body.appendChild(link);
+
+//     // Programmatically trigger the click event on the link to start the download
+//     link.click();
+
+//     // Cleanup: remove the link and revoke the URL
+//     document.body.removeChild(link);
+//     window.URL.revokeObjectURL(url);
+//   } catch (err) {
+//     showAlert('error', err);
+//     console.log(err);
+//     // alert(err.response.data.message);
+//   }
+// };
+
+// const fonts = {
+//   Roboto: {
+//     normal: 'fonts/Roboto-Regular.ttf',
+//     bold: 'fonts/Roboto-Medium.ttf',
+//     italics: 'fonts/Roboto-Italic.ttf',
+//     bolditalics: 'fonts/Roboto-MediumItalic.ttf',
+//   },
+// };
+
+const getFilteredResults = async () => {
+  const query = window.location.search ? window.location.search : '?';
   try {
     const res = await axios({
       method: 'GET',
-      url: '/api/v1/tasks/generate-admin-report',
-      params: { status, from, to },
-      responseType: 'blob',
+      url: `/api/v1/tasks${query}&limit=1000`,
     });
-    // if (res.data.status === 'success') {
-    //   console.log(res);
-    // } else {
-    //   showAlert('error', res.data.message);
-    // }
-    const blob = new Blob([res.data], { type: 'application/pdf' });
-
-    // Create a URL for the blob object
-    const url = window.URL.createObjectURL(blob);
-
-    // Create a link element
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', 'report.pdf');
-
-    // Append the link to the document body
-    document.body.appendChild(link);
-
-    // Programmatically trigger the click event on the link to start the download
-    link.click();
-
-    // Cleanup: remove the link and revoke the URL
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
+    if (res.data.status === 'success') {
+      const result = res.data.tasks.map((task) => [task.user.name, task.carModel, task.taskStatus, task.totalCost, new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })]);
+      return result;
+    } else {
+      return showAlert('error', res.data.message);
+    }
   } catch (err) {
-    showAlert('error', err);
-    console.log(err);
-    // alert(err.response.data.message);
+    return showAlert('error', err);
   }
+};
+
+export const generatePDF = async () => {
+  const filteredResults = await getFilteredResults();
+  console.log(filteredResults);
+  const totalSum = filteredResults.reduce((acc, curr) => acc + curr[3], 0);
+  const totalAmountTasks = filteredResults.length;
+  const from = filteredResults[filteredResults.length - 1][filteredResults[filteredResults.length - 1].length - 1];
+  const to = filteredResults[0][filteredResults[0].length - 1];
+
+  const docDefinition = {
+    content: [
+      { text: `Period: ${from} t/m ${to}`, style: 'subheader' },
+      `Submitted tasks: ${totalAmountTasks}`,
+
+      {
+        layout: 'lightHorizontalLines',
+        style: 'table',
+        table: {
+          headerRows: 1,
+          widths: ['*', 'auto', 'auto', 50, 75],
+
+          body: [['Customer', 'Vehicle Model', 'Status', 'Cost', 'Date'], ...filteredResults, [{ text: 'TOTAL', bold: true }, '', '', { text: totalSum, bold: true }, '']],
+        },
+      },
+    ],
+    documentTitle: `summary${from}${to}.pdf`,
+    styles: {
+      header: {
+        fontSize: 18,
+        bold: true,
+        margin: [0, 0, 0, 10],
+      },
+      subheader: {
+        fontSize: 16,
+        bold: true,
+        margin: [0, 10, 0, 5],
+      },
+      table: {
+        margin: [0, 5, 10, 15],
+      },
+      tableHeader: {
+        bold: true,
+        fontSize: 13,
+        color: 'black',
+      },
+    },
+  };
+  pdfMake.createPdf(docDefinition).download();
 };
