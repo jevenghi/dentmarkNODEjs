@@ -1,7 +1,7 @@
 const axios = require('axios');
 const { RESULTS_LIMIT } = require('../constants/queryConstants');
 const RequestQueryHandler = require('../utils/requestQueryHandler');
-
+const markerConstants = require('../constants/markerConstants');
 const Task = require('../models/taskModel');
 const User = require('../models/userModel');
 const catchAsyncError = require('../utils/catchAsyncError');
@@ -52,7 +52,11 @@ exports.getUser = catchAsyncError(async (req, res, next) => {
     toPlusOneDay.setDate(toPlusOneDay.getDate() - 1);
     to = toPlusOneDay.toISOString().split('T')[0];
   }
-  const requestQueries = new RequestQueryHandler(Task.find(), req.query).filter().sort().limitFields().paginate();
+  const requestQueries = new RequestQueryHandler(Task.find(), req.query)
+    .filter()
+    .sort()
+    .limitFields()
+    .paginate();
   // totalDocCount = await Task.countDocuments();
 
   const tasks = await requestQueries.query;
@@ -101,14 +105,21 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
     }, {});
 
     Object.entries(groupedDents).forEach(([side, dents]) => {
-      const src = side.startsWith('user') ? `/pics/tasks/${side}` : `/pics/sides_pics/${side}.png`;
-      if (!side.startsWith('user')) sidesLeft = sidesLeft.filter((el) => el !== side);
+      let width = markerConstants.UPLOADED_IMAGE_WIDTH;
+      const src = side.startsWith('user')
+        ? `/pics/tasks/${side}`
+        : `/pics/sides_pics/${side}.png`;
+      if (!side.startsWith('user')) {
+        sidesLeft = sidesLeft.filter((el) => el !== side);
+        if (isFrontOrRear(side)) width = markerConstants.IMAGE_WIDTH_FR_REAR;
+      }
       dentsHTML += `
           <div class="image-container">
-            <img id="vehicleImage" src="${src}" data-side="${side}" data-task-id="${req.params.id}"/>
+            <img id="vehicleImage" src="${src}" data-side="${side}" data-task-id="${req.params.id}" style="width: ${width}"/>
           `;
       dents.forEach((dent) => {
-        const { img, shape, length, orientation, paintDamaged, coords, _id } = dent;
+        const { img, shape, length, orientation, paintDamaged, coords, _id } =
+          dent;
         // let markerStyle = isFrontOrRear(img) ? `left: ${coords.x - 2}%; top: ${coords.y - 3.5}%;` : `left: ${coords.x - 1}%; top: ${coords.y - 3}%;`;
         let markerStyle = '';
 
@@ -118,32 +129,64 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
         if (length === 'small') {
           markerClass += ' small';
           if (shape === 'nonagon') {
-            markerStyle += `width: ${isFrontOrRear(side) ? '1.3rem' : '0.5rem'}; height: ${isFrontOrRear(side) ? '1.3rem' : '0.5rem'};`;
-            markerStyle += isFrontOrRear(img) ? `left: ${coords.relativeX - 2}%; top: ${coords.relativeY - 2.6}%;` : `left: ${coords.relativeX - 0.8}%; top: ${coords.relativeY - 2.6}%;`;
-            // markerStyle += `width: ${isFrontOrRear(side) ? '1.3rem' : '1.2rem'}; height: ${isFrontOrRear(side) ? '1.3rem' : '1.2rem'};`;
+            // markerStyle += `width: ${isFrontOrRear(side) ? '1.3rem' : '0.5rem'}; height: ${isFrontOrRear(side) ? '1.3rem' : '0.5rem'};`;
+            markerStyle += `width: ${markerConstants.CIRCLE_SMALL_SIDES}; height: ${markerConstants.CIRCLE_SMALL_SIDES};`;
 
-            // markerStyle += isFrontOrRear(img) ? `left: ${coords.x - 2}px; top: ${coords.y - 2.6}px;` : `left: ${coords.x - 6.5}px; top: ${coords.y - 6}px;`;
+            // markerStyle += isFrontOrRear(img)
+            //   ? `left: ${coords.relativeX - 2}%; top: ${coords.relativeY - 2.6}%;`
+            //   : `left: ${coords.relativeX - 0.8}%; top: ${coords.relativeY - 2.6}%;`;
+
+            markerStyle += isFrontOrRear(img)
+              ? `left: ${coords.x - markerConstants.CIRCLE_SMALL_X_CORR}px; top: ${coords.y - markerConstants.CIRCLE_SMALL_Y_CORR}px;`
+              : `left: ${coords.x - markerConstants.CIRCLE_SMALL_X_CORR}px; top: ${coords.y - markerConstants.CIRCLE_SMALL_Y_CORR}px;`;
           } else if (shape === 'line') {
-            markerStyle += isFrontOrRear(img) ? `left: ${coords.relativeX - 2}%; top: ${coords.relativeY - 1.5}%;` : `left: ${coords.relativeX - 1}%; top: ${coords.relativeY - 1.8}%;`;
-            markerStyle += `width: ${isFrontOrRear(side) ? '1.5rem' : '0.8rem'}; height: ${isFrontOrRear(side) ? '0.6rem' : '0.3rem'}; border-radius: 0.8rem; transform: rotate(${orientation});`;
+            markerStyle += `width: ${markerConstants.LINE_SMALL_W}; height: ${markerConstants.LINE_SMALL_H}; border-radius: 0.8rem; transform: rotate(${orientation});`;
+
+            markerStyle += isFrontOrRear(img)
+              ? `left: ${coords.x - markerConstants.LINE_SMALL_X_CORR}px; top: ${coords.y - markerConstants.LINE_SMALL_Y_CORR}px;`
+              : `left: ${coords.x - markerConstants.LINE_SMALL_X_CORR}px; top: ${coords.y - markerConstants.LINE_SMALL_Y_CORR}px;`;
+
+            // markerStyle += isFrontOrRear(img)
+            //   ? `left: ${coords.relativeX - 2}%; top: ${coords.relativeY - 1.5}%;`
+            //   : `left: ${coords.relativeX - 1}%; top: ${coords.relativeY - 1.8}%;`;
+            // markerStyle += `width: ${isFrontOrRear(side) ? '1.5rem' : '0.8rem'}; height: ${isFrontOrRear(side) ? '0.6rem' : '0.3rem'}; border-radius: 0.8rem; transform: rotate(${orientation});`;
           }
         } else if (length === 'medium') {
           markerClass += ' medium';
           if (shape === 'nonagon') {
-            markerStyle += isFrontOrRear(img) ? `left: ${coords.relativeX - 2.6}%; top: ${coords.relativeY - 3.6}%;` : `left: ${coords.relativeX - 1}%; top: ${coords.relativeY - 3}%;`;
-            markerStyle += `width: ${isFrontOrRear(side) ? '2rem' : '0.8rem'}; height: ${isFrontOrRear(side) ? '2rem' : '0.8rem'};`;
+            // markerStyle += isFrontOrRear(img)
+            //   ? `left: ${coords.relativeX - 2.6}%; top: ${coords.relativeY - 3.6}%;`
+            //   : `left: ${coords.relativeX - 1}%; top: ${coords.relativeY - 3}%;`;
+            // markerStyle += `width: ${isFrontOrRear(side) ? '2rem' : '0.8rem'}; height: ${isFrontOrRear(side) ? '2rem' : '0.8rem'};`;
+            markerStyle += isFrontOrRear(img)
+              ? `left: ${coords.x - markerConstants.CIRCLE_MEDIUM_X_CORR}px; top: ${coords.y - markerConstants.CIRCLE_MEDIUM_Y_CORR}px;`
+              : `left: ${coords.x - markerConstants.CIRCLE_MEDIUM_X_CORR}px; top: ${coords.y - markerConstants.CIRCLE_MEDIUM_Y_CORR}px;`;
+            markerStyle += `width: ${markerConstants.CIRCLE_MEDIUM_SIDES}; height: ${markerConstants.CIRCLE_MEDIUM_SIDES};`;
           } else if (shape === 'line') {
-            markerStyle += isFrontOrRear(img) ? `left: ${coords.relativeX - 3.2}%; top: ${coords.relativeY - 1.8}%;` : `left: ${coords.relativeX - 2}%; top: ${coords.relativeY - 2.6}%;`;
-            markerStyle += `width: ${isFrontOrRear(side) ? '2.2rem' : '1.4rem'}; height: ${isFrontOrRear(side) ? '0.8rem' : '0.5rem'}; border-radius: 0.8rem; transform: rotate(${orientation});`;
+            markerStyle += isFrontOrRear(img)
+              ? `left: ${coords.x - markerConstants.LINE_MEDIUM_X_CORR}px; top: ${coords.y - markerConstants.LINE_MEDIUM_Y_CORR}px;`
+              : `left: ${coords.x - markerConstants.LINE_MEDIUM_X_CORR}px; top: ${coords.y - markerConstants.LINE_MEDIUM_Y_CORR}px;`;
+            markerStyle += `width: ${markerConstants.LINE_MEDIUM_W}; height: ${markerConstants.LINE_MEDIUM_H}; border-radius: 0.8rem; transform: rotate(${orientation});`;
           }
         } else if (length === 'big') {
           markerClass += ' big';
           if (shape === 'nonagon') {
-            markerStyle += isFrontOrRear(img) ? `left: ${coords.relativeX - 3.4}%; top: ${coords.relativeY - 5}%;` : `left: ${coords.relativeX - 2}%; top: ${coords.relativeY - 5.3}%;`;
-            markerStyle += `width: ${isFrontOrRear(side) ? '2.6rem' : '1.6rem'}; height: ${isFrontOrRear(side) ? '2.6rem' : '1.6rem'};`;
+            // markerStyle += isFrontOrRear(img)
+            //   ? `left: ${coords.relativeX - 3.4}%; top: ${coords.relativeY - 5}%;`
+            //   : `left: ${coords.relativeX - 2}%; top: ${coords.relativeY - 5.3}%;`;
+            // markerStyle += `width: ${isFrontOrRear(side) ? '2.6rem' : '1.6rem'}; height: ${isFrontOrRear(side) ? '2.6rem' : '1.6rem'};`;
+            markerStyle += isFrontOrRear(img)
+              ? `left: ${coords.x - markerConstants.CIRCLE_LARGE_X_CORR}px; top: ${coords.y - markerConstants.CIRCLE_LARGE_Y_CORR}px;`
+              : `left: ${coords.x - markerConstants.CIRCLE_LARGE_X_CORR}px; top: ${coords.y - markerConstants.CIRCLE_LARGE_Y_CORR}px;`;
+            markerStyle += `width: ${markerConstants.CIRCLE_LARGE_SIDES}; height: ${markerConstants.CIRCLE_LARGE_SIDES};`;
           } else if (shape === 'line') {
-            markerStyle += isFrontOrRear(img) ? `left: ${coords.relativeX - 3.8}%; top: ${coords.relativeY - 2.5}%;` : `left: ${coords.relativeX - 3.2}%; top: ${coords.relativeY - 4.2}%;`;
-            markerStyle += `width: ${isFrontOrRear(side) ? '2.9rem' : '2.2rem'}; height: ${isFrontOrRear(side) ? '1.2rem' : '0.8rem'}; border-radius: 0.8rem; transform: rotate(${orientation});`;
+            markerStyle += isFrontOrRear(img)
+              ? `left: ${coords.x - markerConstants.LINE_LARGE_X_CORR}px; top: ${coords.y - markerConstants.LINE_LARGE_Y_CORR}px;`
+              : `left: ${coords.x - markerConstants.LINE_LARGE_X_CORR}px; top: ${coords.y - markerConstants.LINE_LARGE_Y_CORR}px;`;
+            // markerStyle += isFrontOrRear(img)
+            //   ? `left: ${coords.relativeX - 3.8}%; top: ${coords.relativeY - 2.5}%;`
+            //   : `left: ${coords.relativeX - 3.2}%; top: ${coords.relativeY - 4.2}%;`;
+            markerStyle += `width: ${markerConstants.LINE_LARGE_W}; height: ${markerConstants.LINE_LARGE_H}; border-radius: 0.8rem; transform: rotate(${orientation});`;
           }
         }
         dentsHTML += `
@@ -199,12 +242,23 @@ exports.getMyTasks = catchAsyncError(async (req, res, next) => {
   }
 
   if (req.user.role === 'user') {
-    requestQueries = new RequestQueryHandler(Task.find({ user: req.user.id }), req.query).filter().sort().limitFields().paginate();
+    requestQueries = new RequestQueryHandler(
+      Task.find({ user: req.user.id }),
+      req.query,
+    )
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
     // totalDocCount = await Task.countDocuments({ user: req.user.id });
   }
 
   if (req.user.role === 'admin') {
-    requestQueries = new RequestQueryHandler(Task.find(), req.query).filter().sort().limitFields().paginate();
+    requestQueries = new RequestQueryHandler(Task.find(), req.query)
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
     // totalDocCount = await Task.countDocuments();
   }
 

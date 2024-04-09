@@ -1,5 +1,6 @@
 import { showAlert } from './alerts.js';
 import axios from 'axios';
+import * as markerConstants from '../../constants/markerConstants';
 
 const isFrontOrRear = (side) => {
   return side.slice(-2) === 'fr' || side.slice(-2) === 're';
@@ -23,12 +24,18 @@ const markerStyle = (
   marker.style.width = isFrontOrRear(side) ? w1 : w2;
   marker.style.height = isFrontOrRear(side) ? h1 : h2;
 
+  // marker.style.left = isFrontOrRear(side)
+  //   ? `${coords.relativeX - x1}%`
+  //   : `${coords.relativeX - x2}%`;
+  // marker.style.top = isFrontOrRear(side)
+  //   ? `${coords.relativeY - y1}%`
+  //   : `${coords.relativeY - y2}%`;
   marker.style.left = isFrontOrRear(side)
-    ? `${coords.relativeX - x1}%`
-    : `${coords.relativeX - x2}%`;
+    ? `${coords.x - x1}px`
+    : `${coords.x - x2}px`;
   marker.style.top = isFrontOrRear(side)
-    ? `${coords.relativeY - y1}%`
-    : `${coords.relativeY - y2}%`;
+    ? `${coords.y - y1}px`
+    : `${coords.y - y2}px`;
   if (shape === 'line') {
     marker.style.borderRadius = '0.8rem';
     marker.style.transform = `rotate(${orientationDent})`;
@@ -63,14 +70,14 @@ export const placeMarker = (
         side,
         coords,
         null,
-        '1.3rem',
-        '0.5rem',
-        '1.3rem',
-        '0.5rem',
-        2,
-        0.8,
-        2.6,
-        2.6,
+        markerConstants.CIRCLE_SMALL_FR_REAR,
+        markerConstants.CIRCLE_SMALL_SIDES,
+        markerConstants.CIRCLE_SMALL_FR_REAR,
+        markerConstants.CIRCLE_SMALL_SIDES,
+        markerConstants.CIRCLE_SMALL_X_CORR,
+        markerConstants.CIRCLE_SMALL_X_CORR,
+        markerConstants.CIRCLE_SMALL_Y_CORR,
+        markerConstants.CIRCLE_SMALL_Y_CORR,
       );
     } else if (shape === 'line') {
       markerStyle(
@@ -79,14 +86,14 @@ export const placeMarker = (
         side,
         coords,
         orientationDent,
-        '1.5rem',
-        '0.8rem',
-        '0.6rem',
-        '0.3rem',
-        2,
-        1,
-        1.5,
-        1.8,
+        markerConstants.LINE_SMALL_W,
+        markerConstants.LINE_SMALL_W,
+        markerConstants.LINE_SMALL_H,
+        markerConstants.LINE_SMALL_H,
+        markerConstants.LINE_SMALL_X_CORR,
+        markerConstants.LINE_SMALL_X_CORR,
+        markerConstants.LINE_SMALL_Y_CORR,
+        markerConstants.LINE_SMALL_Y_CORR,
       );
     }
   }
@@ -99,14 +106,14 @@ export const placeMarker = (
         side,
         coords,
         null,
-        '2rem',
-        '0.8rem',
-        '2rem',
-        '0.8rem',
-        2.6,
-        1,
-        3.6,
-        3,
+        markerConstants.CIRCLE_MEDIUM_FR_REAR,
+        markerConstants.CIRCLE_MEDIUM_SIDES,
+        markerConstants.CIRCLE_MEDIUM_FR_REAR,
+        markerConstants.CIRCLE_MEDIUM_SIDES,
+        markerConstants.CIRCLE_MEDIUM_X_CORR,
+        markerConstants.CIRCLE_MEDIUM_X_CORR,
+        markerConstants.CIRCLE_MEDIUM_Y_CORR,
+        markerConstants.CIRCLE_MEDIUM_Y_CORR,
       );
     } else if (shape === 'line') {
       markerStyle(
@@ -115,14 +122,14 @@ export const placeMarker = (
         side,
         coords,
         orientationDent,
-        '2.2rem',
-        '1.4rem',
-        '0.8rem',
-        '0.5rem',
-        3.2,
-        2,
-        1.8,
-        2.6,
+        markerConstants.LINE_MEDIUM_W,
+        markerConstants.LINE_MEDIUM_W,
+        markerConstants.LINE_MEDIUM_H,
+        markerConstants.LINE_MEDIUM_H,
+        markerConstants.LINE_MEDIUM_X_CORR,
+        markerConstants.LINE_MEDIUM_X_CORR,
+        markerConstants.LINE_MEDIUM_Y_CORR,
+        markerConstants.LINE_MEDIUM_Y_CORR,
       );
     }
   }
@@ -135,14 +142,14 @@ export const placeMarker = (
         side,
         coords,
         null,
-        '2.6rem',
-        '1.6rem',
-        '2.6rem',
-        '1.6rem',
-        3.4,
-        2,
-        5,
-        5.3,
+        markerConstants.CIRCLE_LARGE_FR_REAR,
+        markerConstants.CIRCLE_LARGE_SIDES,
+        markerConstants.CIRCLE_LARGE_FR_REAR,
+        markerConstants.CIRCLE_LARGE_SIDES,
+        markerConstants.CIRCLE_LARGE_X_CORR,
+        markerConstants.CIRCLE_LARGE_X_CORR,
+        markerConstants.CIRCLE_LARGE_Y_CORR,
+        markerConstants.CIRCLE_LARGE_Y_CORR,
       );
     } else if (shape === 'line') {
       markerStyle(
@@ -151,14 +158,14 @@ export const placeMarker = (
         side,
         coords,
         orientationDent,
-        '2.9rem',
-        '2.2rem',
-        '1.2rem',
-        '0.8rem',
-        3.8,
-        3.2,
-        2.5,
-        4.2,
+        markerConstants.LINE_LARGE_W,
+        markerConstants.LINE_LARGE_W,
+        markerConstants.LINE_LARGE_H,
+        markerConstants.LINE_LARGE_H,
+        markerConstants.LINE_LARGE_X_CORR,
+        markerConstants.LINE_LARGE_X_CORR,
+        markerConstants.LINE_LARGE_Y_CORR,
+        markerConstants.LINE_LARGE_Y_CORR,
       );
     }
   }

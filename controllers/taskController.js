@@ -9,6 +9,7 @@ const catchAsyncErr = require('../utils/catchAsyncError');
 const factory = require('./handlerFactory');
 const AppError = require('../utils/appError');
 const multer = require('multer');
+const sendMail = require('../utils/email');
 
 // const multerStorage = multer.diskStorage({
 //   destination: (req, file, cb) => {
@@ -155,10 +156,13 @@ exports.sendTask = catchAsyncErr(async (req, res, next) => {
   req.body.images = JSON.parse(req.body.images);
   req.body.dents = JSON.parse(req.body.dents);
   // req.body.images = JSON.parse(req.body.images);
-  await Task.create(req.body);
+  const newTask = await Task.create(req.body);
+  req.newTask = newTask;
+
   res.status(201).json({
     status: 'success',
   });
+  next();
 });
 
 exports.addDentsToTask = catchAsyncErr(async (req, res, next) => {
@@ -319,3 +323,23 @@ exports.generateAdminReport = catchAsyncErr(async (req, res, next) => {
     return next(new AppError(`Error generating PDF`, 500));
   }
 });
+exports.sendTaskCreationEmail = async (req, res, next) => {
+  try {
+    const taskId = req.newTask.id;
+
+    const task = await Task.findById(taskId);
+    const userName = task.user.name;
+
+    const emailOptions = {
+      email: 'admin@dm.nl',
+      subject: 'New Task submitted',
+      message: `${userName} has submitted new task http://127.0.0.1:5501/tasks/${taskId}.`,
+    };
+
+    await sendMail(emailOptions);
+  } catch (error) {
+    console.error('Error sending task creation email:', error);
+    // You might choose to respond with an error here
+    // res.status(500).json({ error: 'Failed to send task creation email' });
+  }
+};

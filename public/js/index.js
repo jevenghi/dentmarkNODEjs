@@ -6,7 +6,8 @@ import { generatePDF } from './generatePDF';
 import { showAlert } from './alerts';
 import { deleteTask } from './deleteTask';
 import { placeMarker, addDentsToTask } from './placeMarker';
-
+import { DrawableCanvasElement } from './drawOnCanvas';
+// const imageCanvas =
 const mainContainer = document.querySelector('.main-container');
 
 const userDataForm = document.querySelector('.form-user-data');
@@ -54,6 +55,8 @@ function getMarkers() {
 }
 let markers = getMarkers();
 
+// new DrawableCanvasElement('myCanvasId');
+
 if (addAnotherSide) {
   addAnotherSide.addEventListener('click', () => {
     arrowSide.classList.toggle('rotate');
@@ -90,6 +93,8 @@ if (markerContainer) {
       const side = vehicleImage.dataset.side;
       const taskId = vehicleImage.dataset.taskId;
       storedCoordinates = {
+        x: event.offsetX,
+        y: event.offsetY,
         relativeX: (event.offsetX / vehicleImage.clientWidth) * 100,
         relativeY: (event.offsetY / vehicleImage.clientHeight) * 100,
       };
