@@ -43,7 +43,11 @@ exports.resizeTaskPhotos = catchAsyncErr(async (req, res, next) => {
   await Promise.all(
     req.files.images.map(async (file, i) => {
       const filename = `user-${req.user.id}-${Date.now()}-${i + 1}.png`;
-      await sharp(file.buffer).resize(1000).toFormat('png').png({ quality: 90 }).toFile(`public/pics/tasks/${filename}`);
+      await sharp(file.buffer)
+        .resize(1000)
+        .toFormat('png')
+        .png({ quality: 90 })
+        .toFile(`public/pics/tasks/${filename}`);
       req.body.images.push(filename);
     }),
   );
@@ -100,11 +104,22 @@ exports.getAllTasks = catchAsyncErr(async (req, res, next) => {
   let totalDocCount;
 
   if (req.user.role === 'user') {
-    requestQueries = new RequestQueryHandler(Task.find({ user: req.user.id }), req.query).filter().sort().limitFields().paginate();
+    requestQueries = new RequestQueryHandler(
+      Task.find({ user: req.user.id }),
+      req.query,
+    )
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
     totalDocCount = await Task.countDocuments({ user: req.user.id });
   }
   if (req.user.role === 'admin') {
-    requestQueries = new RequestQueryHandler(Task.find(), req.query).filter().sort().limitFields().paginate();
+    requestQueries = new RequestQueryHandler(Task.find(), req.query)
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
     totalDocCount = await Task.countDocuments();
   }
   const tasks = await requestQueries.query;
@@ -169,7 +184,8 @@ exports.addDentsToTask = catchAsyncErr(async (req, res, next) => {
   const taskId = req.params.id;
   try {
     const task = await Task.findById(taskId);
-    if (!task) return next(new AppError(`Task with this ID does not exist`, 404));
+    if (!task)
+      return next(new AppError(`Task with this ID does not exist`, 404));
     task.dents.push(...req.body.dents);
     await task.save();
     res.status(201).json({
@@ -191,7 +207,8 @@ exports.updateTask = factory.updateOne(Task);
 exports.deleteTask = async (req, res, next) => {
   try {
     const task = await Task.findById(req.params.id);
-    if (!task) return next(new AppError(`Task with this ID does not exist`, 404));
+    if (!task)
+      return next(new AppError(`Task with this ID does not exist`, 404));
 
     if (task.user.id === req.user.id || req.user.role === 'admin') {
       await task.deleteOne();
@@ -201,7 +218,9 @@ exports.deleteTask = async (req, res, next) => {
         message: 'Task succesfully deleted',
       });
     } else {
-      return next(new AppError('Only task creator or an admin can delete the task.', 403));
+      return next(
+        new AppError('Only task creator or an admin can delete the task.', 403),
+      );
     }
   } catch (err) {
     res.status(404).json({

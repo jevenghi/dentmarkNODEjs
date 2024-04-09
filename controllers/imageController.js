@@ -42,9 +42,18 @@ exports.resizeTaskPhotos = catchAsyncErr(async (req, res, next) => {
       const isPortrait = metadata.width < metadata.height;
 
       if (isPortrait) {
-        await sharp(file.buffer).rotate(90).resize(1000).toFormat('png').png({ quality: 70 }).toFile(`public/pics/tasks/${filename}`);
+        await sharp(file.buffer)
+          .rotate(90)
+          .resize(1000)
+          .toFormat('png')
+          .png({ quality: 70 })
+          .toFile(`public/pics/tasks/${filename}`);
       } else {
-        await sharp(file.buffer).resize(1000).toFormat('png').png({ quality: 70 }).toFile(`public/pics/tasks/${filename}`);
+        await sharp(file.buffer)
+          .resize(1000)
+          .toFormat('png')
+          .png({ quality: 70 })
+          .toFile(`public/pics/tasks/${filename}`);
       }
       // await sharp(file.buffer).resize(800).toFormat('png').png({ quality: 70 }).toFile(`public/pics/tasks/${filename}`);
       imageNames.push(filename);
@@ -58,7 +67,7 @@ exports.resizeTaskPhotos = catchAsyncErr(async (req, res, next) => {
 });
 
 exports.transferFiles = catchAsyncErr(async (req, res, next) => {
-  const localDirectory = 'D:/jsProjects/krasmarkNODE/public/pics/tasks';
+  const localDirectory = '../public/pics/tasks';
   const remoteDirectory = '/home/tasks';
 
   const config = {
