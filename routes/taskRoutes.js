@@ -11,6 +11,7 @@ router.post(
   taskController.uploadTaskPhotos,
   taskController.resizeTaskPhotos,
   taskController.sendTask,
+  // add next() to sendTask when uncommenting
   // taskController.sendTaskCreationEmail,
 );
 router.post(

@@ -177,7 +177,7 @@ exports.sendTask = catchAsyncErr(async (req, res, next) => {
   res.status(201).json({
     status: 'success',
   });
-  next();
+  // next();
 });
 
 exports.addDentsToTask = catchAsyncErr(async (req, res, next) => {
