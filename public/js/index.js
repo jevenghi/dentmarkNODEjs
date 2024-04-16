@@ -7,8 +7,11 @@ import { showAlert } from './alerts';
 import { deleteTask } from './deleteTask';
 import { placeMarker, addDentsToTask } from './placeMarker';
 import { DrawableCanvasElement } from './drawOnCanvas';
+import { resetPassword } from './resetPassword';
+
 // const imageCanvas =
 const mainContainer = document.querySelector('.main-container');
+const passwordResetForm = document.querySelector('.reset-form');
 
 const userDataForm = document.querySelector('.form-user-data');
 const userPasswordForm = document.querySelector('.form-user-password');
@@ -56,6 +59,20 @@ function getMarkers() {
 let markers = getMarkers();
 
 // new DrawableCanvasElement('myCanvasId');
+
+if (passwordResetForm) {
+  passwordResetForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    const password = document.getElementById('password-reset').value;
+    const passwordConfirm = document.getElementById(
+      'passwordConfirm-reset',
+    ).value;
+
+    resetPassword(password, passwordConfirm, token);
+  });
+}
 
 if (addAnotherSide) {
   addAnotherSide.addEventListener('click', () => {

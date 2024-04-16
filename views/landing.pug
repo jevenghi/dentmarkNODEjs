@@ -2,14 +2,19 @@ extends base
 
 block styles 
   link(rel="stylesheet" href="/css/landing.css")
+  link(rel='preconnect' href='https://fonts.googleapis.com')
+  link(rel='preconnect' href='https://fonts.gstatic.com' crossorigin='')
+  link(href='https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap' rel='stylesheet')
+
 
 block content
   .container
-    h1 Welcome to DentMark.AM
-      p
-        | Skip the hassle of explaining dents over the phone or with unclear
-        | photos. With DentMark.AM, just select your vehicle type from our
-        | preloaded blueprints and pinpoint the dents effortlessly. Our expert
-        | technicians will receive your request instantly for accurate evaluation.
-      a.btn(href="/login") Login
-      a.btn(href="/signup") Sign Up
+    form.login-form
+      h1 Welcome to DentMark.AM
+        p
+          | Skip the hassle of explaining dents over the phone or with unclear
+          | photos. With DentMark.AM, just select your vehicle type from our
+          | preloaded blueprints and pinpoint the dents effortlessly. Our expert
+          | technicians will receive your request instantly for accurate evaluation.
+        a.btn(href="/login") Login
+        a.btn(href="/signup" class='signup_btn') Sign Up

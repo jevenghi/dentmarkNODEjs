@@ -3,7 +3,11 @@ const authController = require('../controllers/authController');
 
 const router = express.Router({ mergeParams: true });
 
-router.get('/checkAuth', authController.isLoggedIn, authController.sendAuthStatus);
+router.get(
+  '/checkAuth',
+  authController.isLoggedIn,
+  authController.sendAuthStatus,
+);
 
 router.post('/register', authController.signup);
 router.post('/login', authController.login);

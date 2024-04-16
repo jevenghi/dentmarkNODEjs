@@ -754,9 +754,10 @@ class App {
     marker.className = 'marker';
 
     if (paintDamaged) {
-      const markerX = document.createElement('span');
-      markerX.textContent = 'X';
-      marker.appendChild(markerX);
+      marker.style.borderStyle = 'dotted';
+      // const markerX = document.createElement('span');
+      // markerX.textContent = 'X';
+      // marker.appendChild(markerX);
     }
 
     if (length === 'small') {

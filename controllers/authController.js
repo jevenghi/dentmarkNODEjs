@@ -5,7 +5,11 @@ const User = require('../models/userModel');
 const AppError = require('../utils/appError');
 const catchAsyncError = require('../utils/catchAsyncError');
 const sendEmail = require('../utils/email');
-const { MAX_LOGIN_ATTEMPTS, LOCK_TIME, RATE_LIMIT } = require('../constants/authConstants');
+const {
+  MAX_LOGIN_ATTEMPTS,
+  LOCK_TIME,
+  RATE_LIMIT,
+} = require('../constants/authConstants');
 
 const signToken = (id) =>
   jwt.sign({ id: id }, process.env.JWT_SECRET, {
@@ -17,7 +21,9 @@ const signToken = (id) =>
 const createAndSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
   const cookieOptions = {
-    expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
+    ),
     httpOnly: true,
   };
 
@@ -38,7 +44,10 @@ const createAndSendToken = (user, statusCode, res) => {
 exports.isLoggedIn = async (req, res, next) => {
   if (req.cookies.jwt) {
     try {
-      const decoded = await promisify(jwt.verify)(req.cookies.jwt, process.env.JWT_SECRET);
+      const decoded = await promisify(jwt.verify)(
+        req.cookies.jwt,
+        process.env.JWT_SECRET,
+      );
 
       const currentUser = await User.findById(decoded.id);
       if (!currentUser) {
@@ -61,7 +70,10 @@ exports.isLoggedIn = async (req, res, next) => {
 exports.isAdmin = async (req, res, next) => {
   if (req.cookies.jwt) {
     try {
-      const decoded = await promisify(jwt.verify)(req.cookies.jwt, process.env.JWT_SECRET);
+      const decoded = await promisify(jwt.verify)(
+        req.cookies.jwt,
+        process.env.JWT_SECRET,
+      );
       const currentUser = await User.findById(decoded.id);
       if (currentUser.role === 'admin') {
         res.json(true);
@@ -106,14 +118,19 @@ exports.signup = catchAsyncError(async (req, res, next) => {
 
     res.status(201).json({
       status: 'success',
-      message: `User created. Please complete your registration, following the instructions sent to your e-mail address. If you haven't received the email, please check your spam folder`,
+      message: `Please complete your registration, following the instructions sent to your e-mail address. If you haven't received the email, please check your spam folder`,
     });
   } catch (err) {
     newUser.emailConfirmationToken = undefined;
     newUser.emailConfirmationTokenExpires = undefined;
     await newUser.save();
 
-    return next(new AppError('There was an error sending the email. Try again later!', 500));
+    return next(
+      new AppError(
+        'There was an error sending the email. Try again later!',
+        500,
+      ),
+    );
   }
   // createAndSendToken(newUser, 200, res);
 });
@@ -124,7 +141,9 @@ exports.checkEmail = catchAsyncError(async (req, res, next) => {
   const existingUser = await User.findOne({ email });
 
   if (existingUser) {
-    res.status(200).json({ status: 'error', message: 'Email already registered' });
+    res
+      .status(200)
+      .json({ status: 'error', message: 'Email already registered' });
   } else {
     res.status(200).json({ status: 'success', message: 'Email available' });
   }
@@ -137,13 +156,24 @@ exports.login = catchAsyncError(async (req, res, next) => {
     return next(new AppError('Please provide email and password', 400));
   }
 
-  const user = await User.findOne({ email }).select('+password -passwordConfirm');
+  const user = await User.findOne({ email }).select(
+    '+password -passwordConfirm',
+  );
 
-  if (user && user.loginAttempts >= MAX_LOGIN_ATTEMPTS && user.lockUntil > Date.now()) {
+  if (
+    user &&
+    user.loginAttempts >= MAX_LOGIN_ATTEMPTS &&
+    user.lockUntil > Date.now()
+  ) {
     const remainingTime = Math.ceil((user.lockUntil - Date.now()) / 60000);
     const units = remainingTime > 1 ? 'minutes' : 'minute';
 
-    return next(new AppError(`Account locked. Please try again in ${remainingTime} ${units}.`, 401));
+    return next(
+      new AppError(
+        `Account locked. Please try again in ${remainingTime} ${units}.`,
+        401,
+      ),
+    );
   }
 
   if (!user || !(await user.correctPassword(password, user.password))) {
@@ -158,7 +188,12 @@ exports.login = catchAsyncError(async (req, res, next) => {
   }
 
   if (!user.emailConfirmed) {
-    return next(new AppError('Please complete your signup process, following the instructions sent to your email address', 403));
+    return next(
+      new AppError(
+        'Please complete your signup process, following the instructions sent to your email address',
+        403,
+      ),
+    );
   }
 
   if (user.loginAttempts !== 0) {
@@ -200,7 +235,10 @@ exports.logout = (req, res) => {
 exports.protect = catchAsyncError(async (req, res, next) => {
   let token;
 
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
     token = req.headers.authorization.split(' ')[1];
   } else if (req.cookies.jwt) {
     token = req.cookies.jwt;
@@ -218,7 +256,12 @@ exports.protect = catchAsyncError(async (req, res, next) => {
   }
 
   if (currentUser.changedPasswordAfter(decoded.iat)) {
-    return next(new AppError(`Invalid credentials or session expired. Please log in again.`, 401));
+    return next(
+      new AppError(
+        `Invalid credentials or session expired. Please log in again.`,
+        401,
+      ),
+    );
   }
 
   req.user = currentUser;
@@ -232,7 +275,9 @@ exports.restrictTo =
     const user = await User.findById(req.user.id).select('+role');
 
     if (!roles.includes(user.role)) {
-      return next(new AppError('You do not have permission to perform this action.', 403));
+      return next(
+        new AppError('You do not have permission to perform this action.', 403),
+      );
     }
 
     next();
@@ -242,13 +287,20 @@ exports.forgotPassword = catchAsyncError(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });
 
   if (!user) {
-    return next(new AppError('Password reset failed. Please check your email address and try again.', 404));
+    return next(
+      new AppError(
+        'Password reset failed. Please check your email address and try again.',
+        404,
+      ),
+    );
   }
 
   const resetToken = user.createPasswordResetToken();
   await user.save({ validateBeforeSave: false });
 
-  const resetURL = `${req.protocol}://${req.get('host')}/resetPassword.html?token=${resetToken}`;
+  // const resetURL = `${req.protocol}://${req.get('host')}/resetPassword.html?token=${resetToken}`;
+  const resetURL = `${req.protocol}://${req.get('host')}/reset-password?token=${resetToken}`;
+
   const message = `Follow the link to reset your password: ${resetURL}`;
 
   try {
@@ -266,12 +318,17 @@ exports.forgotPassword = catchAsyncError(async (req, res, next) => {
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
     await user.save({ validateBeforeSave: false });
-    return next(new AppError('Password reset failed. Please try again later.', 500));
+    return next(
+      new AppError('Password reset failed. Please try again later.', 500),
+    );
   }
 });
 
 exports.resetPassword = catchAsyncError(async (req, res, next) => {
-  const hashedToken = crypto.createHash('sha256').update(req.body.token).digest('hex');
+  const hashedToken = crypto
+    .createHash('sha256')
+    .update(req.body.token)
+    .digest('hex');
   const user = await User.findOne({
     passwordResetToken: hashedToken,
     passwordResetExpires: { $gt: Date.now() },
@@ -291,7 +348,10 @@ exports.resetPassword = catchAsyncError(async (req, res, next) => {
 });
 
 exports.confirmEmail = catchAsyncError(async (req, res, next) => {
-  const hashedToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
+  const hashedToken = crypto
+    .createHash('sha256')
+    .update(req.params.token)
+    .digest('hex');
 
   const user = await User.findOne({
     emailConfirmationToken: hashedToken,
@@ -307,6 +367,7 @@ exports.confirmEmail = catchAsyncError(async (req, res, next) => {
   user.emailConfirmationTokenExpires = undefined;
 
   await user.save({ validateBeforeSave: false });
+  //TODO: sendEmail(welcome);
 
   res.redirect('/welcome');
 });

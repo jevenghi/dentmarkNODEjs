@@ -10,6 +10,7 @@ router.get('/welcome', viewsController.getWelcome);
 router.get('/login', viewsController.getLoginForm);
 router.get('/signup', viewsController.getSignupForm);
 router.get('/forgot-password', viewsController.getForgotPassForm);
+router.get('/reset-password', viewsController.getPassResetForm);
 
 // router.use(authController.protect);
 router.get('/me', authController.protect, viewsController.getMe);

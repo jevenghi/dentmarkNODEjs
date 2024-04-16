@@ -1,6 +1,7 @@
 import { showAlert } from './alerts.js';
+import axios from 'axios';
 
-const resetPassword = async (password, passwordConfirm, token) => {
+export const resetPassword = async (password, passwordConfirm, token) => {
   try {
     const res = await axios({
       method: 'PATCH',
@@ -12,19 +13,25 @@ const resetPassword = async (password, passwordConfirm, token) => {
       },
     });
     if (res.data.status === 'success') {
-      const message = document.createElement('div');
-      message.classList.add('success-message');
-      message.innerHTML = `
-        <div class="message-box">
-          <p>Password changed successfully!</p>
-          <a href="/login" class="btn">Login</a>
-        </div>
-        
-        `;
-      document.querySelector('.container').appendChild(message);
-      document.querySelector('.login-form').style.display = 'none';
+      showAlert('success', 'Password changed successfully!', () => {
+        location.href = '/';
+      });
     }
+
+    //   const message = document.createElement('div');
+    //   message.classList.add('success-message');
+    //   message.innerHTML = `
+    //     <div class="message-box">
+    //       <p>Password changed successfully!</p>
+    //       <a href="/login" class="btn">Login</a>
+    //     </div>
+
+    //     `;
+    //   document.querySelector('.container').appendChild(message);
+    //   document.querySelector('.reset-form').style.display = 'none';
+    // }
   } catch (err) {
+    console.log(err);
     if (err.response.status === 429) {
       // window.location.href = 'limit-exceeded.html';
       showAlert('error', err.response.data);
@@ -41,18 +48,17 @@ const resetPassword = async (password, passwordConfirm, token) => {
     //   `;
     // document.querySelector('.container').appendChild(message);
     // document.querySelector('.login-form').style.display = 'none';
-    console.log(err);
     // console.log(err);
     // alert(err.response.data.message);
   }
 };
 
-document.querySelector('.login-form').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const urlParams = new URLSearchParams(window.location.search);
-  const token = urlParams.get('token');
-  const password = document.getElementById('password').value;
-  const passwordConfirm = document.getElementById('passwordConfirm').value;
+// document.querySelector('.login-form').addEventListener('submit', (e) => {
+//   e.preventDefault();
+//   const urlParams = new URLSearchParams(window.location.search);
+//   const token = urlParams.get('token');
+//   const password = document.getElementById('password').value;
+//   const passwordConfirm = document.getElementById('passwordConfirm').value;
 
-  resetPassword(password, passwordConfirm, token);
-});
+//   resetPassword(password, passwordConfirm, token);
+// });

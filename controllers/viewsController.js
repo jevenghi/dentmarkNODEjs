@@ -7,6 +7,12 @@ const User = require('../models/userModel');
 const catchAsyncError = require('../utils/catchAsyncError');
 // const { showAlert } = require('../public/js/alerts');
 
+exports.getPassResetForm = catchAsyncError(async (req, res, next) => {
+  res.status(200).render('resetPassword', {
+    title: 'Reset your password',
+  });
+});
+
 exports.getLoginForm = catchAsyncError(async (req, res, next) => {
   res.status(200).render('login', {
     title: 'Log into your account',

@@ -11,7 +11,7 @@ router.post(
   taskController.uploadTaskPhotos,
   taskController.resizeTaskPhotos,
   taskController.sendTask,
-  taskController.sendTaskCreationEmail,
+  // taskController.sendTaskCreationEmail,
 );
 router.post(
   '/sendTask/:id',
