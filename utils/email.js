@@ -24,7 +24,10 @@ module.exports = class Email {
   }
 
   async send(template, subject) {
-    const html = pug.renderFile(`${__dirname}/../views/welcome.pug`, { url: this.url, subject });
+    const html = pug.renderFile(`${__dirname}/../views/welcome.pug`, {
+      url: this.url,
+      subject,
+    });
     const mailOptions = {
       from: this.from,
       to: this.to,
@@ -42,6 +45,7 @@ module.exports = class Email {
 };
 
 const sendMail = async (options) => {
+  console.log(process.env.EMAIL_PORT);
   const transport = nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
     port: process.env.EMAIL_PORT,
@@ -52,7 +56,7 @@ const sendMail = async (options) => {
   });
 
   const mailOptions = {
-    from: 'Dentmark App <admin@app.nl>',
+    from: 'Dentmarker App <info@am-place.com>',
     to: options.email,
     subject: options.subject,
     text: options.message,

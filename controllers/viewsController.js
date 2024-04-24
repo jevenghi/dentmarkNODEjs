@@ -130,7 +130,7 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
         let markerStyle = '';
 
         let markerClass = 'marker';
-        if (paintDamaged === 'yes') markerClass += ' paint-damaged';
+        if (paintDamaged) markerStyle += ' border-style: dotted;';
 
         if (length === 'small') {
           markerClass += ' small';
@@ -199,9 +199,16 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
   
           <div class="${markerClass}" style="${markerStyle}" id ="${_id}" data-task-id="${req.params.id}">
   
-            ${paintDamaged ? '<span>X</span>' : ''}
           </div>
         `;
+        //WITh X FOR PAINT DAMAGED MARKERS
+        //   dentsHTML += `
+
+        //   <div class="${markerClass}" style="${markerStyle}" id ="${_id}" data-task-id="${req.params.id}">
+
+        //     ${paintDamaged ? '<span>X</span>' : ''}
+        //   </div>
+        // `;
       });
       dentsHTML += `</div>`;
     });

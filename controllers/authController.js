@@ -245,7 +245,8 @@ exports.protect = catchAsyncError(async (req, res, next) => {
   }
 
   if (!token) {
-    return next(new AppError(`You are not logged in, please log in.`, 401));
+    // return next(new AppError(`You are not logged in, please log in.`, 401));
+    return res.redirect('/');
   }
 
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
