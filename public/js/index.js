@@ -356,8 +356,9 @@ if (signupForm) {
     const password = document.getElementById('password').value;
     const passwordConfirm = document.getElementById('confirm_password').value;
     const name = document.getElementById('company').value;
+    console.log(passwordConfirm);
 
-    signup(name, email, password, passwordConfirm, company);
+    signup(name, email, password, passwordConfirm);
   });
 }
 
