@@ -95,13 +95,15 @@ exports.sendAuthStatus = (req, res) => {
 };
 //TODO: if email confirmation expires, remove document from DB
 exports.signup = catchAsyncError(async (req, res, next) => {
+  console.log('api register');
+  console.log(req.body.passwordConfirm);
   const newUser = await User.create({
     name: req.body.name,
     email: req.body.email,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
   });
-
+  console.log('user created');
   const confirmationToken = newUser.createEmailConfirmationToken();
 
   await newUser.save({ validateBeforeSave: false });
@@ -112,7 +114,7 @@ exports.signup = catchAsyncError(async (req, res, next) => {
   try {
     await sendEmail({
       email: newUser.email,
-      subject: 'Confirm your signup at DentMark.AM',
+      subject: 'Confirm your signup at DentMarker App',
       message,
     });
 
