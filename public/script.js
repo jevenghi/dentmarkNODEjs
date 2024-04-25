@@ -469,6 +469,7 @@ class App {
       // if (taskId) {
       //   await this._addDentsToTask(taskId, this.#dents);
       // }
+
       if (this.#hailDamage) {
         const model = vehicleModel.value;
         if (model.length < 5) {
@@ -493,7 +494,7 @@ class App {
           model,
           this.#bodyType,
           this.#dents,
-          // null,
+          this.#uploadedImages,
         );
       }
       this._removeAllMarkers();
@@ -612,7 +613,7 @@ class App {
     carModel,
     bodyType,
     dents,
-    // images,
+    images,
     // formData = null,
   ) {
     try {
@@ -630,7 +631,7 @@ class App {
       const res = await axios({
         method: 'POST',
         url: '/api/v1/tasks/sendTask',
-        data: { user: customer, carModel, bodyType, dents },
+        data: { user: customer, carModel, bodyType, dents, images },
         // data: formData,
       });
       if (res.data.status === 'success') {

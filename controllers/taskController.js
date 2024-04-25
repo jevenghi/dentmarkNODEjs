@@ -171,7 +171,6 @@ exports.sendTask = catchAsyncErr(async (req, res, next) => {
   // req.body.images = JSON.parse(req.body.images);
   // req.body.dents = JSON.parse(req.body.dents);
   const newTask = await Task.create(req.body);
-  console.log(newTask);
   req.newTask = newTask;
 
   res.status(201).json({
@@ -298,7 +297,6 @@ exports.generateUserReport = catchAsyncErr(async (req, res, next) => {
 
 exports.generateAdminReport = catchAsyncErr(async (req, res, next) => {
   const { status, from, to } = req.query;
-  console.log(status, from, to);
   try {
     let matchStage = {}; // Default empty match stage
 

@@ -5,6 +5,9 @@ const markerConstants = require('../constants/markerConstants');
 const Task = require('../models/taskModel');
 const User = require('../models/userModel');
 const catchAsyncError = require('../utils/catchAsyncError');
+let Client = require('ssh2-sftp-client');
+const path = require('path');
+
 // const { showAlert } = require('../public/js/alerts');
 
 exports.getPassResetForm = catchAsyncError(async (req, res, next) => {
@@ -86,7 +89,39 @@ const isFrontOrRear = function (side) {
 
 exports.getTask = catchAsyncError(async (req, res, next) => {
   const task = await Task.findById(req.params.id);
-  const { bodyType } = task;
+  const { bodyType, images } = task;
+
+  const localDirectory = '/public/pics/pics_temp';
+  // const localDirectory = '../krasmarkNODE/public/pics/pics_temp';
+
+  const remoteDirectory = '/home/tasks';
+
+  const config = {
+    host: process.env.VPS_HOST,
+    port: process.env.VPS_PORT,
+    username: process.env.VPS_USERNAME,
+    password: process.env.VPS_PASSWORD,
+  };
+  const client = new Client();
+
+  try {
+    await client.connect(config);
+    await Promise.all(
+      images.map(async (file) => {
+        const localFilePath = path.resolve(localDirectory, file);
+        const remote = path.posix.join(remoteDirectory, file);
+
+        await client.get(remote, localFilePath);
+      }),
+    );
+
+    client.end();
+    // res.status(201).json({ status: 'success' });
+  } catch (err) {
+    console.error('SFTP Error:', err);
+    return res.status(500).json({ error: 'Error transferring files' });
+  }
+
   let taskDents;
   let dentsHTML = '';
   let sidesLeft = ['re', 'ls', 'rs', 'fr', 'top'].map((el) => bodyType + el);
@@ -94,7 +129,7 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
     task.images.forEach((fileName) => {
       dentsHTML += `
       <div class="image-container">
-        <img id="vehicleImage" src="/pics/tasks/${fileName}" data-side="${fileName}" data-task-id="${req.params.id}"/>
+        <img id="vehicleImage" src="/pics/pics_temp/${fileName}" data-side="${fileName}" data-task-id="${req.params.id}"/>
       </div>  
       `;
     });
@@ -113,7 +148,7 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
     Object.entries(groupedDents).forEach(([side, dents]) => {
       let width = markerConstants.UPLOADED_IMAGE_WIDTH;
       const src = side.startsWith('user')
-        ? `/pics/tasks/${side}`
+        ? `/pics/pics_temp/${side}`
         : `/pics/sides_pics/${side}.png`;
       if (!side.startsWith('user')) {
         sidesLeft = sidesLeft.filter((el) => el !== side);

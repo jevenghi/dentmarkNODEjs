@@ -2,14 +2,14 @@ const express = require('express');
 
 const taskController = require('../controllers/taskController');
 const authController = require('../controllers/authController');
+const imageController = require('../controllers/imageController');
 
 const router = express.Router();
 
 router.post(
   '/sendTask',
   authController.protect,
-  // taskController.uploadTaskPhotos,
-  // taskController.resizeTaskPhotos,
+  imageController.transferFiles,
   taskController.sendTask,
   // add next() to sendTask when uncommenting
   // taskController.sendTaskCreationEmail,

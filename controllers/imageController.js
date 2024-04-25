@@ -67,7 +67,9 @@ exports.resizeTaskPhotos = catchAsyncErr(async (req, res, next) => {
 });
 
 exports.transferFiles = catchAsyncErr(async (req, res, next) => {
-  const localDirectory = '../public/pics/tasks';
+  const localDirectory = '/public/pics/tasks';
+  // const localDirectory = '../krasmarkNODE/public/pics/tasks';
+
   const remoteDirectory = '/home/tasks';
 
   const config = {
@@ -81,7 +83,7 @@ exports.transferFiles = catchAsyncErr(async (req, res, next) => {
   try {
     await client.connect(config);
     await Promise.all(
-      req.body.map(async (file) => {
+      req.body.images.map(async (file) => {
         const localFilePath = path.resolve(localDirectory, file);
         const remote = path.posix.join(remoteDirectory, file);
 
@@ -90,9 +92,10 @@ exports.transferFiles = catchAsyncErr(async (req, res, next) => {
     );
 
     client.end();
-    res.status(201).json({ status: 'success' });
+    // res.status(201).json({ status: 'success' });
   } catch (err) {
     console.error('SFTP Error:', err);
-    res.status(500).json({ error: 'Error transferring files' });
+    return res.status(500).json({ error: 'Error transferring files' });
   }
+  next();
 });
