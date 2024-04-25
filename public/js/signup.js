@@ -42,20 +42,20 @@ export const signup = async (name, email, password, passwordConfirm) => {
       },
     });
     if (res.data.status === 'success') {
-      showAlert('success', res.data.message, () => {
-        location.href = '/';
-      });
+      // showAlert('success', res.data.message, () => {
+      //   location.href = '/';
+      // });
 
-      // const successMessage = document.createElement('div');
-      // successMessage.classList.add('success-message');
-      // successMessage.innerHTML = `
-      //   <div class="message-box">
-      //     <p>${res.data.message}</p>
-      //   </div>
-      //   `;
-      // document.querySelector('.container').appendChild(successMessage);
-      // document.querySelector('.signup-form').style.display = 'none';
-      // document.querySelector('.privacy-policy-link').style.display = 'none';
+      const successMessage = document.createElement('div');
+      successMessage.classList.add('success-message');
+      successMessage.innerHTML = `
+        <div class="message-box">
+          <p>${res.data.message}</p>
+        </div>
+        `;
+      document.querySelector('.container').appendChild(successMessage);
+      document.querySelector('.signup-form').style.display = 'none';
+      document.querySelector('.privacy-policy-link').style.display = 'none';
     } else {
       showAlert('error', res.data.message);
     }

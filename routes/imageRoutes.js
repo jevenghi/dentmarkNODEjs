@@ -4,7 +4,16 @@ const authController = require('../controllers/authController');
 
 const router = express.Router();
 
-router.post('/uploadPhotos', authController.protect, imageController.uploadTaskPhotos, imageController.resizeTaskPhotos);
-router.post('/transferPhotos', authController.protect, imageController.transferFiles);
+router.post(
+  '/uploadPhotos',
+  authController.protect,
+  imageController.uploadTaskPhotos,
+  imageController.resizeTaskPhotos,
+);
+router.post(
+  '/transferPhotos',
+  authController.protect,
+  imageController.transferFiles,
+);
 
 module.exports = router;

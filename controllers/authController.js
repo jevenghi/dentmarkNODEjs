@@ -106,7 +106,7 @@ exports.signup = catchAsyncError(async (req, res, next) => {
   await newUser.save({ validateBeforeSave: false });
 
   const confirmationURL = `${req.protocol}://${req.get('host')}/api/v1/auth/confirmEmail/${confirmationToken}`;
-  const message = `Please confirm your registration at DentMark.AM by clicking the link below:\n${confirmationURL}. Unverified accounts are automatically deleted 30 days after signup. If you didn't request this, please ignore this email.`;
+  const message = `Please confirm your registration at DentMark.AM by clicking the link below:\n${confirmationURL}. \nUnverified accounts are automatically deleted 30 days after signup. If you didn't request this, please ignore this email.`;
 
   try {
     await sendEmail({
@@ -123,7 +123,7 @@ exports.signup = catchAsyncError(async (req, res, next) => {
     newUser.emailConfirmationToken = undefined;
     newUser.emailConfirmationTokenExpires = undefined;
     console.log('error sending email');
-    await newUser.save();
+    await newUser.save({ validateBeforeSave: false });
 
     return next(
       new AppError(
