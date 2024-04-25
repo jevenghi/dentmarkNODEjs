@@ -62,7 +62,7 @@ exports.resizeTaskPhotos = catchAsyncErr(async (req, res, next) => {
   //   req.imageNames = imageNames;
   res.status(201).json({
     status: 'success',
-    images: imageNames,
+    imageNames,
   });
 });
 

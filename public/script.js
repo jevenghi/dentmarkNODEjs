@@ -480,7 +480,7 @@ class App {
           model,
           this.#bodyType,
           this.#dents,
-          this.#uploadedImages,
+          // this.#uploadedImages,
         );
       } else {
         const model = vehicleModel.value;
@@ -493,7 +493,7 @@ class App {
           model,
           this.#bodyType,
           this.#dents,
-          null,
+          // null,
         );
       }
       this._removeAllMarkers();
@@ -612,26 +612,26 @@ class App {
     carModel,
     bodyType,
     dents,
-    images,
-    formData = null,
+    // images,
+    // formData = null,
   ) {
     try {
-      if (!formData) {
-        formData = new FormData();
-        formData.append('user', customer);
-        formData.append('carModel', carModel);
-        formData.append('bodyType', bodyType);
-        formData.append('images', JSON.stringify(images));
+      // if (!formData) {
+      //   formData = new FormData();
+      //   formData.append('user', customer);
+      //   formData.append('carModel', carModel);
+      //   formData.append('bodyType', bodyType);
+      //   formData.append('images', JSON.stringify(images));
 
-        formData.append('dents', JSON.stringify(dents));
-        // formData.append('images', images);
-      }
+      //   formData.append('dents', JSON.stringify(dents));
+      //   // formData.append('images', images);
+      // }
 
       const res = await axios({
         method: 'POST',
         url: '/api/v1/tasks/sendTask',
-        // data: { user: customer, carModel, bodyType, dents },
-        data: formData,
+        data: { user: customer, carModel, bodyType, dents },
+        // data: formData,
       });
       if (res.data.status === 'success') {
         // showAlert(
@@ -921,7 +921,7 @@ class App {
         data: images,
       });
       if (res.data.status === 'success') {
-        return res.data.images;
+        return res.data.imageNames;
       }
     } catch (err) {
       alert(err);

@@ -169,8 +169,9 @@ exports.sendTask = catchAsyncErr(async (req, res, next) => {
   //   dents: formattedDents,
   // };
   // req.body.images = JSON.parse(req.body.images);
-  req.body.dents = JSON.parse(req.body.dents);
+  // req.body.dents = JSON.parse(req.body.dents);
   const newTask = await Task.create(req.body);
+  console.log(newTask);
   req.newTask = newTask;
 
   res.status(201).json({
