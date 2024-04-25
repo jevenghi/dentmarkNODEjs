@@ -68,7 +68,6 @@ exports.resizeTaskPhotos = catchAsyncErr(async (req, res, next) => {
 
 exports.transferFiles = catchAsyncErr(async (req, res, next) => {
   const localDirectory = '../krasmarkNODE/public/pics/tasks/';
-  console.log(absoluteDirectory);
 
   const remoteDirectory = '/home/tasks';
 
