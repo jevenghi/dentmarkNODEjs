@@ -67,8 +67,9 @@ exports.resizeTaskPhotos = catchAsyncErr(async (req, res, next) => {
 });
 
 exports.transferFiles = catchAsyncErr(async (req, res, next) => {
-  const localDirectory = '../public/pics/tasks';
   // const localDirectory = '../krasmarkNODE/public/pics/tasks';
+  const absoluteDirectory = path.resolve(__dirname, 'public', 'pics', 'tasks');
+  console.log(absoluteDirectory);
 
   const remoteDirectory = '/home/tasks';
 
@@ -84,7 +85,7 @@ exports.transferFiles = catchAsyncErr(async (req, res, next) => {
     await client.connect(config);
     await Promise.all(
       req.body.images.map(async (file) => {
-        const localFilePath = path.resolve(localDirectory, file);
+        const localFilePath = path.resolve(absoluteDirectory, file);
         const remote = path.posix.join(remoteDirectory, file);
 
         await client.put(localFilePath, remote);
