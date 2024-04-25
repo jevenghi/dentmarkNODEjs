@@ -84,7 +84,7 @@ exports.transferFiles = catchAsyncErr(async (req, res, next) => {
     await Promise.all(
       req.body.images.map(async (file) => {
         // const localFilePath = path.resolve(localDirectory, file);
-        const localFilePath = `/public/pics/tasks/${file}`;
+        const localFilePath = `public/pics/tasks/${file}`;
 
         const remote = path.posix.join(remoteDirectory, file);
 
