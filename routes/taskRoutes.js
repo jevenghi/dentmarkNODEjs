@@ -11,8 +11,8 @@ router.post(
   authController.protect,
   imageController.transferFiles,
   taskController.sendTask,
-  // add next() to sendTask when uncommenting
-  // taskController.sendTaskCreationEmail,
+  // remove next() to sendTask when commenting below
+  taskController.sendTaskCreationEmail,
 );
 router.post(
   '/sendTask/:id',

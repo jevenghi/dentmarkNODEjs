@@ -176,7 +176,7 @@ exports.sendTask = catchAsyncErr(async (req, res, next) => {
   res.status(201).json({
     status: 'success',
   });
-  // next();
+  next();
 });
 
 exports.addDentsToTask = catchAsyncErr(async (req, res, next) => {
@@ -348,9 +348,9 @@ exports.sendTaskCreationEmail = async (req, res, next) => {
     const userName = task.user.name;
 
     const emailOptions = {
-      email: 'admin@dm.nl',
+      email: 'jevenghi@gmail.com',
       subject: 'New Task submitted',
-      message: `${userName} has submitted new task http://127.0.0.1:5501/tasks/${taskId}.`,
+      message: `${userName} has submitted new task ${req.protocol}://${req.get('host')}/tasks/${taskId}.`,
     };
 
     await sendMail(emailOptions);

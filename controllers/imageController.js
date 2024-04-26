@@ -95,6 +95,7 @@ exports.transferFiles = catchAsyncErr(async (req, res, next) => {
     client.end();
     // res.status(201).json({ status: 'success' });
   } catch (err) {
+    //TODO: handle returned errors
     console.error('SFTP Error:', err);
     return res.status(500).json({ error: 'Error transferring files' });
   }
