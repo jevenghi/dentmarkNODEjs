@@ -348,7 +348,7 @@ exports.sendTaskCreationEmail = async (req, res, next) => {
     const userName = task.user.name;
 
     const emailOptions = {
-      email: 'jevenghi@gmail.com',
+      email: 'info@am-place.com',
       subject: 'New Task submitted',
       message: `${userName} has submitted new task ${req.protocol}://${req.get('host')}/tasks/${taskId}.`,
     };
