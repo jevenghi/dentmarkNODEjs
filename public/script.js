@@ -481,7 +481,7 @@ class App {
           model,
           this.#bodyType,
           this.#dents,
-          // this.#uploadedImages,
+          this.#uploadedImages,
         );
       } else {
         const model = vehicleModel.value;
