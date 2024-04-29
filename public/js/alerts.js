@@ -10,6 +10,6 @@ export const showAlert = (type, msg, callback) => {
   document.querySelector('body').insertAdjacentHTML('afterbegin', markup);
   window.setTimeout(() => {
     hideAlert();
-    if (callback) callback(); // Execute the callback if provided
+    if (callback) callback();
   }, 3000);
 };

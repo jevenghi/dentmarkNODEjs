@@ -1,5 +1,4 @@
 'use strict';
-import { showAlert } from '../js/alerts.js';
 
 const buttonsBody = document.querySelectorAll('.button--body');
 const bodyContainer = document.querySelector('.body-container');
@@ -369,7 +368,8 @@ class App {
     hailDamageCheck.addEventListener('click', (e) => {
       if (!this.#ownImageUploaded) {
         e.preventDefault();
-        return alert('Please upload photos');
+        // return alert('Please upload photos');
+        return this._showAlert('error', 'Please upload photos');
       }
       this.#hailDamage = true;
     });
@@ -392,7 +392,11 @@ class App {
       // removeMarksContainer.style.display = 'flex';
 
       if (this.#dents.length > 100) {
-        return alert(
+        // return alert(
+        //   'You can place maximum 100 markers per vehicle. We will take care of the rest on site',
+        // );
+        return this._showAlert(
+          'error',
           'You can place maximum 100 markers per vehicle. We will take care of the rest on site',
         );
       }
@@ -412,13 +416,13 @@ class App {
         relativeY: ((event.clientY - imageRect.top) / imageRect.height) * 100,
       };
       if (!this.#shapePressed || !this.#distancePressed) {
-        alert('Shape and size should be selected');
+        this._showAlert('error', 'Shape and size should be selected');
         return;
       }
 
       if (this.#dentShape === 'line') {
         if (!this.#orientationPressed) {
-          alert('Choose the orientation of the dent');
+          this._showAlert('error', 'Choose the orientation of the dent');
           return;
         }
       }
@@ -465,7 +469,7 @@ class App {
       e.preventDefault();
       // this._transferFiles(this.#uploadedImages);
       if (this.#dents.length === 0 && !this.#hailDamage)
-        return alert('You have not placed any dent yet');
+        return this._showAlert('error', 'You have not placed any dent yet');
       // if (taskId) {
       //   await this._addDentsToTask(taskId, this.#dents);
       // }
@@ -473,7 +477,10 @@ class App {
       if (this.#hailDamage) {
         const model = vehicleModel.value;
         if (model.length < 5) {
-          return alert('Model name must have at least 5 characters');
+          return this._showAlert(
+            'error',
+            'Model name must have at least 5 characters',
+          );
         }
         document.querySelector('.send-marks').textContent = 'Sending task...';
         await this._sendTask(
@@ -486,7 +493,10 @@ class App {
       } else {
         const model = vehicleModel.value;
         if (model.length < 5) {
-          return alert('Model name must have at least 5 characters');
+          return this._showAlert(
+            'error',
+            'Model name must have at least 5 characters',
+          );
         }
         document.querySelector('.send-marks').textContent = 'Sending task...';
         await this._sendTask(
@@ -943,6 +953,22 @@ class App {
       alert(err);
     }
   }
+
+  _hideAlert() {
+    const el = document.querySelector('.alert');
+    if (el) el.parentElement.removeChild(el);
+  }
+
+  _showAlert(type, msg, callback) {
+    this._hideAlert();
+    const markup = `<div class="alert alert--${type}">${msg}</div>`;
+    document.querySelector('body').insertAdjacentHTML('afterbegin', markup);
+    window.setTimeout(() => {
+      this._hideAlert();
+      if (callback) callback();
+    }, 3000);
+  }
+
   _logoutUser() {
     fetch('/api/v1/users/logout', {
       method: 'GET',
