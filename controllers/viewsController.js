@@ -129,7 +129,7 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
     task.images.forEach((fileName) => {
       dentsHTML += `
       <div class="image-container">
-        <img id="vehicleImage" src="/pics/pics_temp/${fileName}" data-side="${fileName}" data-task-id="${req.params.id}"/>
+        <img id="vehicleImage" src="/pics/pics_temp/${fileName}" data-side="${fileName}" data-task-id="${req.params.id}" style="width: ${markerConstants.UPLOADED_IMAGE_WIDTH}"/>
       </div>  
       `;
     });

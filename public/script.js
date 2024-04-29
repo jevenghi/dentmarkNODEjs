@@ -412,7 +412,7 @@ class App {
         relativeY: ((event.clientY - imageRect.top) / imageRect.height) * 100,
       };
       if (!this.#shapePressed || !this.#distancePressed) {
-        alert('Shape and Distance options should be selected');
+        alert('Shape and size should be selected');
         return;
       }
 

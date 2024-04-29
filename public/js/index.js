@@ -117,12 +117,12 @@ if (markerContainer) {
       };
 
       if (!shapePressed || !distancePressed) {
-        alert('Shape and Distance options should be selected');
+        showAlert('error', 'Shape and size should be selected');
         return;
       }
 
       if (dentShape === 'line' && !orientationPressed) {
-        alert('Choose the orientation of the dent');
+        showAlert('error', 'Choose the orientation of the dent');
         return;
       }
 

@@ -57,9 +57,10 @@ export const placeMarker = (
   // marker.style.top = isFrontOrRear(side) ? `${coords.y - 3.5}%` : `${coords.y - 3}%`;
 
   if (paintDamaged) {
-    const markerX = document.createElement('span');
-    markerX.textContent = 'X';
-    marker.appendChild(markerX);
+    // const markerX = document.createElement('span');
+    // markerX.textContent = 'X';
+    // marker.appendChild(markerX);
+    marker.style.borderStyle = 'dotted';
   }
 
   if (length === 'small') {
@@ -219,10 +220,10 @@ export const addDentsToTask = async (taskId, dents) => {
       window.setTimeout(() => {
         // window.scrollTo(0, 0);
         location.reload();
-      }, 50);
+      }, 0);
     }
   } catch (err) {
     console.log(err);
-    alert(err);
+    showAlert(err);
   }
 };
