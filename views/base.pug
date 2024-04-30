@@ -7,15 +7,13 @@ html
       //- link(rel='stylesheet' href='/css/welcome.css')
       //- link(rel='stylesheet' href='/css/style.css')
       block styles
-
-      
       title DentMarker
       
   
   body
     // HEADER
-    //- if user logged in include 
-    //- include _header
+    block header    
+      include _header
         
     // CONTENT
 

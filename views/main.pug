@@ -1,0 +1,43 @@
+extends base
+block styles
+  link(rel="stylesheet" href="/css/style.css")
+  link(href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz@9..40&family=Tourney:wght@100&display=swap&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+      rel="stylesheet")
+
+block content
+  .main-container
+    .photo-upload_container
+      input.form__upload(type="file" accept="image/*" id="photo" name="photo" multiple)
+      button.form__btn.upload_photo Upload
+    
+    .choose.choose__side
+      h1 Choose side
+    .marker-container.hidden
+      .row
+        label
+          | Paint damaged
+          input.m_checkbox.m_checkbox--paint(type="checkbox" id="paint-damaged")
+        label
+          | Hail damage
+          input.m_checkbox.m_checkbox--hail(type="checkbox" id="hail-damaged")
+
+    .image-container
+      img#vehicleImage(src="")
+      div#marker
+
+    .remove-container.hidden
+      button.remove_mark_btn.remove__last Undo
+      button.remove_mark_btn.remove--marks Clear All Marks
+    
+    if (role === 'admin')
+      .search-bar(style="display: none")
+        input(type="text" placeholder="Customer name..." id="search-input")
+        div#search-results.dropdown-content
+
+    .send-container.hidden
+      label.form__label Vehicle Model
+      input.form__input.form__input--model(type="text")
+      .form__row.form__row--button
+        button.form__btn.send-marks Send Task  
+  .overlay.hidden            
+    

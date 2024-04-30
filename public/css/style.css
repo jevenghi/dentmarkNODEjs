@@ -317,15 +317,15 @@ input[type='file'] {
 }
 
 .marker-container {
-  margin: 0.5rem;
+  margin: 1rem;
   /* opacity: 0; */
   background-color: #ffffff;
   border-radius: 2px;
   transition: opacity 0.5s ease-in-out;
-  width: 98%;
+  width: 85%;
   position: relative;
   display: inline-block;
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   /* position: fixed;
   width: 100%; */
 }

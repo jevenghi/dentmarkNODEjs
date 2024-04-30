@@ -16,6 +16,13 @@ exports.getHelp = catchAsyncError(async (req, res, next) => {
   });
 });
 
+exports.getMain = catchAsyncError(async (req, res, next) => {
+  const { role } = req.user;
+  res.status(200).render('main', {
+    title: 'Dentmarker',
+    role,
+  });
+});
 exports.getPassResetForm = catchAsyncError(async (req, res, next) => {
   res.status(200).render('resetPassword', {
     title: 'Reset your password',

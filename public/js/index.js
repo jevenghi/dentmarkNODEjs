@@ -8,10 +8,14 @@ import { deleteTask } from './deleteTask';
 import { placeMarker, addDentsToTask } from './placeMarker';
 import { DrawableCanvasElement } from './drawOnCanvas';
 import { resetPassword } from './resetPassword';
-
+import {
+  uploadPhotosTemp,
+  renderVehicleImageFromUploads,
+} from './photosHandler';
 // const imageCanvas =
 const mainContainer = document.querySelector('.main-container');
 const passwordResetForm = document.querySelector('.reset-form');
+const uploadPhoto = document.querySelector('.upload_photo');
 
 const userDataForm = document.querySelector('.form-user-data');
 const userPasswordForm = document.querySelector('.form-user-password');
@@ -50,6 +54,7 @@ const markerParameters = document.querySelector('.choose-marker');
 const addAnotherSide = document.querySelector('.choose__side');
 const arrowParams = document.querySelector('.arrow__params');
 const arrowSide = document.querySelector('.arrow__side');
+const imageContainer = document.querySelector('.image-container');
 
 let url = new URL(window.location.href);
 
@@ -57,28 +62,42 @@ function getMarkers() {
   return document.querySelectorAll('.marker');
 }
 let markers = getMarkers();
+let uploadedImages = [];
+// if (addAnotherSide) {
+//   addAnotherSide.addEventListener('click', () => {
+//     arrowSide.classList.toggle('rotate');
+//     sidesContainer.style.display =
+//       sidesContainer.style.display === 'none' ? 'grid' : 'none';
+//   });
+// }
 
-// new DrawableCanvasElement('myCanvasId');
-
-if (passwordResetForm) {
-  passwordResetForm.addEventListener('submit', (e) => {
+if (uploadPhoto) {
+  uploadPhoto.addEventListener('click', async (e) => {
     e.preventDefault();
-    const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get('token');
-    const password = document.getElementById('password-reset').value;
-    const passwordConfirm = document.getElementById(
-      'passwordConfirm-reset',
-    ).value;
+    const vehicleImage = imageContainer.querySelector('#vehicleImage');
+    if (vehicleImage) vehicleImage.src = '';
+    const form = new FormData();
+    const images = document.getElementById('photo').files;
+    if (images.length === 0) return showAlert('error', 'No files chosen');
+    uploadPhoto.textContent = 'Uploading...';
 
-    resetPassword(password, passwordConfirm, token);
-  });
-}
+    Array.from(images).forEach((file) => {
+      form.append('images', file);
+    });
 
-if (addAnotherSide) {
-  addAnotherSide.addEventListener('click', () => {
-    arrowSide.classList.toggle('rotate');
-    sidesContainer.style.display =
-      sidesContainer.style.display === 'none' ? 'grid' : 'none';
+    try {
+      const imagesProcessed = await uploadPhotosTemp(form);
+      uploadedImages.push(...imagesProcessed);
+    } catch (error) {
+      showAlert('error', 'Error uploading photos');
+    }
+    uploadPhoto.textContent = 'Upload';
+    renderVehicleImageFromUploads(uploadedImages);
+    sideSelection = document.querySelector('.sides-container');
+
+    setTimeout(function () {
+      sideSelection.classList.add('visible');
+    }, 50);
   });
 }
 
@@ -91,17 +110,11 @@ if (markerParameters) {
 }
 
 if (markerContainer) {
-  let distancePressed = false;
-  let shapePressed = false;
-  let orientationPressed = false;
   const dents = [];
   let storedCoordinates;
   let imageContainers = document.querySelectorAll('.image-container');
-
   let dentPaintDamaged = false;
-  let dentLength;
-  let dentShape;
-  let lineAngle;
+  let hailDamage = false;
 
   function handleImageContainerClick(imageContainer) {
     const vehicleImage = imageContainer.querySelector('#vehicleImage');
@@ -115,16 +128,6 @@ if (markerContainer) {
         relativeX: (event.offsetX / vehicleImage.clientWidth) * 100,
         relativeY: (event.offsetY / vehicleImage.clientHeight) * 100,
       };
-
-      if (!shapePressed || !distancePressed) {
-        showAlert('error', 'Shape and size should be selected');
-        return;
-      }
-
-      if (dentShape === 'line' && !orientationPressed) {
-        showAlert('error', 'Choose the orientation of the dent');
-        return;
-      }
 
       const coords = storedCoordinates;
       placeMarker(
@@ -188,15 +191,6 @@ if (markerContainer) {
     dentPaintDamaged = dentPaintDamaged ? false : true;
   });
 
-  buttonsOrientation.forEach((button) => {
-    button.addEventListener('click', () => {
-      buttonsOrientation.forEach((btn) => btn.classList.remove('pressed'));
-
-      button.classList.add('pressed');
-      orientationPressed = true;
-      lineAngle = button.id;
-    });
-  });
   buttonsSide.forEach((button) => {
     button.addEventListener('click', () => {
       const img = button.value;
@@ -456,5 +450,19 @@ if (deleteTaskBtn) {
       const taskId = deleteTaskBtn.dataset.taskId;
       deleteTask(taskId);
     }
+  });
+}
+
+if (passwordResetForm) {
+  passwordResetForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    const password = document.getElementById('password-reset').value;
+    const passwordConfirm = document.getElementById(
+      'passwordConfirm-reset',
+    ).value;
+
+    resetPassword(password, passwordConfirm, token);
   });
 }

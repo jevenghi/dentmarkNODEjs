@@ -147,32 +147,6 @@ class App {
         sideSelection.classList.add('visible');
       }, 50);
       this._placeMarkersOnSide(this.#ownImageUploaded);
-
-      // const buttonsSide = document.querySelectorAll('.button--side');
-      // buttonsSide.forEach((button) => {
-      //   button.addEventListener('click', () => {
-      //     const vehicleImage = document.getElementById('vehicleImage');
-      //     this.#bodySide = button.value;
-
-      //     vehicleImage.src = `pics/tasks/${this.#bodySide}`;
-      //   });
-      // });
-
-      // const reader = new FileReader();
-      // const vehicleImage = document.getElementById('vehicleImage');
-      // reader.onload = function (event) {
-      //   vehicleImage.src = event.target.result;
-      //   vehicleImage.style.width = '1000px';
-      //   vehicleImage.style.height = '300px';
-      // };
-      // markerContainer.classList.remove('hidden');
-      // reader.readAsDataURL(image);
-
-      // for (const entry of form.entries()) {
-      //   console.log(entry);
-      // }
-
-      // this._sendTask(null, null, null, null, form);
     });
 
     if (searchInput) {
