@@ -10,6 +10,12 @@ const path = require('path');
 
 // const { showAlert } = require('../public/js/alerts');
 
+exports.getHelp = catchAsyncError(async (req, res, next) => {
+  res.status(200).render('help', {
+    title: 'Instruction',
+  });
+});
+
 exports.getPassResetForm = catchAsyncError(async (req, res, next) => {
   res.status(200).render('resetPassword', {
     title: 'Reset your password',

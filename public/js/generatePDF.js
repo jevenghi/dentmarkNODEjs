@@ -67,7 +67,17 @@ const getFilteredResults = async () => {
       url: `/api/v1/tasks${query}&limit=1000`,
     });
     if (res.data.status === 'success') {
-      const result = res.data.tasks.map((task) => [task.user.name, task.carModel, task.taskStatus, task.totalCost, new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })]);
+      const result = res.data.tasks.map((task) => [
+        task.user.name,
+        task.carModel,
+        task.taskStatus,
+        task.totalCost,
+        new Date(task.createdAt).toLocaleDateString('en-US', {
+          month: 'short',
+          day: '2-digit',
+          year: 'numeric',
+        }),
+      ]);
       return result;
     } else {
       return showAlert('error', res.data.message);
@@ -79,10 +89,12 @@ const getFilteredResults = async () => {
 
 export const generatePDF = async () => {
   const filteredResults = await getFilteredResults();
-  console.log(filteredResults);
   const totalSum = filteredResults.reduce((acc, curr) => acc + curr[3], 0);
   const totalAmountTasks = filteredResults.length;
-  const from = filteredResults[filteredResults.length - 1][filteredResults[filteredResults.length - 1].length - 1];
+  const from =
+    filteredResults[filteredResults.length - 1][
+      filteredResults[filteredResults.length - 1].length - 1
+    ];
   const to = filteredResults[0][filteredResults[0].length - 1];
 
   const docDefinition = {
@@ -97,7 +109,17 @@ export const generatePDF = async () => {
           headerRows: 1,
           widths: ['*', 'auto', 'auto', 50, 75],
 
-          body: [['Customer', 'Vehicle Model', 'Status', 'Cost', 'Date'], ...filteredResults, [{ text: 'TOTAL', bold: true }, '', '', { text: totalSum, bold: true }, '']],
+          body: [
+            ['Customer', 'Vehicle Model', 'Status', 'Cost', 'Date'],
+            ...filteredResults,
+            [
+              { text: 'TOTAL', bold: true },
+              '',
+              '',
+              { text: totalSum, bold: true },
+              '',
+            ],
+          ],
         },
       },
     ],

@@ -114,10 +114,14 @@ class App {
     });
     uploadPhoto.addEventListener('click', async (e) => {
       e.preventDefault();
-      uploadPhoto.textContent = 'Uploading...';
+
       if (vehicleImage) vehicleImage.src = '';
       const form = new FormData();
       const images = document.getElementById('photo').files;
+      if (images.length === 0)
+        return this._showAlert('error', 'No files chosen');
+      uploadPhoto.textContent = 'Uploading...';
+
       Array.from(images).forEach((file) => {
         form.append('images', file);
       });
