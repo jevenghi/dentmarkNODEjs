@@ -62,7 +62,8 @@ html {
   margin-bottom: 0.5rem;
 }
 
-.choose h1 {
+.choose h1,
+h1 {
   margin-bottom: 5px;
   margin-top: 10px;
   font-family: 'DM Sans', sans-serif;
@@ -159,7 +160,7 @@ input[type='file'] {
 
 .sides-container {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(3, 1fr);
 
   gap: 0.3rem 0.3rem;
   opacity: 0;

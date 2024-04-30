@@ -39,6 +39,7 @@ const forgotPassBtn = document.getElementById('forgot-pass');
 // const vehicleImage = document.getElementById('vehicleImage');
 // const vehicleImages = document.querySelectorAll('#vehicleImage');
 const removeLastMarkBtn = document.querySelector('.remove__last');
+const sideText = document.querySelector('.choose__side');
 
 const markerContainer = document.querySelector('.marker-container');
 const addDents = document.querySelector('.add-dents');
@@ -93,11 +94,27 @@ if (uploadPhoto) {
     }
     uploadPhoto.textContent = 'Upload';
     renderVehicleImageFromUploads(uploadedImages);
+    sideText.classList.remove('hidden');
     sideSelection = document.querySelector('.sides-container');
 
     setTimeout(function () {
       sideSelection.classList.add('visible');
     }, 50);
+    const buttonsSide = document.querySelectorAll('.button--side');
+    buttonsSide.forEach((button) => {
+      button.addEventListener('click', () => {
+        let img;
+        buttonsSide.forEach((btn) => {
+          btn.style.border = 'none';
+        });
+        markerContainer.classList.remove('hidden');
+
+        button.style.border = '0.3rem solid coral';
+        img = button.value;
+        let vehicleImage = document.getElementById('vehicleImage');
+        vehicleImage.src = `pics/tasks/${img}`;
+      });
+    });
   });
 }
 
@@ -164,29 +181,6 @@ if (markerContainer) {
   //   if (dents) dents.pop();
   // });
 
-  buttonsDistance.forEach((button) => {
-    button.addEventListener('click', () => {
-      buttonsDistance.forEach((btn) => btn.classList.remove('pressed'));
-      distancePressed = true;
-
-      button.classList.add('pressed');
-      dentLength = button.id;
-    });
-  });
-  buttonsShape.forEach((button) => {
-    button.addEventListener('click', () => {
-      buttonsShape.forEach((btn) => btn.classList.remove('pressed'));
-
-      button.classList.add('pressed');
-      shapePressed = true;
-      dentShape = button.id;
-      if (dentShape === 'line') {
-        orientationContainer.classList.remove('hidden');
-      } else {
-        orientationContainer.classList.add('hidden');
-      }
-    });
-  });
   paintDamagedCheck.addEventListener('click', () => {
     dentPaintDamaged = dentPaintDamaged ? false : true;
   });

@@ -6,11 +6,12 @@ block styles
 
 block content
   .main-container
+    h1 Upload photos
     .photo-upload_container
       input.form__upload(type="file" accept="image/*" id="photo" name="photo" multiple)
       button.form__btn.upload_photo Upload
     
-    .choose.choose__side
+    .choose.choose__side.hidden
       h1 Choose side
     .marker-container.hidden
       .row
