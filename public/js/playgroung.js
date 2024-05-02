@@ -1,45 +1,9 @@
-vehicleImage.addEventListener('click', (event) => {
-  event.preventDefault();
-  if (this.#dents.length > 100) {
-    return this._showAlert(
-      'error',
-      'You can place maximum 100 markers per vehicle. We will take care of the rest on site',
-    );
-  }
-  const imageRect = vehicleImage.getBoundingClientRect();
-  this.#storedCoordinates = {
-    x: event.offsetX,
-    y: event.offsetY,
-    relativeX: ((event.clientX - imageRect.left) / imageRect.width) * 100,
-    relativeY: ((event.clientY - imageRect.top) / imageRect.height) * 100,
-  };
-  const coords = this.#storedCoordinates;
-  this._placeMarker(
-    this.#bodySide,
-    this.#dentPaintDamaged,
-    coords,
-    imageContainer,
-  );
-  const newObj = {
-    img: this.#bodySide,
-    paintDamaged: this.#dentPaintDamaged,
-    coords: this.#storedCoordinates,
-    status: 'open',
-  };
-  this.#dents.push(newObj);
-  if (!this.#dentsTemp[this.#bodySide]) {
-    this.#dentsTemp[this.#bodySide] = [];
-  }
-  this.#dentsTemp[this.#bodySide].push(newObj);
-});
+
 const marker = document.createElement('div');
 marker.className = 'marker';
 
 if (paintDamaged) {
   marker.style.borderStyle = 'dotted';
-  // const markerX = document.createElement('span');
-  // markerX.textContent = 'X';
-  // marker.appendChild(markerX);
 }
 marker.style.left = `${coords.x - 25}px`;
 marker.style.top = `${coords.y - 25}px`;
@@ -133,4 +97,63 @@ _removeAllMarkers() {
       marker.style.borderRadius = '1rem';
       marker.style.transform = `rotate(${orientationDent})`;
     }
+  }
+
+  
+  if (searchInput) {
+    searchInput.addEventListener('input', async function () {
+      const userInput = searchInput.value.trim();
+      if (userInput.length > 0) {
+        try {
+          const response = await axios.get('/api/v1/users/suggestUser', {
+            params: {
+              q: userInput,
+            },
+          });
+          displayResults(response.data);
+        } catch (error) {
+          console.error(error);
+        }
+      } else {
+        clearResults();
+      }
+    });
+
+    function displayResults(results) {
+      clearResults();
+
+      if (results.length > 0) {
+        results.forEach(function (result) {
+          const link = document.createElement('a');
+          link.textContent = result;
+          searchResults.appendChild(link);
+        });
+        searchResults.style.display = 'block';
+      } else {
+        searchResults.style.display = 'none';
+      }
+    }
+
+    function clearResults() {
+      while (searchResults.firstChild) {
+        searchResults.removeChild(searchResults.firstChild);
+      }
+      searchResults.style.display = 'none';
+    }
+
+    searchResults.addEventListener('click', function (event) {
+      if (event.target.tagName === 'A') {
+        searchInput.value = customer = event.target.textContent;
+        searchResults.style.display = 'none';
+      }
+    });
+
+    document.addEventListener('click', function (event) {
+      if (
+        !searchInput.contains(event.target) &&
+        !searchResults.contains(event.target)
+      ) {
+        searchResults.style.display = 'none';
+      }
+    });
   }

@@ -12,12 +12,14 @@ import {
   uploadPhotosTemp,
   renderVehicleImageFromUploads,
 } from './photosHandler';
+import { sendTask } from './sendTask';
 // const imageCanvas =
 const mainContainer = document.querySelector('.main-container');
 const passwordResetForm = document.querySelector('.reset-form');
 const uploadPhoto = document.querySelector('.upload_photo');
 const sendContainer = document.querySelector('.send-container');
 const sendMarksBtn = document.querySelector('.send-marks');
+const vehicleModel = document.querySelector('.form__input--model');
 
 const removeMarksContainer = document.querySelector('.remove-container');
 const userDataForm = document.querySelector('.form-user-data');
@@ -47,11 +49,10 @@ const sideText = document.querySelector('.choose__side');
 const markerContainer = document.querySelector('.marker-container');
 const addDents = document.querySelector('.add-dents');
 
-const buttonsDistance = document.querySelectorAll('.m_button--distance');
-const buttonsShape = document.querySelectorAll('.m_button--shapes');
 const paintDamagedCheck = document.getElementById('paint-damaged');
-const buttonsOrientation = document.querySelectorAll('.m_button--orientation');
-const orientationContainer = document.querySelector('.row--orientation');
+const specialCaseCheck = document.getElementById('special-case');
+const bigDentCheck = document.getElementById('big-dent');
+
 const buttonsSide = document.querySelectorAll('.button--side');
 const sidesContainer = document.querySelector('.sides-container');
 const markerParameters = document.querySelector('.choose-marker');
@@ -76,12 +77,14 @@ let url = new URL(window.location.href);
 
 if (uploadPhoto) {
   let img;
-
+  let customer;
   let storedCoordinates;
   let uploadedImages = [];
   let dents = [];
   let dentsTemp = {};
   let dentPaintDamaged = false;
+  let specialCase = false;
+  let bigDent = false;
   const markers = imageContainer.getElementsByClassName('marker');
 
   uploadPhoto.addEventListener('click', async (e) => {
@@ -101,7 +104,7 @@ if (uploadPhoto) {
       const imagesProcessed = await uploadPhotosTemp(form);
       uploadedImages.push(...imagesProcessed);
     } catch (error) {
-      showAlert('error', 'Error uploading photos');
+      showAlert('error', error);
     }
     uploadPhoto.textContent = 'Upload';
     renderVehicleImageFromUploads(uploadedImages);
@@ -130,6 +133,8 @@ if (uploadPhoto) {
         vehicleImage.src = `pics/tasks/${img}`;
 
         removeMarksContainer.classList.remove('hidden');
+        paintDamagedCheck.checked = false;
+        bigDentCheck.checked = false;
 
         sendContainer.classList.remove('hidden');
         markerContainer.classList.remove('hidden');
@@ -140,11 +145,11 @@ if (uploadPhoto) {
         if (searchBar) searchBar.classList.remove('hidden');
 
         const sideDents = dentsTemp[img];
-        console.log(sideDents);
         if (sideDents && sideDents.length > 0) {
           sideDents.forEach((dent) => {
             const marker = document.createElement('div');
             marker.className = 'marker';
+            if (dent.dentPaintDamaged) marker.style.borderStyle = 'dotted';
             marker.style.left = `${dent.coords.x - 12}px`;
             marker.style.top = `${dent.coords.y - 12}px`;
             imageContainer.appendChild(marker);
@@ -152,6 +157,16 @@ if (uploadPhoto) {
           });
         }
       });
+    });
+
+    paintDamagedCheck.addEventListener('click', () => {
+      dentPaintDamaged = dentPaintDamaged ? false : true;
+    });
+    bigDentCheck.addEventListener('click', () => {
+      bigDent = bigDent ? false : true;
+    });
+    specialCaseCheck.addEventListener('click', () => {
+      specialCase = specialCase ? false : true;
     });
 
     vehicleImage.addEventListener('click', (event) => {
@@ -167,12 +182,22 @@ if (uploadPhoto) {
       const coords = storedCoordinates;
       const marker = document.createElement('div');
       marker.className = 'marker';
-      marker.style.left = `${coords.x - 12}px`;
-      marker.style.top = `${coords.y - 12}px`;
+      if (dentPaintDamaged) marker.style.borderStyle = 'dotted';
+      if (bigDent) {
+        marker.style.width = '5rem';
+        marker.style.height = '5rem';
+        marker.style.left = `${coords.x - 26}px`;
+        marker.style.top = `${coords.y - 26}px`;
+      } else {
+        marker.style.left = `${coords.x - 12}px`;
+        marker.style.top = `${coords.y - 12}px`;
+      }
       imageContainer.appendChild(marker);
       const newObj = {
         img: img,
         paintDamaged: dentPaintDamaged,
+        bigDent: bigDent,
+        specialCase: specialCase,
         coords: storedCoordinates,
         status: 'open',
       };
@@ -183,8 +208,13 @@ if (uploadPhoto) {
       dentsTemp[img].push(newObj);
     });
   });
-  sendMarksBtn.addEventListener('click', () => {
-    console.log(dents);
+  sendMarksBtn.addEventListener('click', async () => {
+    if (dents.length === 0 && !specialCase)
+      return showAlert('error', 'You have not placed any dent yet');
+    const model = vehicleModel.value;
+    if (model.length < 5)
+      return showAlert('error', 'Model name must have at least 5 characters');
+    await sendTask(customer, model, dents, uploadedImages);
   });
 }
 

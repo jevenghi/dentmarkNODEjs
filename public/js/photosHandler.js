@@ -12,7 +12,9 @@ export const uploadPhotosTemp = async (images) => {
       return res.data.imageNames;
     }
   } catch (err) {
-    console.error(err);
+    throw err.response.data.message === 'Unexpected field'
+      ? 'You can upload up to 10 images'
+      : err.response.data.message;
   }
 };
 

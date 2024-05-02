@@ -2,9 +2,8 @@ const mongoose = require('mongoose');
 
 const dentSchema = new mongoose.Schema({
   img: String,
-  shape: String,
-  length: String,
-  orientation: String,
+  bigDent: Boolean,
+  specialCase: Boolean,
   paintDamaged: Boolean,
   coords: Object,
   cost: {
@@ -28,9 +27,6 @@ const taskSchema = new mongoose.Schema(
       trim: true,
       maxlength: [30, 'Car model name must not exceed 30 characters'],
       minlength: [5, 'Car model name must have at least 4 characters'],
-    },
-    bodyType: {
-      type: String,
     },
     difficulty: {
       type: String,
@@ -64,6 +60,11 @@ const taskSchema = new mongoose.Schema(
       min: [0, 'Cost can not be negative'],
       max: [10000, 'Cost can not exceed 10,000'],
       default: 0,
+    },
+    remark: {
+      type: String,
+      trim: true,
+      maxlength: [50, 'Remark must not exceed 30 characters'],
     },
   },
   {

@@ -30,7 +30,7 @@ const upload = multer({
   storage: multerStorage,
   fileFilter: multerFilter,
 });
-exports.uploadTaskPhotos = upload.fields([{ name: 'images', maxCount: 5 }]);
+exports.uploadTaskPhotos = upload.fields([{ name: 'images', maxCount: 10 }]);
 
 exports.resizeTaskPhotos = catchAsyncErr(async (req, res, next) => {
   const imageNames = [];
