@@ -209,7 +209,7 @@ exports.login = catchAsyncError(async (req, res, next) => {
     await user.save();
   }
 
-  createAndSendToken(user, 200, res);
+  createAndSendToken(user, 200, req, res);
 });
 
 exports.logout = (req, res) => {
@@ -352,7 +352,7 @@ exports.resetPassword = catchAsyncError(async (req, res, next) => {
 
   await user.save();
 
-  createAndSendToken(user, 200, res);
+  createAndSendToken(user, 200, req, res);
 });
 
 exports.confirmEmail = catchAsyncError(async (req, res, next) => {
@@ -393,5 +393,5 @@ exports.updatePassword = catchAsyncError(async (req, res, next) => {
 
   await user.save();
 
-  createAndSendToken(user, 200, res);
+  createAndSendToken(user, 200, req, res);
 });
