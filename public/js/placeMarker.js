@@ -2,10 +2,6 @@ import { showAlert } from './alerts.js';
 import axios from 'axios';
 import * as markerConstants from '../../constants/markerConstants';
 
-const isFrontOrRear = (side) => {
-  return side.slice(-2) === 'fr' || side.slice(-2) === 're';
-};
-
 const markerStyle = (
   shape,
   marker,
@@ -21,9 +17,6 @@ const markerStyle = (
   y1,
   y2,
 ) => {
-  marker.style.width = isFrontOrRear(side) ? w1 : w2;
-  marker.style.height = isFrontOrRear(side) ? h1 : h2;
-
   // marker.style.left = isFrontOrRear(side)
   //   ? `${coords.relativeX - x1}%`
   //   : `${coords.relativeX - x2}%`;
@@ -170,40 +163,6 @@ export const placeMarker = (
       );
     }
   }
-
-  // if (length === 'small') {
-  //   if (shape === 'nonagon') {
-  //     marker.style.width = isFrontOrRear(side) ? '1.3rem' : '0.5rem';
-  //     marker.style.height = isFrontOrRear(side) ? '1.3rem' : '0.5rem';
-  //   } else if (shape === 'line') {
-  //     marker.style.width = isFrontOrRear(side) ? '1.5rem' : '0.8rem';
-  //     marker.style.height = isFrontOrRear(side) ? '0.6rem' : '0.3rem';
-  //     marker.style.borderRadius = '0.8rem';
-  //     marker.style.transform = `rotate(${orientationDent})`;
-  //   }
-  // }
-  // if (length === 'medium') {
-  //   if (shape === 'nonagon') {
-  //     marker.style.width = isFrontOrRear(side) ? '2rem' : '0.8rem';
-  //     marker.style.height = isFrontOrRear(side) ? '2rem' : '0.8rem';
-  //   } else if (shape === 'line') {
-  //     marker.style.width = isFrontOrRear(side) ? '2.2rem' : '1.4rem';
-  //     marker.style.height = isFrontOrRear(side) ? '0.8rem' : '0.5rem';
-  //     marker.style.borderRadius = '0.8rem';
-  //     marker.style.transform = `rotate(${orientationDent})`;
-  //   }
-  // }
-  // if (length === 'big') {
-  //   if (shape === 'nonagon') {
-  //     marker.style.width = isFrontOrRear(side) ? '2.6rem' : '1.6rem';
-  //     marker.style.height = isFrontOrRear(side) ? '2.6rem' : '1.6rem';
-  //   } else if (shape === 'line') {
-  //     marker.style.width = isFrontOrRear(side) ? '2.9rem' : '2.2rem';
-  //     marker.style.height = isFrontOrRear(side) ? '1.2rem' : '0.8rem';
-  //     marker.style.borderRadius = '0.8rem';
-  //     marker.style.transform = `rotate(${orientationDent})`;
-  //   }
-  // }
 
   image.appendChild(marker);
 };

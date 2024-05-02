@@ -88,19 +88,13 @@ const LINE_LARGE_Y_CORR = 8;
 const UPLOADED_IMAGE_WIDTH = '1000px';
 
 class App {
-  #lineAngle;
-  #shapePressed = false;
   #ownImageUploaded = false;
-  #distancePressed = false;
-  #orientationPressed = false;
   #storedCoordinates;
   #bodyType;
   #bodySide;
   #dents = [];
   #dentsTemp = {};
   #uploadedImages = [];
-  #dentLength;
-  #dentShape;
   #dentPaintDamaged = false;
   #hailDamage = false;
   constructor() {
@@ -207,11 +201,6 @@ class App {
       });
     }
 
-    chooseBodyText.addEventListener('click', () => {
-      bodyContainer.style.display =
-        bodyContainer.style.display === 'none' ? 'grid' : 'none';
-      arrowBody.classList.toggle('rotate');
-    });
     sideText.addEventListener('click', () => {
       sideSelection.style.display =
         sideSelection.style.display === 'none' ? 'grid' : 'none';
@@ -265,84 +254,11 @@ class App {
           sideSelection.classList.add('visible');
         }, 50);
         this._placeMarkersOnSide(this.#ownImageUploaded);
-        // const buttonsSide = document.querySelectorAll('.button--side');
-        // buttonsSide.forEach((button) => {
-        //   button.addEventListener('click', () => {
-        //     buttonsSide.forEach((btn) => {
-        //       btn.style.border = 'none';
-        //     });
-        //     this._removeAllMarkers();
-        //     this._customerFieldVisible();
+       
 
-        //     // sideSelection.style.display =//   sideSelection.style.display === 'none' ? 'grid' : 'none';
-        //     // arrowSide.classList.toggle('rotate');
+    
 
-        //     this.#shapePressed = false;
-        //     this.#distancePressed = false;
-        //     this.#orientationPressed = false;
-        //     paintDamagedCheck.checked = false;
-        //     this.#dentPaintDamaged = false;
-
-        //     buttonsShape.forEach((btn) => btn.classList.remove('pressed'));
-        //     buttonsDistance.forEach((btn) => btn.classList.remove('pressed'));
-        //     buttonsOrientation.forEach((btn) => btn.classList.remove('pressed'));
-        //     orientationContainer.classList.add('hidden');
-
-        //     // button.style.background =
-        //     //   'linear-gradient(to right, #e69c6a, #ca580c)';
-        //     button.style.border = '0.3rem solid coral';
-        //     this.#bodySide = button.value;
-
-        //     const vehicleImage = document.getElementById('vehicleImage');
-        //     // if (this._isFrontOrRear(this.#bodySide)) vehicleImage.style.width = '500px';
-        //     vehicleImage.style.width = this._isFrontOrRear(this.#bodySide) ? IMAGE_WIDTH_FR_REAR : IMAGE_WIDTH_SIDE;
-
-        //     vehicleImage.src = `pics/sides_pics/${this.#bodySide}.png`;
-        //     removeMarksContainer.classList.remove('hidden');
-
-        //     sendContainer.classList.remove('hidden');
-        //     markerContainer.classList.remove('hidden');
-        //     saveMarksContainer.classList.remove('hidden');
-        //     setTimeout(function () {
-        //       markerContainer.classList.add('visible');
-        //     }, 50);
-
-        //     const sideDents = this.#dentsTemp[this.#bodySide];
-
-        //     if (sideDents && sideDents.length > 0) {
-        //       sideDents.forEach((dent) => {
-        //         this._placeMarker(dent.img, dent.shape, dent.length, dent.orientation, dent.paintDamaged, dent.coords, imageContainer);
-        //       });
-        //     }
-        //   });
-        // });
-      });
-    });
-
-    buttonsDistance.forEach((button) => {
-      button.addEventListener('click', () => {
-        buttonsDistance.forEach((btn) => btn.classList.remove('pressed'));
-
-        button.classList.add('pressed');
-        this.#distancePressed = true;
-        this.#dentLength = button.id;
-      });
-    });
-
-    buttonsShape.forEach((button) => {
-      button.addEventListener('click', () => {
-        buttonsShape.forEach((btn) => btn.classList.remove('pressed'));
-
-        button.classList.add('pressed');
-        this.#shapePressed = true;
-        this.#dentShape = button.id;
-        if (this.#dentShape === 'line') {
-          orientationContainer.classList.remove('hidden');
-        } else {
-          orientationContainer.classList.add('hidden');
-        }
-      });
-    });
+    
     hailDamageCheck.addEventListener('click', (e) => {
       if (!this.#ownImageUploaded) {
         e.preventDefault();
@@ -367,80 +283,37 @@ class App {
 
     vehicleImage.addEventListener('click', (event) => {
       event.preventDefault();
-      // removeMarksContainer.style.display = 'flex';
-
       if (this.#dents.length > 100) {
-        // return alert(
-        //   'You can place maximum 100 markers per vehicle. We will take care of the rest on site',
-        // );
         return this._showAlert(
           'error',
           'You can place maximum 100 markers per vehicle. We will take care of the rest on site',
         );
       }
       const imageRect = vehicleImage.getBoundingClientRect();
-
-      //calculate the percentage values of the x, y relative to the width,
-      //height of an image, so that x, y can be recreated on image of another size.
-      // this.#storedCoordinates = {
-      //   x: (event.offsetX / vehicleImage.clientWidth) * 100,
-      //   y: (event.offsetY / vehicleImage.clientHeight) * 100,
-      // };
-
       this.#storedCoordinates = {
         x: event.offsetX,
         y: event.offsetY,
         relativeX: ((event.clientX - imageRect.left) / imageRect.width) * 100,
         relativeY: ((event.clientY - imageRect.top) / imageRect.height) * 100,
       };
-      if (!this.#shapePressed || !this.#distancePressed) {
-        this._showAlert('error', 'Shape and size should be selected');
-        return;
-      }
-
-      if (this.#dentShape === 'line') {
-        if (!this.#orientationPressed) {
-          this._showAlert('error', 'Choose the orientation of the dent');
-          return;
-        }
-      }
-      // const { x, y } = this.#storedCoordinates;
       const coords = this.#storedCoordinates;
-
       this._placeMarker(
         this.#bodySide,
-        this.#dentShape,
-        this.#dentLength,
-        this.#lineAngle,
         this.#dentPaintDamaged,
         coords,
         imageContainer,
       );
-
       const newObj = {
         img: this.#bodySide,
-        shape: this.#dentShape,
-        length: this.#dentLength,
-        orientation: this.#orientationPressed ? this.#lineAngle : null,
         paintDamaged: this.#dentPaintDamaged,
         coords: this.#storedCoordinates,
         status: 'open',
       };
-
       this.#dents.push(newObj);
-
       if (!this.#dentsTemp[this.#bodySide]) {
         this.#dentsTemp[this.#bodySide] = [];
       }
       this.#dentsTemp[this.#bodySide].push(newObj);
-      // let existingSide = this.#dents.find(
-      //   (item) => Object.keys(item)[0] === this.#bodySide,
-      // );
-      // if (!existingSide) {
-      //   this.#dents.push({ [this.#bodySide]: [newObj] });
-      // } else {
-      //   existingSide[this.#bodySide].push(newObj);
-      // }
     });
 
     sendMarksBtn.addEventListener('click', async (e) => {
@@ -560,9 +433,6 @@ class App {
           sideDents.forEach((dent) => {
             this._placeMarker(
               dent.img,
-              dent.shape,
-              dent.length,
-              dent.orientation,
               dent.paintDamaged,
               dent.coords,
               imageContainer,
@@ -732,9 +602,6 @@ class App {
 
   _placeMarker(
     side,
-    shape,
-    length,
-    orientationDent,
     paintDamaged,
     coords,
     image,
@@ -749,78 +616,7 @@ class App {
       // marker.appendChild(markerX);
     }
 
-    if (length === 'small') {
-      if (shape === 'nonagon') {
-        this._markerStyle(
-          'nonagon',
-          marker,
-          side,
-          coords,
-          null,
-          CIRCLE_SMALL_FR_REAR,
-          CIRCLE_SMALL_SIDES,
-          CIRCLE_SMALL_FR_REAR,
-          CIRCLE_SMALL_SIDES,
-          CIRCLE_SMALL_X_CORR,
-          CIRCLE_SMALL_X_CORR,
-          CIRCLE_SMALL_Y_CORR,
-          CIRCLE_SMALL_Y_CORR,
-        );
-      } else if (shape === 'line') {
-        this._markerStyle(
-          'line',
-          marker,
-          side,
-          coords,
-          orientationDent,
-          LINE_SMALL_W,
-          LINE_SMALL_W,
-          LINE_SMALL_H,
-          LINE_SMALL_H,
-          LINE_SMALL_X_CORR,
-          LINE_SMALL_X_CORR,
-          LINE_SMALL_Y_CORR,
-          LINE_SMALL_Y_CORR,
-        );
-      }
-    }
-
-    if (length === 'medium') {
-      if (shape === 'nonagon') {
-        this._markerStyle(
-          'nonagon',
-          marker,
-          side,
-          coords,
-          null,
-          CIRCLE_MEDIUM_FR_REAR,
-          CIRCLE_MEDIUM_SIDES,
-          CIRCLE_MEDIUM_FR_REAR,
-          CIRCLE_MEDIUM_SIDES,
-          CIRCLE_MEDIUM_X_CORR,
-          CIRCLE_MEDIUM_X_CORR,
-          CIRCLE_MEDIUM_Y_CORR,
-          CIRCLE_MEDIUM_Y_CORR,
-        );
-      } else if (shape === 'line') {
-        this._markerStyle(
-          'line',
-          marker,
-          side,
-          coords,
-          orientationDent,
-          LINE_MEDIUM_W,
-          LINE_MEDIUM_W,
-          LINE_MEDIUM_H,
-          LINE_MEDIUM_H,
-          LINE_MEDIUM_X_CORR,
-          LINE_MEDIUM_X_CORR,
-          LINE_MEDIUM_Y_CORR,
-          LINE_MEDIUM_Y_CORR,
-        );
-      }
-    }
-
+  
     if (length === 'big') {
       if (shape === 'nonagon') {
         this._markerStyle(
@@ -829,14 +625,7 @@ class App {
           side,
           coords,
           null,
-          CIRCLE_LARGE_FR_REAR,
-          CIRCLE_LARGE_SIDES,
-          CIRCLE_LARGE_FR_REAR,
-          CIRCLE_LARGE_SIDES,
-          CIRCLE_LARGE_X_CORR,
-          CIRCLE_LARGE_X_CORR,
-          CIRCLE_LARGE_Y_CORR,
-          CIRCLE_LARGE_Y_CORR,
+       
         );
       } else if (shape === 'line') {
         this._markerStyle(
@@ -846,30 +635,14 @@ class App {
           coords,
           orientationDent,
           LINE_LARGE_W,
-          LINE_LARGE_W,
-          LINE_LARGE_H,
-          LINE_LARGE_H,
-          LINE_LARGE_X_CORR,
-          LINE_LARGE_X_CORR,
-          LINE_LARGE_Y_CORR,
-          LINE_LARGE_Y_CORR,
+     
         );
       }
     }
     image.appendChild(marker);
   }
 
-  _circleMarkerStyle(marker, side, coords, w1, w2, x1, x2, y1, y2) {
-    marker.style.width = marker.style.height = this._isFrontOrRear(side)
-      ? w1
-      : w2;
-    marker.style.left = this._isFrontOrRear(side)
-      ? `${coords.x - x1}%`
-      : `${coords.x - x2}%`;
-    marker.style.top = this._isFrontOrRear(side)
-      ? `${coords.y - y1}%`
-      : `${coords.y - y2}%`;
-  }
+
 
   _markerStyle(
     shape,

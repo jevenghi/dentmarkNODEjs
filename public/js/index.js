@@ -16,7 +16,10 @@ import {
 const mainContainer = document.querySelector('.main-container');
 const passwordResetForm = document.querySelector('.reset-form');
 const uploadPhoto = document.querySelector('.upload_photo');
+const sendContainer = document.querySelector('.send-container');
+const sendMarksBtn = document.querySelector('.send-marks');
 
+const removeMarksContainer = document.querySelector('.remove-container');
 const userDataForm = document.querySelector('.form-user-data');
 const userPasswordForm = document.querySelector('.form-user-password');
 const loginForm = document.querySelector('.login-form');
@@ -59,11 +62,10 @@ const imageContainer = document.querySelector('.image-container');
 
 let url = new URL(window.location.href);
 
-function getMarkers() {
-  return document.querySelectorAll('.marker');
-}
-let markers = getMarkers();
-let uploadedImages = [];
+// function getMarkers() {
+//   return document.querySelectorAll('.marker');
+// }
+// let markers = getMarkers();
 // if (addAnotherSide) {
 //   addAnotherSide.addEventListener('click', () => {
 //     arrowSide.classList.toggle('rotate');
@@ -73,6 +75,15 @@ let uploadedImages = [];
 // }
 
 if (uploadPhoto) {
+  let img;
+
+  let storedCoordinates;
+  let uploadedImages = [];
+  let dents = [];
+  let dentsTemp = {};
+  let dentPaintDamaged = false;
+  const markers = imageContainer.getElementsByClassName('marker');
+
   uploadPhoto.addEventListener('click', async (e) => {
     e.preventDefault();
     const vehicleImage = imageContainer.querySelector('#vehicleImage');
@@ -103,125 +114,174 @@ if (uploadPhoto) {
     const buttonsSide = document.querySelectorAll('.button--side');
     buttonsSide.forEach((button) => {
       button.addEventListener('click', () => {
-        let img;
         buttonsSide.forEach((btn) => {
           btn.style.border = 'none';
         });
-        markerContainer.classList.remove('hidden');
+        if (markers.length > 0) {
+          while (markers.length > 0) {
+            imageContainer.removeChild(markers[0]);
+          }
+        }
 
         button.style.border = '0.3rem solid coral';
         img = button.value;
         let vehicleImage = document.getElementById('vehicleImage');
+        vehicleImage.style.width = '1000px';
         vehicleImage.src = `pics/tasks/${img}`;
+
+        removeMarksContainer.classList.remove('hidden');
+
+        sendContainer.classList.remove('hidden');
+        markerContainer.classList.remove('hidden');
+        setTimeout(function () {
+          markerContainer.classList.add('visible');
+        }, 50);
+        const searchBar = document.querySelector('.search-bar');
+        if (searchBar) searchBar.classList.remove('hidden');
+
+        const sideDents = dentsTemp[img];
+        console.log(sideDents);
+        if (sideDents && sideDents.length > 0) {
+          sideDents.forEach((dent) => {
+            const marker = document.createElement('div');
+            marker.className = 'marker';
+            marker.style.left = `${dent.coords.x - 12}px`;
+            marker.style.top = `${dent.coords.y - 12}px`;
+            imageContainer.appendChild(marker);
+            // this._placeMarker(dent.paintDamaged, dent.coords, imageContainer);
+          });
+        }
       });
     });
-  });
-}
 
-if (markerParameters) {
-  markerParameters.addEventListener('click', () => {
-    arrowParams.classList.toggle('rotate');
-    markerContainer.style.display =
-      markerContainer.style.display === 'none' ? 'inline-block' : 'none';
-  });
-}
-
-if (markerContainer) {
-  const dents = [];
-  let storedCoordinates;
-  let imageContainers = document.querySelectorAll('.image-container');
-  let dentPaintDamaged = false;
-  let hailDamage = false;
-
-  function handleImageContainerClick(imageContainer) {
-    const vehicleImage = imageContainer.querySelector('#vehicleImage');
     vehicleImage.addEventListener('click', (event) => {
       event.preventDefault();
-      const side = vehicleImage.dataset.side;
-      const taskId = vehicleImage.dataset.taskId;
+      const imageRect = vehicleImage.getBoundingClientRect();
+
       storedCoordinates = {
         x: event.offsetX,
         y: event.offsetY,
-        relativeX: (event.offsetX / vehicleImage.clientWidth) * 100,
-        relativeY: (event.offsetY / vehicleImage.clientHeight) * 100,
+        relativeX: ((event.clientX - imageRect.left) / imageRect.width) * 100,
+        relativeY: ((event.clientY - imageRect.top) / imageRect.height) * 100,
       };
-
       const coords = storedCoordinates;
-      placeMarker(
-        side,
-        dentShape,
-        dentLength,
-        lineAngle,
-        dentPaintDamaged,
-        coords,
-        imageContainer,
-      );
+      const marker = document.createElement('div');
+      marker.className = 'marker';
+      marker.style.left = `${coords.x - 12}px`;
+      marker.style.top = `${coords.y - 12}px`;
+      imageContainer.appendChild(marker);
       const newObj = {
-        img: side,
-        shape: dentShape,
-        length: dentLength,
-        orientation: orientationPressed ? lineAngle : null,
+        img: img,
         paintDamaged: dentPaintDamaged,
         coords: storedCoordinates,
+        status: 'open',
       };
-
       dents.push(newObj);
-      addDentsToTask(taskId, dents);
-    });
-  }
-
-  // removeLastMarkBtn.addEventListener('click', () => {
-  //   const imageContainer = document.querySelector('.image-container');
-  //   markers = imageContainer.querySelectorAll('.marker');
-
-  //   if (markers.length > 0) {
-  //     const lastMarker = markers[markers.length - 1];
-  //     imageContainer.removeChild(lastMarker);
-  //   }
-  //   if (dents) dents.pop();
-  // });
-
-  paintDamagedCheck.addEventListener('click', () => {
-    dentPaintDamaged = dentPaintDamaged ? false : true;
-  });
-
-  buttonsSide.forEach((button) => {
-    button.addEventListener('click', () => {
-      const img = button.value;
-      const taskId = button.dataset.taskId;
-      const imageHTML = `<div class="image-container">
-      <img id="vehicleImage" src="../pics/sides_pics/${img}.png" data-side="${img}" data-task-id="${taskId}" /></div>`;
-      backToTasks.insertAdjacentHTML('beforebegin', imageHTML);
-      imageContainers = document.querySelectorAll('.image-container');
-      imageContainers.forEach((imageContainer) => {
-        handleImageContainerClick(imageContainer);
-      });
-    });
-  });
-  // imageContainers = document.querySelectorAll('.image-container__summary');
-  imageContainers.forEach((imageContainer) => {
-    handleImageContainerClick(imageContainer);
-  });
-
-  // addDents.addEventListener('click', () => {
-  //   if (dents.length === 0) return showAlert('error', 'No markers placed');
-  //   const taskId = addDents.dataset.taskId;
-  //   addDentsToTask(taskId, dents);
-  // });
-}
-
-if (markers) {
-  markers.forEach((marker) => {
-    marker.addEventListener('click', () => {
-      const taskId = marker.dataset.taskId;
-      const dentId = marker.id;
-      const confirmed = confirm('Remove this marker?');
-      if (confirmed) {
-        updatedDent(taskId, { dentId });
+      if (!dentsTemp[img]) {
+        dentsTemp[img] = [];
       }
+      dentsTemp[img].push(newObj);
     });
   });
+  sendMarksBtn.addEventListener('click', () => {
+    console.log(dents);
+  });
 }
+
+// if (markerParameters) {
+//   markerParameters.addEventListener('click', () => {
+//     arrowParams.classList.toggle('rotate');
+//     markerContainer.style.display =
+//       markerContainer.style.display === 'none' ? 'inline-block' : 'none';
+//   });
+// }
+
+// if (markerContainer) {
+//   const dents = [];
+//   let storedCoordinates;
+//   let imageContainers = document.querySelectorAll('.image-container');
+//   let dentPaintDamaged = false;
+//   let hailDamage = false;
+
+//   function handleImageContainerClick(imageContainer) {
+//     const vehicleImage = imageContainer.querySelector('#vehicleImage');
+//     vehicleImage.addEventListener('click', (event) => {
+//       event.preventDefault();
+//       const side = vehicleImage.dataset.side;
+//       const taskId = vehicleImage.dataset.taskId;
+//       storedCoordinates = {
+//         x: event.offsetX,
+//         y: event.offsetY,
+//         relativeX: (event.offsetX / vehicleImage.clientWidth) * 100,
+//         relativeY: (event.offsetY / vehicleImage.clientHeight) * 100,
+//       };
+
+//       const coords = storedCoordinates;
+//       // placeMarker(side, dentPaintDamaged, coords, imageContainer);
+//       const newObj = {
+//         img: side,
+//         paintDamaged: dentPaintDamaged,
+//         coords: storedCoordinates,
+//       };
+
+//       dents.push(newObj);
+//       console.log(dents);
+//       // addDentsToTask(taskId, dents);
+//     });
+//   }
+
+//   // removeLastMarkBtn.addEventListener('click', () => {
+//   //   const imageContainer = document.querySelector('.image-container');
+//   //   markers = imageContainer.querySelectorAll('.marker');
+
+//   //   if (markers.length > 0) {
+//   //     const lastMarker = markers[markers.length - 1];
+//   //     imageContainer.removeChild(lastMarker);
+//   //   }
+//   //   if (dents) dents.pop();
+//   // });
+
+//   paintDamagedCheck.addEventListener('click', () => {
+//     dentPaintDamaged = dentPaintDamaged ? false : true;
+//   });
+
+//   buttonsSide.forEach((button) => {
+//     button.addEventListener('click', () => {
+//       const img = button.value;
+//       const taskId = button.dataset.taskId;
+//       const imageHTML = `<div class="image-container">
+//       <img id="vehicleImage" src="../pics/sides_pics/${img}.png" data-side="${img}" data-task-id="${taskId}" /></div>`;
+//       backToTasks.insertAdjacentHTML('beforebegin', imageHTML);
+//       imageContainers = document.querySelectorAll('.image-container');
+//       imageContainers.forEach((imageContainer) => {
+//         handleImageContainerClick(imageContainer);
+//       });
+//     });
+//   });
+//   // imageContainers = document.querySelectorAll('.image-container__summary');
+//   imageContainers.forEach((imageContainer) => {
+//     handleImageContainerClick(imageContainer);
+//   });
+
+//   // addDents.addEventListener('click', () => {
+//   //   if (dents.length === 0) return showAlert('error', 'No markers placed');
+//   //   const taskId = addDents.dataset.taskId;
+//   //   addDentsToTask(taskId, dents);
+//   // });
+// }
+
+// if (markers) {
+//   markers.forEach((marker) => {
+//     marker.addEventListener('click', () => {
+//       const taskId = marker.dataset.taskId;
+//       const dentId = marker.id;
+//       const confirmed = confirm('Remove this marker?');
+//       if (confirmed) {
+//         updatedDent(taskId, { dentId });
+//       }
+//     });
+//   });
+// }
 
 if (forgotPassBtn) {
   forgotPassBtn.addEventListener('click', function (e) {

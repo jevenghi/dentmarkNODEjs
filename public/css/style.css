@@ -446,11 +446,11 @@ input[type='file'] {
 
 .marker {
   position: absolute;
-  width: 0.5rem;
-  height: 0.5rem;
+  width: 2rem;
+  height: 2rem;
   /* background: radial-gradient(circle at 50% 50%, red, transparent); */
   border-radius: 50%;
-  border: 3px solid rgba(255, 16, 240, 0.7);
+  border: 2px solid rgba(255, 16, 240, 1);
 
   display: flex;
   align-items: center;
@@ -676,27 +676,6 @@ button[type='submit']:hover {
 .form-group .availability-message {
   font-style: italic;
   color: #ff0000; /* Red color for the message */
-}
-
-.marker-number {
-  position: absolute;
-  color: #1900ff;
-  font-size: 1rem;
-  font-weight: bold;
-  /* right: 110%; */
-  /* left: 0;
-  height: 1.3rem;
-  bottom: 0; */
-
-  /* background-color: #fff; */
-  padding: 2px 1rem;
-  /* border: 0.5px solid #000; */
-  border-radius: 1px;
-  /* transform: translateX(-50%); */
-  height: 1.3rem;
-}
-.table-container {
-  background-color: #ccc;
 }
 
 /* SIGNUP LOGIN PROFILE*/
