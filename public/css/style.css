@@ -411,9 +411,9 @@ input[type='file'] {
   border-radius: 5px;
   padding: 1rem 1.8rem;
   margin-top: 0;
-  max-width: 100%;
+  width: 98%;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   /* margin-bottom: 10rem; */
 
@@ -436,6 +436,8 @@ input[type='file'] {
   border: none;
   border-radius: 0.3rem;
   color: #ffffff;
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
 }
 .shapes-container {
   display: flex;
@@ -446,11 +448,11 @@ input[type='file'] {
 
 .marker {
   position: absolute;
-  width: 2rem;
-  height: 2rem;
+  width: 1.5rem;
+  height: 1.5rem;
   /* background: radial-gradient(circle at 50% 50%, red, transparent); */
   border-radius: 50%;
-  border: 2px solid rgba(255, 16, 240, 1);
+  border: 0.15rem solid rgba(255, 16, 240, 1);
 
   display: flex;
   align-items: center;
@@ -529,6 +531,7 @@ input[type='file'] {
 
 .search-bar {
   margin-top: 1rem;
+  position: relative;
 }
 
 .task-header {
@@ -883,9 +886,7 @@ button[type='submit']:hover {
 .dropdown-content a:hover {
   background-color: #f1f1f1;
 }
-.search-bar {
-  position: relative;
-}
-#search-input {
-  width: 15rem;
-}
+
+/* #search-input {
+  width: 36rem;
+} */

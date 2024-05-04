@@ -6,13 +6,14 @@ import { generatePDF } from './generatePDF';
 import { showAlert } from './alerts';
 import { deleteTask } from './deleteTask';
 import { placeMarker, addDentsToTask } from './placeMarker';
-import { DrawableCanvasElement } from './drawOnCanvas';
 import { resetPassword } from './resetPassword';
 import {
   uploadPhotosTemp,
   renderVehicleImageFromUploads,
 } from './photosHandler';
 import { sendTask } from './sendTask';
+import { searchUsers } from './searchUsers';
+
 // const imageCanvas =
 const mainContainer = document.querySelector('.main-container');
 const passwordResetForm = document.querySelector('.reset-form');
@@ -61,6 +62,11 @@ const arrowParams = document.querySelector('.arrow__params');
 const arrowSide = document.querySelector('.arrow__side');
 const imageContainer = document.querySelector('.image-container');
 
+const searchBar = document.querySelector('.search-bar');
+
+const searchInput = document.getElementById('search-input');
+const searchResults = document.getElementById('search-results');
+
 let url = new URL(window.location.href);
 
 // function getMarkers() {
@@ -75,6 +81,27 @@ let url = new URL(window.location.href);
 //   });
 // }
 
+const displayResults = (results) => {
+  clearResults();
+
+  if (results.length > 0) {
+    results.forEach(function (result) {
+      const link = document.createElement('a');
+      link.textContent = result;
+      searchResults.appendChild(link);
+    });
+    searchResults.style.display = 'block';
+  } else {
+    searchResults.style.display = 'none';
+  }
+};
+const clearResults = () => {
+  while (searchResults.firstChild) {
+    searchResults.removeChild(searchResults.firstChild);
+  }
+  searchResults.style.display = 'none';
+};
+
 if (uploadPhoto) {
   let img;
   let customer;
@@ -86,6 +113,17 @@ if (uploadPhoto) {
   let specialCase = false;
   let bigDent = false;
   const markers = imageContainer.getElementsByClassName('marker');
+
+  paintDamagedCheck.addEventListener('click', () => {
+    dentPaintDamaged = dentPaintDamaged ? false : true;
+    console.log(dentPaintDamaged);
+  });
+  bigDentCheck.addEventListener('click', () => {
+    bigDent = bigDent ? false : true;
+  });
+  specialCaseCheck.addEventListener('click', () => {
+    specialCase = specialCase ? false : true;
+  });
 
   uploadPhoto.addEventListener('click', async (e) => {
     e.preventDefault();
@@ -108,6 +146,7 @@ if (uploadPhoto) {
     }
     uploadPhoto.textContent = 'Upload';
     renderVehicleImageFromUploads(uploadedImages);
+
     sideText.classList.remove('hidden');
     sideSelection = document.querySelector('.sides-container');
 
@@ -133,8 +172,11 @@ if (uploadPhoto) {
         vehicleImage.src = `pics/tasks/${img}`;
 
         removeMarksContainer.classList.remove('hidden');
+        sendMarksBtn.classList.remove('hidden');
         paintDamagedCheck.checked = false;
         bigDentCheck.checked = false;
+        dentPaintDamaged = false;
+        bigDent = false;
 
         sendContainer.classList.remove('hidden');
         markerContainer.classList.remove('hidden');
@@ -147,27 +189,27 @@ if (uploadPhoto) {
         const sideDents = dentsTemp[img];
         if (sideDents && sideDents.length > 0) {
           sideDents.forEach((dent) => {
-            const marker = document.createElement('div');
-            marker.className = 'marker';
-            if (dent.dentPaintDamaged) marker.style.borderStyle = 'dotted';
-            marker.style.left = `${dent.coords.x - 12}px`;
-            marker.style.top = `${dent.coords.y - 12}px`;
-            imageContainer.appendChild(marker);
-            // this._placeMarker(dent.paintDamaged, dent.coords, imageContainer);
+            placeMarker(
+              dent.bigDent,
+              dent.paintDamaged,
+              dent.coords,
+              imageContainer,
+            );
           });
         }
       });
     });
 
-    paintDamagedCheck.addEventListener('click', () => {
-      dentPaintDamaged = dentPaintDamaged ? false : true;
-    });
-    bigDentCheck.addEventListener('click', () => {
-      bigDent = bigDent ? false : true;
-    });
-    specialCaseCheck.addEventListener('click', () => {
-      specialCase = specialCase ? false : true;
-    });
+    // paintDamagedCheck.addEventListener('click', () => {
+    //   dentPaintDamaged = dentPaintDamaged ? false : true;
+    //   console.log(dentPaintDamaged);
+    // });
+    // bigDentCheck.addEventListener('click', () => {
+    //   bigDent = bigDent ? false : true;
+    // });
+    // specialCaseCheck.addEventListener('click', () => {
+    //   specialCase = specialCase ? false : true;
+    // });
 
     vehicleImage.addEventListener('click', (event) => {
       event.preventDefault();
@@ -180,24 +222,11 @@ if (uploadPhoto) {
         relativeY: ((event.clientY - imageRect.top) / imageRect.height) * 100,
       };
       const coords = storedCoordinates;
-      const marker = document.createElement('div');
-      marker.className = 'marker';
-      if (dentPaintDamaged) marker.style.borderStyle = 'dotted';
-      if (bigDent) {
-        marker.style.width = '5rem';
-        marker.style.height = '5rem';
-        marker.style.left = `${coords.x - 26}px`;
-        marker.style.top = `${coords.y - 26}px`;
-      } else {
-        marker.style.left = `${coords.x - 12}px`;
-        marker.style.top = `${coords.y - 12}px`;
-      }
-      imageContainer.appendChild(marker);
+      placeMarker(bigDent, dentPaintDamaged, coords, imageContainer);
       const newObj = {
         img: img,
         paintDamaged: dentPaintDamaged,
         bigDent: bigDent,
-        specialCase: specialCase,
         coords: storedCoordinates,
         status: 'open',
       };
@@ -208,13 +237,45 @@ if (uploadPhoto) {
       dentsTemp[img].push(newObj);
     });
   });
+
+  if (searchInput) {
+    searchInput.addEventListener('input', async function () {
+      const userInput = searchInput.value.trim();
+      if (userInput.length > 0) {
+        try {
+          const response = await searchUsers(userInput);
+          displayResults(response);
+        } catch (error) {
+          showAlert('error', error);
+        }
+      } else {
+        clearResults();
+      }
+    });
+    searchResults.addEventListener('click', function (event) {
+      if (event.target.tagName === 'A') {
+        searchInput.value = customer = event.target.textContent;
+        searchResults.style.display = 'none';
+      }
+    });
+
+    document.addEventListener('click', function (event) {
+      if (
+        !searchInput.contains(event.target) &&
+        !searchResults.contains(event.target)
+      ) {
+        searchResults.style.display = 'none';
+      }
+    });
+  }
+
   sendMarksBtn.addEventListener('click', async () => {
     if (dents.length === 0 && !specialCase)
       return showAlert('error', 'You have not placed any dent yet');
     const model = vehicleModel.value;
     if (model.length < 5)
       return showAlert('error', 'Model name must have at least 5 characters');
-    await sendTask(customer, model, dents, uploadedImages);
+    await sendTask(customer, model, dents, uploadedImages, specialCase);
   });
 }
 

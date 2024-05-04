@@ -9,10 +9,10 @@ const router = express.Router();
 router.post(
   '/sendTask',
   authController.protect,
-  // imageController.transferFiles,
+  imageController.transferFiles,
   taskController.sendTask,
   // remove next() to sendTask when commenting below
-  // taskController.sendTaskCreationEmail,
+  taskController.sendTaskCreationEmail,
 );
 router.post(
   '/sendTask/:id',

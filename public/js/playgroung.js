@@ -119,27 +119,27 @@ _removeAllMarkers() {
       }
     });
 
-    function displayResults(results) {
-      clearResults();
+    // function displayResults(results) {
+    //   clearResults();
 
-      if (results.length > 0) {
-        results.forEach(function (result) {
-          const link = document.createElement('a');
-          link.textContent = result;
-          searchResults.appendChild(link);
-        });
-        searchResults.style.display = 'block';
-      } else {
-        searchResults.style.display = 'none';
-      }
-    }
+    //   if (results.length > 0) {
+    //     results.forEach(function (result) {
+    //       const link = document.createElement('a');
+    //       link.textContent = result;
+    //       searchResults.appendChild(link);
+    //     });
+    //     searchResults.style.display = 'block';
+    //   } else {
+    //     searchResults.style.display = 'none';
+    //   }
+    // }
 
-    function clearResults() {
-      while (searchResults.firstChild) {
-        searchResults.removeChild(searchResults.firstChild);
-      }
-      searchResults.style.display = 'none';
-    }
+    // function clearResults() {
+    //   while (searchResults.firstChild) {
+    //     searchResults.removeChild(searchResults.firstChild);
+    //   }
+    //   searchResults.style.display = 'none';
+    // }
 
     searchResults.addEventListener('click', function (event) {
       if (event.target.tagName === 'A') {

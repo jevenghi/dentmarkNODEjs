@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const dentSchema = new mongoose.Schema({
   img: String,
   bigDent: Boolean,
-  specialCase: Boolean,
   paintDamaged: Boolean,
   coords: Object,
   cost: {
@@ -60,6 +59,10 @@ const taskSchema = new mongoose.Schema(
       min: [0, 'Cost can not be negative'],
       max: [10000, 'Cost can not exceed 10,000'],
       default: 0,
+    },
+    specialCase: {
+      type: Boolean,
+      default: false,
     },
     remark: {
       type: String,
