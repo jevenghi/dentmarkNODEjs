@@ -116,7 +116,6 @@ if (uploadPhoto) {
 
   paintDamagedCheck.addEventListener('click', () => {
     dentPaintDamaged = dentPaintDamaged ? false : true;
-    console.log(dentPaintDamaged);
   });
   bigDentCheck.addEventListener('click', () => {
     bigDent = bigDent ? false : true;
@@ -199,43 +198,32 @@ if (uploadPhoto) {
         }
       });
     });
+  });
 
-    // paintDamagedCheck.addEventListener('click', () => {
-    //   dentPaintDamaged = dentPaintDamaged ? false : true;
-    //   console.log(dentPaintDamaged);
-    // });
-    // bigDentCheck.addEventListener('click', () => {
-    //   bigDent = bigDent ? false : true;
-    // });
-    // specialCaseCheck.addEventListener('click', () => {
-    //   specialCase = specialCase ? false : true;
-    // });
+  vehicleImage.addEventListener('click', (event) => {
+    event.preventDefault();
+    const imageRect = vehicleImage.getBoundingClientRect();
 
-    vehicleImage.addEventListener('click', (event) => {
-      event.preventDefault();
-      const imageRect = vehicleImage.getBoundingClientRect();
-
-      storedCoordinates = {
-        x: event.offsetX,
-        y: event.offsetY,
-        relativeX: ((event.clientX - imageRect.left) / imageRect.width) * 100,
-        relativeY: ((event.clientY - imageRect.top) / imageRect.height) * 100,
-      };
-      const coords = storedCoordinates;
-      placeMarker(bigDent, dentPaintDamaged, coords, imageContainer);
-      const newObj = {
-        img: img,
-        paintDamaged: dentPaintDamaged,
-        bigDent: bigDent,
-        coords: storedCoordinates,
-        status: 'open',
-      };
-      dents.push(newObj);
-      if (!dentsTemp[img]) {
-        dentsTemp[img] = [];
-      }
-      dentsTemp[img].push(newObj);
-    });
+    storedCoordinates = {
+      x: event.offsetX,
+      y: event.offsetY,
+      relativeX: ((event.clientX - imageRect.left) / imageRect.width) * 100,
+      relativeY: ((event.clientY - imageRect.top) / imageRect.height) * 100,
+    };
+    const coords = storedCoordinates;
+    placeMarker(bigDent, dentPaintDamaged, coords, imageContainer);
+    const newObj = {
+      img: img,
+      paintDamaged: dentPaintDamaged,
+      bigDent: bigDent,
+      coords: storedCoordinates,
+      status: 'open',
+    };
+    dents.push(newObj);
+    if (!dentsTemp[img]) {
+      dentsTemp[img] = [];
+    }
+    dentsTemp[img].push(newObj);
   });
 
   if (searchInput) {
@@ -268,15 +256,16 @@ if (uploadPhoto) {
       }
     });
   }
-
-  sendMarksBtn.addEventListener('click', async () => {
-    if (dents.length === 0 && !specialCase)
-      return showAlert('error', 'You have not placed any dent yet');
-    const model = vehicleModel.value;
-    if (model.length < 5)
-      return showAlert('error', 'Model name must have at least 5 characters');
-    await sendTask(customer, model, dents, uploadedImages, specialCase);
-  });
+  if (sendMarksBtn) {
+    sendMarksBtn.addEventListener('click', async () => {
+      if (dents.length === 0 && !specialCase)
+        return showAlert('error', 'You have not placed any dent yet');
+      const model = vehicleModel.value;
+      if (model.length < 5)
+        return showAlert('error', 'Model name must have at least 5 characters');
+      await sendTask(customer, model, dents, uploadedImages, specialCase);
+    });
+  }
 }
 
 // if (markerParameters) {

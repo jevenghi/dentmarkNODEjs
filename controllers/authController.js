@@ -16,8 +16,6 @@ const signToken = (id) =>
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 
-// const createEmailConfirmationToken =
-
 const createAndSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
   const cookieOptions = {
@@ -67,25 +65,6 @@ exports.isLoggedIn = async (req, res, next) => {
   next();
 };
 
-exports.isAdmin = async (req, res, next) => {
-  if (req.cookies.jwt) {
-    try {
-      const decoded = await promisify(jwt.verify)(
-        req.cookies.jwt,
-        process.env.JWT_SECRET,
-      );
-      const currentUser = await User.findById(decoded.id);
-      if (currentUser.role === 'admin') {
-        res.json(true);
-      } else {
-        res.json(false);
-      }
-    } catch (err) {
-      return next(new AppError(err, 400));
-    }
-  }
-};
-
 exports.sendAuthStatus = (req, res) => {
   if (res.locals.user && res.locals.user.emailConfirmed) {
     res.json({ loggedIn: true, user: res.locals.user });
@@ -122,7 +101,6 @@ exports.signup = catchAsyncError(async (req, res, next) => {
   } catch (err) {
     newUser.emailConfirmationToken = undefined;
     newUser.emailConfirmationTokenExpires = undefined;
-    console.log('error sending email');
     await newUser.save({ validateBeforeSave: false });
 
     return next(
