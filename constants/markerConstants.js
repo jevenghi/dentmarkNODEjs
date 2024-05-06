@@ -1,8 +1,8 @@
 const markerConstants = {
   MARKER_SMALL: '1.5rem',
   MARKER_BIG: '4rem',
-  MARKER_SMALL_CORR: 10,
-  MARKER_BIG_CORR: 26,
+  MARKER_SMALL_CORR: 8,
+  MARKER_BIG_CORR: 20,
 
   CIRCLE_SMALL_SIDES: '1rem',
   CIRCLE_MEDIUM_SIDES: '2rem',

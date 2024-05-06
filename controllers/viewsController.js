@@ -7,6 +7,7 @@ const User = require('../models/userModel');
 const catchAsyncError = require('../utils/catchAsyncError');
 let Client = require('ssh2-sftp-client');
 const path = require('path');
+const factory = require('./handlerFactory');
 
 // const { showAlert } = require('../public/js/alerts');
 
@@ -96,13 +97,9 @@ exports.getUser = catchAsyncError(async (req, res, next) => {
   });
 });
 
-const isFrontOrRear = function (side) {
-  return side.slice(-2) === 'fr' || side.slice(-2) === 're';
-};
-
 exports.getTask = catchAsyncError(async (req, res, next) => {
   const task = await Task.findById(req.params.id);
-  const { bodyType, images } = task;
+  const { images } = task;
 
   const localDirectory = 'public/pics/pics_temp';
   // const localDirectory = '../krasmarkNODE/public/pics/pics_temp';
@@ -135,133 +132,6 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
     return res.status(500).json({ error: 'Error transferring files' });
   }
 
-  let taskDents;
-  let dentsHTML = '';
-  let sidesLeft = ['re', 'ls', 'rs', 'fr', 'top'].map((el) => bodyType + el);
-  if (task.dents.length === 0) {
-    task.images.forEach((fileName) => {
-      dentsHTML += `
-      <div class="image-container">
-        <img id="vehicleImage" src="/pics/pics_temp/${fileName}" data-side="${fileName}" data-task-id="${req.params.id}" style="width: ${markerConstants.UPLOADED_IMAGE_WIDTH}"/>
-      </div>  
-      `;
-    });
-  } else {
-    taskDents = task.dents.toObject();
-
-    const groupedDents = taskDents.reduce((acc, obj) => {
-      const { img } = obj;
-      if (!acc[img]) {
-        acc[img] = [];
-      }
-      acc[img].push(obj);
-      return acc;
-    }, {});
-
-    Object.entries(groupedDents).forEach(([side, dents]) => {
-      let width = markerConstants.UPLOADED_IMAGE_WIDTH;
-      const src = side.startsWith('user')
-        ? `/pics/pics_temp/${side}`
-        : `/pics/sides_pics/${side}.png`;
-      if (!side.startsWith('user')) {
-        sidesLeft = sidesLeft.filter((el) => el !== side);
-        if (isFrontOrRear(side)) width = markerConstants.IMAGE_WIDTH_FR_REAR;
-      }
-      dentsHTML += `
-          <div class="image-container">
-            <img id="vehicleImage" src="${src}" data-side="${side}" data-task-id="${req.params.id}" style="width: ${width}"/>
-          `;
-      dents.forEach((dent) => {
-        const { img, shape, length, orientation, paintDamaged, coords, _id } =
-          dent;
-        // let markerStyle = isFrontOrRear(img) ? `left: ${coords.x - 2}%; top: ${coords.y - 3.5}%;` : `left: ${coords.x - 1}%; top: ${coords.y - 3}%;`;
-        let markerStyle = '';
-
-        let markerClass = 'marker';
-        if (paintDamaged) markerStyle += ' border-style: dotted;';
-
-        if (length === 'small') {
-          markerClass += ' small';
-          if (shape === 'nonagon') {
-            // markerStyle += `width: ${isFrontOrRear(side) ? '1.3rem' : '0.5rem'}; height: ${isFrontOrRear(side) ? '1.3rem' : '0.5rem'};`;
-            markerStyle += `width: ${markerConstants.CIRCLE_SMALL_SIDES}; height: ${markerConstants.CIRCLE_SMALL_SIDES};`;
-
-            // markerStyle += isFrontOrRear(img)
-            //   ? `left: ${coords.relativeX - 2}%; top: ${coords.relativeY - 2.6}%;`
-            //   : `left: ${coords.relativeX - 0.8}%; top: ${coords.relativeY - 2.6}%;`;
-
-            markerStyle += isFrontOrRear(img)
-              ? `left: ${coords.x - markerConstants.CIRCLE_SMALL_X_CORR}px; top: ${coords.y - markerConstants.CIRCLE_SMALL_Y_CORR}px;`
-              : `left: ${coords.x - markerConstants.CIRCLE_SMALL_X_CORR}px; top: ${coords.y - markerConstants.CIRCLE_SMALL_Y_CORR}px;`;
-          } else if (shape === 'line') {
-            markerStyle += `width: ${markerConstants.LINE_SMALL_W}; height: ${markerConstants.LINE_SMALL_H}; border-radius: 0.8rem; transform: rotate(${orientation});`;
-
-            markerStyle += isFrontOrRear(img)
-              ? `left: ${coords.x - markerConstants.LINE_SMALL_X_CORR}px; top: ${coords.y - markerConstants.LINE_SMALL_Y_CORR}px;`
-              : `left: ${coords.x - markerConstants.LINE_SMALL_X_CORR}px; top: ${coords.y - markerConstants.LINE_SMALL_Y_CORR}px;`;
-
-            // markerStyle += isFrontOrRear(img)
-            //   ? `left: ${coords.relativeX - 2}%; top: ${coords.relativeY - 1.5}%;`
-            //   : `left: ${coords.relativeX - 1}%; top: ${coords.relativeY - 1.8}%;`;
-            // markerStyle += `width: ${isFrontOrRear(side) ? '1.5rem' : '0.8rem'}; height: ${isFrontOrRear(side) ? '0.6rem' : '0.3rem'}; border-radius: 0.8rem; transform: rotate(${orientation});`;
-          }
-        } else if (length === 'medium') {
-          markerClass += ' medium';
-          if (shape === 'nonagon') {
-            // markerStyle += isFrontOrRear(img)
-            //   ? `left: ${coords.relativeX - 2.6}%; top: ${coords.relativeY - 3.6}%;`
-            //   : `left: ${coords.relativeX - 1}%; top: ${coords.relativeY - 3}%;`;
-            // markerStyle += `width: ${isFrontOrRear(side) ? '2rem' : '0.8rem'}; height: ${isFrontOrRear(side) ? '2rem' : '0.8rem'};`;
-            markerStyle += isFrontOrRear(img)
-              ? `left: ${coords.x - markerConstants.CIRCLE_MEDIUM_X_CORR}px; top: ${coords.y - markerConstants.CIRCLE_MEDIUM_Y_CORR}px;`
-              : `left: ${coords.x - markerConstants.CIRCLE_MEDIUM_X_CORR}px; top: ${coords.y - markerConstants.CIRCLE_MEDIUM_Y_CORR}px;`;
-            markerStyle += `width: ${markerConstants.CIRCLE_MEDIUM_SIDES}; height: ${markerConstants.CIRCLE_MEDIUM_SIDES};`;
-          } else if (shape === 'line') {
-            markerStyle += isFrontOrRear(img)
-              ? `left: ${coords.x - markerConstants.LINE_MEDIUM_X_CORR}px; top: ${coords.y - markerConstants.LINE_MEDIUM_Y_CORR}px;`
-              : `left: ${coords.x - markerConstants.LINE_MEDIUM_X_CORR}px; top: ${coords.y - markerConstants.LINE_MEDIUM_Y_CORR}px;`;
-            markerStyle += `width: ${markerConstants.LINE_MEDIUM_W}; height: ${markerConstants.LINE_MEDIUM_H}; border-radius: 0.8rem; transform: rotate(${orientation});`;
-          }
-        } else if (length === 'big') {
-          markerClass += ' big';
-          if (shape === 'nonagon') {
-            // markerStyle += isFrontOrRear(img)
-            //   ? `left: ${coords.relativeX - 3.4}%; top: ${coords.relativeY - 5}%;`
-            //   : `left: ${coords.relativeX - 2}%; top: ${coords.relativeY - 5.3}%;`;
-            // markerStyle += `width: ${isFrontOrRear(side) ? '2.6rem' : '1.6rem'}; height: ${isFrontOrRear(side) ? '2.6rem' : '1.6rem'};`;
-            markerStyle += isFrontOrRear(img)
-              ? `left: ${coords.x - markerConstants.CIRCLE_LARGE_X_CORR}px; top: ${coords.y - markerConstants.CIRCLE_LARGE_Y_CORR}px;`
-              : `left: ${coords.x - markerConstants.CIRCLE_LARGE_X_CORR}px; top: ${coords.y - markerConstants.CIRCLE_LARGE_Y_CORR}px;`;
-            markerStyle += `width: ${markerConstants.CIRCLE_LARGE_SIDES}; height: ${markerConstants.CIRCLE_LARGE_SIDES};`;
-          } else if (shape === 'line') {
-            markerStyle += isFrontOrRear(img)
-              ? `left: ${coords.x - markerConstants.LINE_LARGE_X_CORR}px; top: ${coords.y - markerConstants.LINE_LARGE_Y_CORR}px;`
-              : `left: ${coords.x - markerConstants.LINE_LARGE_X_CORR}px; top: ${coords.y - markerConstants.LINE_LARGE_Y_CORR}px;`;
-            // markerStyle += isFrontOrRear(img)
-            //   ? `left: ${coords.relativeX - 3.8}%; top: ${coords.relativeY - 2.5}%;`
-            //   : `left: ${coords.relativeX - 3.2}%; top: ${coords.relativeY - 4.2}%;`;
-            markerStyle += `width: ${markerConstants.LINE_LARGE_W}; height: ${markerConstants.LINE_LARGE_H}; border-radius: 0.8rem; transform: rotate(${orientation});`;
-          }
-        }
-        dentsHTML += `
-  
-          <div class="${markerClass}" style="${markerStyle}" id ="${_id}" data-task-id="${req.params.id}">
-  
-          </div>
-        `;
-        //WITh X FOR PAINT DAMAGED MARKERS
-        //   dentsHTML += `
-
-        //   <div class="${markerClass}" style="${markerStyle}" id ="${_id}" data-task-id="${req.params.id}">
-
-        //     ${paintDamaged ? '<span>X</span>' : ''}
-        //   </div>
-        // `;
-      });
-      dentsHTML += `</div>`;
-    });
-  }
-
   res.status(200).render('task', {
     title: 'Task',
     taskId: req.params.id,
@@ -269,11 +139,9 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
     date: task.createdAt.toLocaleDateString('en-GB'),
     taskStatus: task.taskStatus,
     model: task.carModel,
-    dents: taskDents,
     customer: task.user.name,
-    dentsHTML: dentsHTML,
     totalCost: task.totalCost,
-    sidesLeft,
+    uploadedImages: images,
   });
 });
 

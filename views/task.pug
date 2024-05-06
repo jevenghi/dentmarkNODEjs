@@ -8,7 +8,7 @@ block content
   .main-container
     if role === 'admin'  
       button.delete-task(data-task-id=taskId) Delete Task
-    .task-header
+    .task-header(data-task-id=taskId)
       if role === 'admin'
         p Customer: #{customer}
       p Model: #{model}

@@ -5,11 +5,16 @@ import { updatedDent } from './updateDent';
 import { generatePDF } from './generatePDF';
 import { showAlert } from './alerts';
 import { deleteTask } from './deleteTask';
-import { placeMarker, addDentsToTask } from './placeMarker';
+import {
+  placeMarker,
+  addDentsToTask,
+  populateSidesWithDents,
+} from './placeMarker';
 import { resetPassword } from './resetPassword';
 import {
   uploadPhotosTemp,
   renderVehicleImageFromUploads,
+  getImagesAndDents,
 } from './photosHandler';
 import { sendTask } from './sendTask';
 import { searchUsers } from './searchUsers';
@@ -54,7 +59,7 @@ const paintDamagedCheck = document.getElementById('paint-damaged');
 const specialCaseCheck = document.getElementById('special-case');
 const bigDentCheck = document.getElementById('big-dent');
 
-const buttonsSide = document.querySelectorAll('.button--side');
+// let buttonsSide = document.querySelectorAll('.button--side');
 const sidesContainer = document.querySelector('.sides-container');
 const markerParameters = document.querySelector('.choose-marker');
 const addAnotherSide = document.querySelector('.choose__side');
@@ -67,12 +72,25 @@ const searchBar = document.querySelector('.search-bar');
 const searchInput = document.getElementById('search-input');
 const searchResults = document.getElementById('search-results');
 
+const taskHeader = document.querySelector('.task-header');
+
 let url = new URL(window.location.href);
+
+let img;
+let customer;
+let storedCoordinates;
+let uploadedImages = [];
+let dents = [];
+let dentsTemp = {};
+let dentPaintDamaged = false;
+let specialCase = false;
+let bigDent = false;
 
 // function getMarkers() {
 //   return document.querySelectorAll('.marker');
 // }
 // let markers = getMarkers();
+
 // if (addAnotherSide) {
 //   addAnotherSide.addEventListener('click', () => {
 //     arrowSide.classList.toggle('rotate');
@@ -102,18 +120,12 @@ const clearResults = () => {
   searchResults.style.display = 'none';
 };
 
-if (uploadPhoto) {
-  let img;
-  let customer;
-  let storedCoordinates;
-  let uploadedImages = [];
-  let dents = [];
-  let dentsTemp = {};
-  let dentPaintDamaged = false;
-  let specialCase = false;
-  let bigDent = false;
-  const markers = imageContainer.getElementsByClassName('marker');
+if (taskHeader) {
+  const taskId = taskHeader.dataset.taskId;
+  getImagesAndDents(taskId);
+}
 
+if (markerContainer) {
   paintDamagedCheck.addEventListener('click', () => {
     dentPaintDamaged = dentPaintDamaged ? false : true;
   });
@@ -123,7 +135,9 @@ if (uploadPhoto) {
   specialCaseCheck.addEventListener('click', () => {
     specialCase = specialCase ? false : true;
   });
+}
 
+if (uploadPhoto) {
   uploadPhoto.addEventListener('click', async (e) => {
     e.preventDefault();
     const vehicleImage = imageContainer.querySelector('#vehicleImage');
@@ -144,7 +158,7 @@ if (uploadPhoto) {
       showAlert('error', error);
     }
     uploadPhoto.textContent = 'Upload';
-    renderVehicleImageFromUploads(uploadedImages);
+    renderVehicleImageFromUploads(uploadedImages, 'tasks');
 
     sideText.classList.remove('hidden');
     sideSelection = document.querySelector('.sides-container');
@@ -153,6 +167,8 @@ if (uploadPhoto) {
       sideSelection.classList.add('visible');
     }, 50);
     const buttonsSide = document.querySelectorAll('.button--side');
+    const markers = imageContainer.getElementsByClassName('marker');
+
     buttonsSide.forEach((button) => {
       button.addEventListener('click', () => {
         buttonsSide.forEach((btn) => {

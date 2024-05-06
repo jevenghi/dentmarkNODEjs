@@ -34,7 +34,11 @@ exports.updateOne = (Model) =>
 
 exports.getAll = (Model) =>
   catchAsyncError(async (req, res, next) => {
-    const requestQueries = new RequestQueryHandler(Model.find(), req.query).filter().sort().limitFields().paginate();
+    const requestQueries = new RequestQueryHandler(Model.find(), req.query)
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
 
     const doc = await requestQueries.query;
 
