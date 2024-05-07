@@ -19,7 +19,7 @@ export const uploadPhotosTemp = async (images) => {
   }
 };
 
-export const renderVehicleImageFromUploads = (uploadedImages, folder) => {
+export const renderVehicleImageFromUploads = (uploadedImages) => {
   const sidesContainer = document.querySelector('.sides-container');
   const sideText = document.querySelector('.choose__side');
 
@@ -28,7 +28,7 @@ export const renderVehicleImageFromUploads = (uploadedImages, folder) => {
   uploadedImages.forEach((image) => {
     html += `
             <button class="button button--side" value="${image}">
-                <img src="/pics/${folder}/${image}" id="${image}" />
+                <img src="/pics/tasks/${image}" id="${image}" />
             </button>`;
   });
   html += '</div>';
@@ -53,7 +53,7 @@ export const getImagesAndDents = async (taskId) => {
         return acc;
       }, {});
 
-      renderVehicleImageFromUploads(images, 'pics_temp');
+      renderVehicleImageFromUploads(images);
       sideSelection = document.querySelector('.sides-container');
 
       setTimeout(function () {

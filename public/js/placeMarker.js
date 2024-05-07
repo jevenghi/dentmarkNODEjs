@@ -22,12 +22,12 @@ export const placeMarker = (bigDent, paintDamaged, coords, image) => {
   image.appendChild(marker);
 };
 
-export const addDentsToTask = async (taskId, dents) => {
+export const addDentsToTask = async (taskId, dents, uploadedImages) => {
   try {
     const res = await axios({
       method: 'POST',
       url: `/api/v1/tasks/sendTask/${taskId}`,
-      data: { dents },
+      data: { dents, uploadedImages },
     });
     if (res.data.status === 'success') {
       // alert('Dents successfully added!');

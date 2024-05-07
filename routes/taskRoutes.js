@@ -17,6 +17,8 @@ router.post(
 router.post(
   '/sendTask/:id',
   authController.protect,
+  imageController.transferFiles,
+
   taskController.addDentsToTask,
 );
 

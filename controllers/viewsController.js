@@ -96,12 +96,12 @@ exports.getUser = catchAsyncError(async (req, res, next) => {
     limit,
   });
 });
-
+//TODO: fix error handling
 exports.getTask = catchAsyncError(async (req, res, next) => {
   const task = await Task.findById(req.params.id);
   const { images } = task;
 
-  const localDirectory = 'public/pics/pics_temp';
+  const localDirectory = 'public/pics/tasks';
   // const localDirectory = '../krasmarkNODE/public/pics/pics_temp';
 
   const remoteDirectory = '/home/tasks';

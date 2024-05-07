@@ -186,6 +186,7 @@ exports.addDentsToTask = catchAsyncErr(async (req, res, next) => {
     if (!task)
       return next(new AppError(`Task with this ID does not exist`, 404));
     task.dents.push(...req.body.dents);
+    task.images = [...req.body.uploadedImages];
     await task.save();
     res.status(201).json({
       status: 'success',

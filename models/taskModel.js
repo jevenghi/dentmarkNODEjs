@@ -27,6 +27,12 @@ const taskSchema = new mongoose.Schema(
       maxlength: [30, 'Car model name must not exceed 30 characters'],
       minlength: [5, 'Car model name must have at least 4 characters'],
     },
+    year: {
+      type: Number,
+
+      min: 1990,
+      max: 2030,
+    },
     difficulty: {
       type: String,
       enum: {

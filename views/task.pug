@@ -55,10 +55,13 @@ block content
 
         .image-container
           img#vehicleImage(src="")
-          div#marker      
-    button(type="button" class='save-new-dents') Save added dents           
+          div#marker
 
+        .remove-container.hidden
+          button.remove_mark_btn.remove__last Undo
+          button.remove_mark_btn.remove--marks Clear All Marks
 
+    button(type="button" class='save-new-dents') Save added dents
     button(type="button" class='back-tasks') Back to tasks           
   .overlay.hidden
             
