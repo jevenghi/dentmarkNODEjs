@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const dentSchema = new mongoose.Schema({
-  img: String,
+  imageId: String,
   bigDent: Boolean,
   paintDamaged: Boolean,
   coords: Object,

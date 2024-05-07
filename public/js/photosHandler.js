@@ -45,11 +45,11 @@ export const getImagesAndDents = async (taskId) => {
       const { images, dents } = res.data.data;
 
       const groupedDents = dents.reduce((acc, obj) => {
-        const { img } = obj;
-        if (!acc[img]) {
-          acc[img] = [];
+        const { imageId } = obj;
+        if (!acc[imageId]) {
+          acc[imageId] = [];
         }
-        acc[img].push(obj);
+        acc[imageId].push(obj);
         return acc;
       }, {});
 
@@ -59,11 +59,12 @@ export const getImagesAndDents = async (taskId) => {
       setTimeout(function () {
         sideSelection.classList.add('visible');
       }, 50);
-      populateSidesWithDents(groupedDents, 'pics_temp');
+      // populateSidesWithDents(groupedDents, 'pics_temp');
+      return { images, groupedDents };
     }
   } catch (err) {
     console.log(err);
-    showAlert('error', err.response.data.message);
+    throw err.response.data.message;
   }
 };
 // export const uploadPhotosTemp = async (e) => {

@@ -8,7 +8,7 @@ import { deleteTask } from './deleteTask';
 import {
   placeMarker,
   addDentsToTask,
-  populateSidesWithDents,
+  // populateSidesWithDents,
 } from './placeMarker';
 import { resetPassword } from './resetPassword';
 import {
@@ -73,18 +73,8 @@ const searchInput = document.getElementById('search-input');
 const searchResults = document.getElementById('search-results');
 
 const taskHeader = document.querySelector('.task-header');
-
+const addNewDentsToTask = document.querySelector('.save-new-dents');
 let url = new URL(window.location.href);
-
-let img;
-let customer;
-let storedCoordinates;
-let uploadedImages = [];
-let dents = [];
-let dentsTemp = {};
-let dentPaintDamaged = false;
-let specialCase = false;
-let bigDent = false;
 
 // function getMarkers() {
 //   return document.querySelectorAll('.marker');
@@ -98,6 +88,83 @@ let bigDent = false;
 //       sidesContainer.style.display === 'none' ? 'grid' : 'none';
 //   });
 // }
+
+let img;
+let customer;
+let storedCoordinates;
+let uploadedImages = [];
+let dents = [];
+let dentsTemp = {};
+let dentPaintDamaged = false;
+let specialCase = false;
+let bigDent = false;
+let taskId;
+
+const populateSidesWithDents = (dents, folder) => {
+  const imageContainer = document.querySelector('.image-container');
+
+  const markers = imageContainer.getElementsByClassName('marker');
+  const buttonsSide = document.querySelectorAll('.button--side');
+  buttonsSide.forEach((button) => {
+    button.addEventListener('click', () => {
+      buttonsSide.forEach((btn) => {
+        btn.style.border = 'none';
+      });
+
+      if (markers.length > 0) {
+        while (markers.length > 0) {
+          imageContainer.removeChild(markers[0]);
+        }
+      }
+
+      button.style.border = '0.3rem solid coral';
+      img = button.value;
+      let vehicleImage = document.getElementById('vehicleImage');
+      vehicleImage.style.width = '1000px';
+      vehicleImage.src = `/pics/${folder}/${img}`;
+      vehicleImage.setAttribute('data-image-id', img);
+
+      // removeMarksContainer.classList.remove('hidden');
+      // sendMarksBtn.classList.remove('hidden');
+      paintDamagedCheck.checked = false;
+      bigDentCheck.checked = false;
+      dentPaintDamaged = false;
+      bigDent = false;
+
+      // sendContainer.classList.remove('hidden');
+      markerContainer.classList.remove('hidden');
+      setTimeout(function () {
+        markerContainer.classList.add('visible');
+      }, 50);
+      const searchBar = document.querySelector('.search-bar');
+      if (searchBar) searchBar.classList.remove('hidden');
+
+      const sideDents = dents[img];
+      if (sideDents && sideDents.length > 0) {
+        sideDents.forEach((dent) => {
+          placeMarker(
+            dent.bigDent,
+            dent.paintDamaged,
+            dent.coords,
+            imageContainer,
+          );
+        });
+      }
+    });
+  });
+};
+
+async function loadDataAndPopulate(taskId) {
+  try {
+    const { images, groupedDents } = await getImagesAndDents(taskId);
+    populateSidesWithDents(groupedDents, 'pics_temp');
+    uploadedImages = images;
+    dentsTemp = groupedDents;
+  } catch (error) {
+    console.error(error);
+    showAlert('error', error);
+  }
+}
 
 const displayResults = (results) => {
   clearResults();
@@ -120,26 +187,51 @@ const clearResults = () => {
   searchResults.style.display = 'none';
 };
 
-if (taskHeader) {
-  const taskId = taskHeader.dataset.taskId;
-  getImagesAndDents(taskId);
-}
-
-if (markerContainer) {
-  paintDamagedCheck.addEventListener('click', () => {
-    dentPaintDamaged = dentPaintDamaged ? false : true;
-  });
-  bigDentCheck.addEventListener('click', () => {
-    bigDent = bigDent ? false : true;
-  });
-  specialCaseCheck.addEventListener('click', () => {
-    specialCase = specialCase ? false : true;
-  });
-}
-
 if (uploadPhoto) {
+  // let img;
+  // let customer;
+  // let storedCoordinates;
+  // let uploadedImages = [];
+  // let dents = [];
+  // let dentsTemp = {};
+  // let dentPaintDamaged = false;
+  // let specialCase = false;
+  // let bigDent = false;
+  // let taskId;
+
+  if (markerContainer) {
+    paintDamagedCheck.addEventListener('click', () => {
+      dentPaintDamaged = dentPaintDamaged ? false : true;
+    });
+    bigDentCheck.addEventListener('click', () => {
+      bigDent = bigDent ? false : true;
+    });
+    specialCaseCheck.addEventListener('click', () => {
+      specialCase = specialCase ? false : true;
+    });
+  }
+
+  if (taskHeader) {
+    taskId = taskHeader.dataset.taskId;
+    loadDataAndPopulate(taskId);
+
+    // (async () => {
+    //   try {
+    //     const { images, groupedDents } = await getImagesAndDents(taskId);
+    //     populateSidesWithDents(groupedDents, 'pics_temp', dentPaintDamaged);
+
+    //     uploadedImages = images;
+    //     dentsTemp = groupedDents;
+    //   } catch (error) {
+    //     console.error(error);
+    //     return showAlert('error', error);
+    //   }
+    // })();
+  }
+
   uploadPhoto.addEventListener('click', async (e) => {
     e.preventDefault();
+
     const vehicleImage = imageContainer.querySelector('#vehicleImage');
     if (vehicleImage) vehicleImage.src = '';
     const form = new FormData();
@@ -185,6 +277,7 @@ if (uploadPhoto) {
         let vehicleImage = document.getElementById('vehicleImage');
         vehicleImage.style.width = '1000px';
         vehicleImage.src = `pics/tasks/${img}`;
+        vehicleImage.setAttribute('data-image-id', img);
 
         removeMarksContainer.classList.remove('hidden');
         sendMarksBtn.classList.remove('hidden');
@@ -218,6 +311,7 @@ if (uploadPhoto) {
 
   vehicleImage.addEventListener('click', (event) => {
     event.preventDefault();
+    const imageId = vehicleImage.dataset.imageId;
     const imageRect = vehicleImage.getBoundingClientRect();
 
     storedCoordinates = {
@@ -229,17 +323,17 @@ if (uploadPhoto) {
     const coords = storedCoordinates;
     placeMarker(bigDent, dentPaintDamaged, coords, imageContainer);
     const newObj = {
-      img: img,
+      imageId: imageId,
       paintDamaged: dentPaintDamaged,
       bigDent: bigDent,
       coords: storedCoordinates,
       status: 'open',
     };
     dents.push(newObj);
-    if (!dentsTemp[img]) {
-      dentsTemp[img] = [];
+    if (!dentsTemp[imageId]) {
+      dentsTemp[imageId] = [];
     }
-    dentsTemp[img].push(newObj);
+    dentsTemp[imageId].push(newObj);
   });
 
   if (searchInput) {
@@ -270,6 +364,11 @@ if (uploadPhoto) {
       ) {
         searchResults.style.display = 'none';
       }
+    });
+  }
+  if (addNewDentsToTask) {
+    addNewDentsToTask.addEventListener('click', async () => {
+      addDentsToTask(taskId, dents);
     });
   }
   if (sendMarksBtn) {
