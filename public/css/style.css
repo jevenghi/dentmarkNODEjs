@@ -455,8 +455,8 @@ input[type='file'] {
 
 .marker {
   position: absolute;
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 4rem;
+  height: 4rem;
   /* background: radial-gradient(circle at 50% 50%, red, transparent); */
   border-radius: 50%;
   border: 0.15rem solid rgba(255, 16, 240, 1);
@@ -853,6 +853,17 @@ button[type='submit']:hover {
 .upload_photo {
   background-color: rgb(255, 87, 34);
   color: #fff;
+  border-radius: 0.3rem;
+  border: none;
+  margin-top: 1rem;
+  padding: 0.5rem;
+  font-size: 1.5rem;
+  text-decoration: none;
+}
+
+.save-new-dents {
+  background-color: rgb(255, 255, 255);
+  color: #000000;
   border-radius: 0.3rem;
   border: none;
   margin-top: 1rem;
