@@ -51,6 +51,13 @@ body {
   justify-content: flex-start;
   /* height: 100vh; */
 }
+
+@media only screen and (min-width: 480px) and (orientation: landscape) {
+  .image-container {
+    max-width: 98%; /* When landscape on phone, adjust max-width */
+  }
+}
+
 html {
   font-size: 62.5%;
   box-sizing: border-box;
@@ -222,11 +229,11 @@ input[type='file'] {
   margin-top: 0.5rem;
 }
 
-/* @media screen and (orientation: landscape) {
-  .marker-container {
-    width: 40rem;
+@media only screen and (min-width: 480px) and (orientation: landscape) {
+  .main-container {
+    max-width: 98%; /* Remove max-width constraint */
   }
-} */
+}
 
 .image-container__summary {
   position: relative;
