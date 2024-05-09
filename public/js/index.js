@@ -109,8 +109,6 @@ const removeAllMarkers = (markers) => {
       imageContainer.removeChild(markers[0]);
     }
   }
-  dents = [];
-  dentsTemp = {};
 };
 
 const populateSidesWithDents = (dents, folder) => {
@@ -215,6 +213,8 @@ if (uploadPhoto) {
       const confirmed = confirm('Remove all markers?');
       if (confirmed) {
         removeAllMarkers(markers);
+        dents = [];
+        dentsTemp = {};
       }
     });
   }
