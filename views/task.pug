@@ -14,20 +14,23 @@ block content
       p Model: #{model}
       p Task created: #{date}
       //- button.add-dents(data-task-id=taskId) Add dents
-      .task-status-wrapper
-        if role === 'admin' 
-          p Task status:  
-          select.task-status-select(data-task-id=taskId)
-            option(value="open", selected=taskStatus === "open") Open
-            option(value="in-progress", selected=taskStatus === "in-progress") In Progress
-            option(value="pending", selected=taskStatus === "pending") Complete/Not paid
-            option(value="complete", selected=taskStatus === "complete") Paid
-      .task-cost-wrapper
-        if role === 'admin'
+              if role === 'admin'
+              if role === 'admin'
+      if role === 'admin'
+        .task-status-wrapper
+            p Task status:  
+            select.task-status-select(data-task-id=taskId)
+              option(value="open", selected=taskStatus === "open") Open
+              option(value="in-progress", selected=taskStatus === "in-progress") In Progress
+              option(value="pending", selected=taskStatus === "pending") Complete/Not paid
+              option(value="complete", selected=taskStatus === "complete") Paid
+        .task-cost-wrapper
           p Total cost:
           input(type="text", placeholder=`€${totalCost}`, class="total-cost", data-task-id=taskId)
+            
+        .task-cost-wrapper
           p Remark:
-          input(type="text", placeholder=remark, class="task-remark", data-remark=remark)
+          input(type="text", value=remark, class="task-remark", data-task-id=taskId)
              
       if role === 'user'
         p Task status: #{taskStatus}

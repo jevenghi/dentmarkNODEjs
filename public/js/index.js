@@ -1,7 +1,7 @@
 import { updateSettings } from './updateAccount';
 import { login, logoutUser, forgotPassword } from './login';
 import { signup, checkFieldAvailability } from './signup';
-import { updatedDent } from './updateDent';
+import { updateTask } from './updateTask';
 import { generatePDF } from './generatePDF';
 import { showAlert } from './alerts';
 import { deleteTask } from './deleteTask';
@@ -26,6 +26,8 @@ const uploadPhoto = document.querySelector('.upload_photo');
 const sendContainer = document.querySelector('.send-container');
 const sendMarksBtn = document.querySelector('.send-marks');
 const vehicleModel = document.querySelector('.form__input--model');
+const removeLastMarkBtn = document.querySelector('.remove__last');
+const removeMarksBtn = document.querySelector('.remove--marks');
 
 const removeMarksContainer = document.querySelector('.remove-container');
 const userDataForm = document.querySelector('.form-user-data');
@@ -34,6 +36,8 @@ const loginForm = document.querySelector('.login-form');
 const signupForm = document.querySelector('.signup-form');
 const costInputs = document.querySelectorAll('.dent-cost');
 const totalCostInput = document.querySelector('.total-cost');
+const remarkInput = document.querySelector('.task-remark');
+
 const myAccBtn = document.querySelector('.nav__el--myacc');
 const logout = document.querySelector('.logout');
 const modal = document.querySelector('.modal');
@@ -49,7 +53,6 @@ const filterOptions = document.querySelector('.filter-menu');
 const forgotPassBtn = document.getElementById('forgot-pass');
 // const vehicleImage = document.getElementById('vehicleImage');
 // const vehicleImages = document.querySelectorAll('#vehicleImage');
-const removeLastMarkBtn = document.querySelector('.remove__last');
 const sideText = document.querySelector('.choose__side');
 
 const markerContainer = document.querySelector('.marker-container');
@@ -71,7 +74,7 @@ const searchBar = document.querySelector('.search-bar');
 
 const searchInput = document.getElementById('search-input');
 const searchResults = document.getElementById('search-results');
-
+const selectedYear = document.getElementById('year');
 const taskHeader = document.querySelector('.task-header');
 const addNewDentsToTask = document.querySelector('.save-new-dents');
 let url = new URL(window.location.href);
@@ -100,6 +103,14 @@ let specialCase = false;
 let bigDent = false;
 let taskId;
 
+const removeAllMarkers = (markers) => {
+  if (markers.length > 0) {
+    while (markers.length > 0) {
+      imageContainer.removeChild(markers[0]);
+    }
+  }
+};
+
 const populateSidesWithDents = (dents, folder) => {
   const imageContainer = document.querySelector('.image-container');
 
@@ -111,11 +122,7 @@ const populateSidesWithDents = (dents, folder) => {
         btn.style.border = 'none';
       });
 
-      if (markers.length > 0) {
-        while (markers.length > 0) {
-          imageContainer.removeChild(markers[0]);
-        }
-      }
+      removeAllMarkers(markers);
 
       button.style.border = '0.3rem solid coral';
       img = button.value;
@@ -154,6 +161,14 @@ const populateSidesWithDents = (dents, folder) => {
   });
 };
 
+const removeLastMarker = (markers, dents) => {
+  if (markers.length > 0) {
+    const lastMarker = markers[markers.length - 1];
+    imageContainer.removeChild(lastMarker);
+  }
+  if (dents) dents.pop();
+};
+
 async function loadDataAndPopulate(taskId) {
   try {
     const { images, groupedDents } = await getImagesAndDents(taskId);
@@ -188,6 +203,16 @@ const clearResults = () => {
 };
 
 if (uploadPhoto) {
+  if (removeLastMarkBtn) {
+    const markers = imageContainer.getElementsByClassName('marker');
+    removeLastMarkBtn.addEventListener('click', () => {
+      removeLastMarker(markers, dents);
+      if (dentsTemp[img]) dentsTemp[img].pop();
+    });
+    removeMarksBtn.addEventListener('click', () => {
+      removeAllMarkers(markers);
+    });
+  }
   if (markerContainer) {
     paintDamagedCheck.addEventListener('click', () => {
       dentPaintDamaged = dentPaintDamaged ? false : true;
@@ -271,8 +296,7 @@ if (uploadPhoto) {
         if (searchBar) searchBar.classList.remove('hidden');
 
         const sideDents = dentsTemp[img];
-        console.log(dentsTemp);
-        console.log(dentsTemp[img]);
+
         if (sideDents && sideDents.length > 0) {
           sideDents.forEach((dent) => {
             placeMarker(
@@ -346,7 +370,6 @@ if (uploadPhoto) {
   }
   if (addNewDentsToTask) {
     addNewDentsToTask.addEventListener('click', async () => {
-      console.log(uploadedImages);
       addDentsToTask(taskId, dents, uploadedImages);
     });
   }
@@ -354,9 +377,12 @@ if (uploadPhoto) {
     sendMarksBtn.addEventListener('click', async () => {
       if (dents.length === 0 && !specialCase)
         return showAlert('error', 'You have not placed any dent yet');
-      const model = vehicleModel.value;
+      let model = vehicleModel.value;
       if (model.length < 5)
         return showAlert('error', 'Model name must have at least 5 characters');
+      const year = selectedYear.value;
+      if (!year) return showAlert('error', 'Please choose model year');
+      model += ` ${year}`;
       await sendTask(customer, model, dents, uploadedImages, specialCase);
     });
   }
@@ -629,9 +655,9 @@ if (costInputs) {
       }
       if (taskStatus === 'open') {
         taskStatus = 'in-progress';
-        updatedDent(taskId, { taskStatus, dentId, cost });
+        updateTask(taskId, { taskStatus, dentId, cost });
       } else {
-        updatedDent(taskId, { dentId, cost });
+        updateTask(taskId, { dentId, cost });
       }
     });
   });
@@ -650,18 +676,24 @@ if (totalCostInput) {
     }
     if (taskStatus === 'open') {
       taskStatus = 'in-progress';
-      updatedDent(taskId, { taskStatus, cost });
+      updateTask(taskId, { taskStatus, cost });
     } else {
-      updatedDent(taskId, { cost });
+      updateTask(taskId, { cost });
     }
   });
 }
-
+if (remarkInput) {
+  remarkInput.addEventListener('change', () => {
+    const taskId = remarkInput.dataset.taskId;
+    const remark = remarkInput.value;
+    updateTask(taskId, { remark });
+  });
+}
 if (taskStatusBtn) {
   taskStatusBtn.addEventListener('change', () => {
     const taskId = taskStatusBtn.dataset.taskId;
     const taskStatus = document.querySelector('.task-status-select').value;
-    updatedDent(taskId, { taskStatus });
+    updateTask(taskId, { taskStatus });
   });
 }
 

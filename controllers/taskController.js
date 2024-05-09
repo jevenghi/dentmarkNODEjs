@@ -186,7 +186,7 @@ exports.addDentsToTask = catchAsyncErr(async (req, res, next) => {
     if (!task)
       return next(new AppError(`Task with this ID does not exist`, 404));
     task.dents.push(...req.body.dents);
-    task.images = [...req.body.uploadedImages];
+    task.images = [...req.body.images];
     await task.save();
     res.status(201).json({
       status: 'success',
@@ -260,7 +260,7 @@ exports.getTaskStats = async (req, res) => {
 
 exports.updateDents = catchAsyncErr(async (req, res, next) => {
   const taskId = req.params.id;
-  const { dentId, cost, taskStatus } = req.body;
+  const { dentId, cost, taskStatus, remark } = req.body;
   // try {
   const updatedDent = await Task.findOneAndUpdate(
     // { _id: taskId, 'dents._id': dentId },
@@ -271,6 +271,9 @@ exports.updateDents = catchAsyncErr(async (req, res, next) => {
 
     { new: true, runValidators: true },
   );
+  if (remark) {
+    await Task.findByIdAndUpdate(taskId, { remark });
+  }
   if (cost) {
     await Task.findByIdAndUpdate(taskId, { totalCost: cost });
   }

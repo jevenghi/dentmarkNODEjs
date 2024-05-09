@@ -142,6 +142,7 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
     customer: task.user.name,
     totalCost: task.totalCost,
     uploadedImages: images,
+    remark: task.remark,
   });
 });
 

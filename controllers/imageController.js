@@ -70,7 +70,7 @@ exports.transferFiles = catchAsyncErr(async (req, res, next) => {
   const localDirectory = '../krasmarkNODE/public/pics/tasks/';
 
   const remoteDirectory = '/home/tasks';
-  const images = req.body.images || req.body.uploadedImages;
+  console.log(req.body);
 
   const config = {
     host: process.env.VPS_HOST,
@@ -83,7 +83,7 @@ exports.transferFiles = catchAsyncErr(async (req, res, next) => {
   try {
     await client.connect(config);
     await Promise.all(
-      images.map(async (file) => {
+      req.body.images.map(async (file) => {
         // const localFilePath = path.resolve(localDirectory, file);
         const localFilePath = `public/pics/tasks/${file}`;
 

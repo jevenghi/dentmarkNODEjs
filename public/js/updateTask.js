@@ -1,7 +1,7 @@
 import { showAlert } from './alerts.js';
 import axios from 'axios';
 
-export const updatedDent = async (taskId, data) => {
+export const updateTask = async (taskId, data) => {
   try {
     const res = await axios({
       method: 'PATCH',
