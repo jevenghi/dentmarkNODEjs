@@ -70,7 +70,6 @@ exports.transferFiles = catchAsyncErr(async (req, res, next) => {
   const localDirectory = '../krasmarkNODE/public/pics/tasks/';
 
   const remoteDirectory = '/home/tasks';
-  console.log(req.body);
 
   const config = {
     host: process.env.VPS_HOST,
