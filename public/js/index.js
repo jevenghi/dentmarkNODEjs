@@ -109,6 +109,8 @@ const removeAllMarkers = (markers) => {
       imageContainer.removeChild(markers[0]);
     }
   }
+  dents = [];
+  dentsTemp = {};
 };
 
 const populateSidesWithDents = (dents, folder) => {
@@ -210,7 +212,10 @@ if (uploadPhoto) {
       if (dentsTemp[img]) dentsTemp[img].pop();
     });
     removeMarksBtn.addEventListener('click', () => {
-      removeAllMarkers(markers);
+      const confirmed = confirm('Remove all markers?');
+      if (confirmed) {
+        removeAllMarkers(markers);
+      }
     });
   }
   if (markerContainer) {
