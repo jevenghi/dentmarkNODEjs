@@ -375,6 +375,8 @@ if (uploadPhoto) {
   }
   if (addNewDentsToTask) {
     addNewDentsToTask.addEventListener('click', async () => {
+      if (dents.length === 0)
+        return showAlert('error', `You haven't added any dent`);
       addDentsToTask(taskId, dents, uploadedImages);
     });
   }
