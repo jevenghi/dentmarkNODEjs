@@ -1,12 +1,11 @@
-const axios = require('axios');
+let Client = require('ssh2-sftp-client');
+const path = require('path');
+
 const { RESULTS_LIMIT } = require('../constants/queryConstants');
 const RequestQueryHandler = require('../utils/requestQueryHandler');
-const markerConstants = require('../constants/markerConstants');
 const Task = require('../models/taskModel');
 const User = require('../models/userModel');
 const catchAsyncError = require('../utils/catchAsyncError');
-let Client = require('ssh2-sftp-client');
-const path = require('path');
 const factory = require('./handlerFactory');
 
 // const { showAlert } = require('../public/js/alerts');
@@ -101,7 +100,6 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
   const task = await Task.findById(req.params.id);
   const { images } = task;
 
-  const localDirectory = '/pics/tasks';
   // const localDirectory = '/public/pics/tasks';
 
   const remoteDirectory = '/home/tasks';

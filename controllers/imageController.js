@@ -1,7 +1,6 @@
 const multer = require('multer');
 const sharp = require('sharp');
 const path = require('path');
-const fs = require('fs');
 let Client = require('ssh2-sftp-client');
 const catchAsyncErr = require('../utils/catchAsyncError');
 const AppError = require('../utils/appError');
@@ -67,8 +66,6 @@ exports.resizeTaskPhotos = catchAsyncErr(async (req, res, next) => {
 });
 
 exports.transferFiles = catchAsyncErr(async (req, res, next) => {
-  const localDirectory = '../krasmarkNODE/public/pics/tasks/';
-
   const remoteDirectory = '/home/tasks';
 
   const config = {

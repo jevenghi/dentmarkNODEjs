@@ -346,7 +346,6 @@ exports.confirmEmail = catchAsyncError(async (req, res, next) => {
   user.emailConfirmationTokenExpires = undefined;
 
   await user.save({ validateBeforeSave: false });
-  //TODO: sendEmail(welcome);
 
   res.redirect('/welcome');
 });
