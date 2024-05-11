@@ -4,7 +4,15 @@ const handleCastErrorDB = (err) => {
   const message = `Invalid ${err.path}: ${err.value}`;
   return new AppError(message, 400);
 };
-
+const handleMulterError = (err) => {
+  console.log(err.message);
+  console.log(err === 'MulterError: Unexpected field');
+  const message =
+    err.message === 'MulterError: Unexpected field'
+      ? 'You can upload up to 10 images'
+      : err.message;
+  return new AppError(message, 400);
+};
 const handleDuplicateFieldsDB = (err) => {
   // console.log(Object.values(err.keyValue));
   const message = `${Object.values(err.keyValue)} is already registered.`;
@@ -22,29 +30,6 @@ const handleJWTError = () =>
 
 const handleJWTExpiredError = () =>
   new AppError('Token expired. Please log in again.', 401);
-
-// const sendErrorDev = (err, res) => {
-//   res.status(err.statusCode).json({
-//     status: err.status,
-//     error: err,
-//     message: err.message,
-//     stack: err.stack,
-//   });
-// };
-
-// const sendErrorProd = (err, res) => {
-//   if (err.isOperational) {
-//     res.status(err.statusCode).json({
-//       status: err.status,
-//       message: err.message,
-//     });
-//   } else {
-//     res.status(500).json({
-//       status: 'error',
-//       message: 'Something went very wrong.',
-//     });
-//   }
-// };
 
 const sendErrorDev = (err, req, res) => {
   // A) API
@@ -82,6 +67,7 @@ const sendErrorProd = (err, req, res) => {
     return res.status(500).json({
       status: 'error',
       message: 'Something went very wrong!',
+      // message: err.message,
     });
   }
 
@@ -121,6 +107,7 @@ module.exports = (err, req, res, next) => {
       error = handleValidationErrorDB(error);
     if (error.name === 'JsonWebTokenError') error = handleJWTError();
     if (error.name === 'TokenExpiredError') error = handleJWTExpiredError();
+    if (error.name === 'MulterError') error = handleMulterError(error);
     sendErrorProd(error, req, res);
   }
 };
