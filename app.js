@@ -93,7 +93,7 @@ app.use('/api/v1/auth/resetPassword', passResetLimiter);
 app.use(compression());
 
 //BODY PARSER, CONVERTING BODY INTO REQ.BODY
-app.use(express.json({ limit: '10mb' }));
+app.use(express.json({ limit: '10kb' }));
 app.use(cookieParser());
 
 //DATA SANITIZATION AGAINST NOSQL QUERY INJECTION
