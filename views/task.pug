@@ -35,34 +35,35 @@ block content
       if role === 'user'
         p Task status: #{taskStatus}
         p Total cost: € #{totalCost}
+        p Remark: #{remark}
 
-    if role === 'admin'
-      .main-container
-        .photo-upload_container
-          input.form__upload(type="file" accept="image/*" id="photo" name="photo" multiple)
-          button.form__btn.upload_photo Upload
-    
-        .choose.choose__side
-          h1 Choose side
-        .marker-container
-          .row
-            label
-              | Paint damaged
-              input.m_checkbox.m_checkbox--paint(type="checkbox" id="paint-damaged")
-            label
-              | 5+ cm
-              input.m_checkbox.m_checkbox--hail(type="checkbox" id="big-dent")
-            label
-              | Special case
-              input.m_checkbox.m_checkbox--hail(type="checkbox" id="special-case")
+    //- if role === 'admin'
+    .main-container
+      .photo-upload_container
+        input.form__upload(type="file" accept="image/*" id="photo" name="photo" multiple)
+        button.form__btn.upload_photo Upload
+  
+      .choose.choose__side
+        h1 Choose side
+      .marker-container
+        .row
+          label
+            | Paint damaged
+            input.m_checkbox.m_checkbox--paint(type="checkbox" id="paint-damaged")
+          label
+            | 5+ cm
+            input.m_checkbox.m_checkbox--hail(type="checkbox" id="big-dent")
+          label
+            | Special case
+            input.m_checkbox.m_checkbox--hail(type="checkbox" id="special-case")
 
-        .image-container
-          img#vehicleImage(src="")
-          div#marker
+      .image-container
+        img#vehicleImage(src="")
+        div#marker
 
-        .remove-container.hidden
-          button.remove_mark_btn.remove__last Undo
-          button.remove_mark_btn.remove--marks Clear All Marks
+      .remove-container.hidden
+        button.remove_mark_btn.remove__last Undo
+        button.remove_mark_btn.remove--marks Clear All Marks
 
     button(type="button" class='save-new-dents') Save added dents
     button(type="button" class='back-tasks') Back to tasks           
