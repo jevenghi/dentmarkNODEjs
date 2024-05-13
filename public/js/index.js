@@ -2,7 +2,7 @@ import { updateSettings } from './updateAccount';
 import { login, logoutUser, forgotPassword } from './login';
 import { signup, checkFieldAvailability } from './signup';
 import { updateTask } from './updateTask';
-import { generatePDF } from './generatePDF';
+import { generatePDF, generateTaskPDF } from './generatePDF';
 import { showAlert } from './alerts';
 import { deleteTask } from './deleteTask';
 import {
@@ -18,7 +18,8 @@ import {
 } from './photosHandler';
 import { sendTask } from './sendTask';
 import { searchUsers } from './searchUsers';
-
+import { makeScreenshot } from './makeScreenshot';
+import { UPLOADED_IMAGE_WIDTH } from '../../constants/markerConstants';
 // const imageCanvas =
 const mainContainer = document.querySelector('.main-container');
 const passwordResetForm = document.querySelector('.reset-form');
@@ -29,6 +30,7 @@ const vehicleModel = document.querySelector('.form__input--model');
 const removeLastMarkBtn = document.querySelector('.remove__last');
 const removeMarksBtn = document.querySelector('.remove--marks');
 
+const downloadTaskBtn = document.querySelector('.download-task-report');
 const removeMarksContainer = document.querySelector('.remove-container');
 const userDataForm = document.querySelector('.form-user-data');
 const userPasswordForm = document.querySelector('.form-user-password');
@@ -127,7 +129,7 @@ const populateSidesWithDents = (dents, folder) => {
       button.style.border = '0.3rem solid coral';
       img = button.value;
       let vehicleImage = document.getElementById('vehicleImage');
-      vehicleImage.style.width = '1000px';
+      vehicleImage.style.width = UPLOADED_IMAGE_WIDTH;
       vehicleImage.src = `/pics/tasks/${img}`;
       vehicleImage.setAttribute('data-image-id', img);
 
@@ -233,6 +235,13 @@ if (uploadPhoto) {
   if (taskHeader) {
     taskId = taskHeader.dataset.taskId;
     loadDataAndPopulate(taskId);
+
+    // downloadTaskBtn.addEventListener('click', function () {
+    //   downloadTaskBtn.textContent = 'Downloading...';
+    //   // generateTaskPDF(uploadedImages);
+    //   makeScreenshot();
+    //   downloadTaskBtn.textContent = 'Download Task';
+    // });
   }
 
   uploadPhoto.addEventListener('click', async (e) => {
@@ -394,101 +403,6 @@ if (uploadPhoto) {
     });
   }
 }
-
-// if (markerParameters) {
-//   markerParameters.addEventListener('click', () => {
-//     arrowParams.classList.toggle('rotate');
-//     markerContainer.style.display =
-//       markerContainer.style.display === 'none' ? 'inline-block' : 'none';
-//   });
-// }
-
-// if (markerContainer) {
-//   const dents = [];
-//   let storedCoordinates;
-//   let imageContainers = document.querySelectorAll('.image-container');
-//   let dentPaintDamaged = false;
-//   let hailDamage = false;
-
-//   function handleImageContainerClick(imageContainer) {
-//     const vehicleImage = imageContainer.querySelector('#vehicleImage');
-//     vehicleImage.addEventListener('click', (event) => {
-//       event.preventDefault();
-//       const side = vehicleImage.dataset.side;
-//       const taskId = vehicleImage.dataset.taskId;
-//       storedCoordinates = {
-//         x: event.offsetX,
-//         y: event.offsetY,
-//         relativeX: (event.offsetX / vehicleImage.clientWidth) * 100,
-//         relativeY: (event.offsetY / vehicleImage.clientHeight) * 100,
-//       };
-
-//       const coords = storedCoordinates;
-//       // placeMarker(side, dentPaintDamaged, coords, imageContainer);
-//       const newObj = {
-//         img: side,
-//         paintDamaged: dentPaintDamaged,
-//         coords: storedCoordinates,
-//       };
-
-//       dents.push(newObj);
-//       console.log(dents);
-//       // addDentsToTask(taskId, dents);
-//     });
-//   }
-
-//   // removeLastMarkBtn.addEventListener('click', () => {
-//   //   const imageContainer = document.querySelector('.image-container');
-//   //   markers = imageContainer.querySelectorAll('.marker');
-
-//   //   if (markers.length > 0) {
-//   //     const lastMarker = markers[markers.length - 1];
-//   //     imageContainer.removeChild(lastMarker);
-//   //   }
-//   //   if (dents) dents.pop();
-//   // });
-
-//   paintDamagedCheck.addEventListener('click', () => {
-//     dentPaintDamaged = dentPaintDamaged ? false : true;
-//   });
-
-//   buttonsSide.forEach((button) => {
-//     button.addEventListener('click', () => {
-//       const img = button.value;
-//       const taskId = button.dataset.taskId;
-//       const imageHTML = `<div class="image-container">
-//       <img id="vehicleImage" src="../pics/sides_pics/${img}.png" data-side="${img}" data-task-id="${taskId}" /></div>`;
-//       backToTasks.insertAdjacentHTML('beforebegin', imageHTML);
-//       imageContainers = document.querySelectorAll('.image-container');
-//       imageContainers.forEach((imageContainer) => {
-//         handleImageContainerClick(imageContainer);
-//       });
-//     });
-//   });
-//   // imageContainers = document.querySelectorAll('.image-container__summary');
-//   imageContainers.forEach((imageContainer) => {
-//     handleImageContainerClick(imageContainer);
-//   });
-
-//   // addDents.addEventListener('click', () => {
-//   //   if (dents.length === 0) return showAlert('error', 'No markers placed');
-//   //   const taskId = addDents.dataset.taskId;
-//   //   addDentsToTask(taskId, dents);
-//   // });
-// }
-
-// if (markers) {
-//   markers.forEach((marker) => {
-//     marker.addEventListener('click', () => {
-//       const taskId = marker.dataset.taskId;
-//       const dentId = marker.id;
-//       const confirmed = confirm('Remove this marker?');
-//       if (confirmed) {
-//         updatedDent(taskId, { dentId });
-//       }
-//     });
-//   });
-// }
 
 if (forgotPassBtn) {
   forgotPassBtn.addEventListener('click', function (e) {

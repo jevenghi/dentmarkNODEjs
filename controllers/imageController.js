@@ -2,6 +2,8 @@ const multer = require('multer');
 const sharp = require('sharp');
 const path = require('path');
 let Client = require('ssh2-sftp-client');
+const fs = require('fs');
+
 const catchAsyncErr = require('../utils/catchAsyncError');
 const AppError = require('../utils/appError');
 
@@ -97,4 +99,21 @@ exports.transferFiles = catchAsyncErr(async (req, res, next) => {
     return res.status(500).json({ error: 'Error transferring files' });
   }
   next();
+});
+
+exports.getImageDataURI = catchAsyncErr(async (req, res, next) => {
+  const imagesBase64 = [];
+  await Promise.all(
+    // eslint-disable-next-line array-callback-return
+    req.body.images.map((image) => {
+      const imagePath = `public/pics/tasks/${image}`;
+      const imageContent = fs.readFileSync(imagePath, 'base64');
+      imagesBase64.push(imageContent);
+    }),
+  );
+
+  res.status(200).json({
+    status: 'success',
+    imagesBase64,
+  });
 });

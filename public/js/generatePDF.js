@@ -1,11 +1,11 @@
 import { showAlert } from './alerts.js';
 import axios from 'axios';
+
 const pdfFonts = require('pdfmake/build/vfs_fonts.js');
 const pdfMake = require('pdfmake/build/pdfmake.js');
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
-const fs = require('fs');
 // export const generatePDF = async () => {
 //   const urlParams = new URLSearchParams(window.location.search);
 //   const status = urlParams.get('taskStatus');
@@ -146,4 +146,47 @@ export const generatePDF = async () => {
     },
   };
   pdfMake.createPdf(docDefinition).download();
+};
+
+// export const generateTaskPDF = (images) => {
+//   const docDefinition = {
+//     content: [],
+//   };
+
+//   images.forEach((imageName) => {
+//     console.log(imageName);
+//     const imagePath = `D:/jsProjects/krasmarkNODE/public/pics/tasks/${imageName}`;
+
+//     docDefinition.content.push({
+//       image: imagePath,
+//       width: 500,
+//     });
+//   });
+
+//   pdfMake.createPdf(docDefinition).download();
+// };
+export const generateTaskPDF = async (images) => {
+  const docDefinition = {
+    content: [],
+  };
+  try {
+    const res = await axios({
+      method: 'POST',
+      url: `/api/v1/photos/getDataURI`,
+      data: { images },
+    });
+    if (res.data.status === 'success') {
+      const imagesURIs = res.data.imagesBase64;
+      imagesURIs.forEach((dataURI) => {
+        docDefinition.content.push({
+          image: `data:image/png;base64,${dataURI}`,
+          width: 500,
+        });
+      });
+      pdfMake.createPdf(docDefinition).download();
+    }
+  } catch (err) {
+    console.log(err);
+    showAlert('error', 'Error making the report');
+  }
 };

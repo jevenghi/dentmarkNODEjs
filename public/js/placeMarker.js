@@ -14,9 +14,13 @@ export const placeMarker = (bigDent, paintDamaged, coords, image) => {
     marker.style.width = marker.style.height = markerConstants.MARKER_BIG;
     marker.style.left = `${coords.x - markerConstants.MARKER_BIG_CORR}px`;
     marker.style.top = `${coords.y - markerConstants.MARKER_BIG_CORR}px`;
+    // marker.style.left = `${coords.relativeX - markerConstants.MARKER_BIG_CORR}%`;
+    // marker.style.top = `${coords.relativeY - markerConstants.MARKER_BIG_CORR}%`;
   } else {
     marker.style.left = `${coords.x - markerConstants.MARKER_SMALL_CORR}px`;
     marker.style.top = `${coords.y - markerConstants.MARKER_SMALL_CORR}px`;
+    // marker.style.left = `${coords.relativeX - markerConstants.MARKER_SMALL_CORR}%`;
+    // marker.style.top = `${coords.relativeY - markerConstants.MARKER_SMALL_CORR}%`;
   }
 
   image.appendChild(marker);

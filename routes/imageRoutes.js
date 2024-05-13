@@ -16,4 +16,9 @@ router.post(
   imageController.transferFiles,
 );
 
+router.post(
+  '/getDataURI',
+  authController.protect,
+  imageController.getImageDataURI,
+);
 module.exports = router;
