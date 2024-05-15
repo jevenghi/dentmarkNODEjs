@@ -217,6 +217,9 @@ input[type='file'] {
   width: 100%;
   /* width: 1000px; */
 }
+.screenshot-container {
+  position: relative;
+}
 .image-container {
   position: relative;
   display: flex;
@@ -536,22 +539,34 @@ input[type='file'] {
     font-size: 0.5rem;
   }
 } */
-
+.download-task-report {
+  margin: 1rem;
+}
 .search-bar {
   margin-top: 1rem;
   position: relative;
 }
 
+.total-cost,
+.task-remark,
+.task-status-select {
+  border-width: 1px; /* Set the border width to make it thinner */
+  border-style: solid; /* Set the border style */
+  /* You can also optionally specify border color and radius */
+  border-color: #ccc; /* Set the border color */
+  border-radius: 4px; /* Optionally set border radius */
+}
 .task-header {
   width: 100%;
   background-color: rgb(238, 238, 238);
   /* padding: 1rem; */
   margin: 1rem;
   margin-bottom: 0;
+  font-size: 2rem;
 }
 
 .task-header p {
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   margin-left: 1rem;
 }
 

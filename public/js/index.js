@@ -2,7 +2,7 @@ import { updateSettings } from './updateAccount';
 import { login, logoutUser, forgotPassword } from './login';
 import { signup, checkFieldAvailability } from './signup';
 import { updateTask } from './updateTask';
-import { generatePDF, generateTaskPDF } from './generatePDF';
+import { generatePDF } from './generatePDF';
 import { showAlert } from './alerts';
 import { deleteTask } from './deleteTask';
 import {
@@ -18,7 +18,7 @@ import {
 } from './photosHandler';
 import { sendTask } from './sendTask';
 import { searchUsers } from './searchUsers';
-import { makeScreenshot } from './makeScreenshot';
+import { generateTaskPDF, createShortcutContainer } from './makeScreenshot';
 import { UPLOADED_IMAGE_WIDTH } from '../../constants/markerConstants';
 // const imageCanvas =
 const mainContainer = document.querySelector('.main-container');
@@ -134,6 +134,7 @@ const populateSidesWithDents = (dents, folder) => {
       vehicleImage.setAttribute('data-image-id', img);
 
       removeMarksContainer.classList.remove('hidden');
+      addNewDentsToTask.classList.remove('hidden');
       // sendMarksBtn.classList.remove('hidden');
       paintDamagedCheck.checked = false;
       bigDentCheck.checked = false;
@@ -235,13 +236,25 @@ if (uploadPhoto) {
   if (taskHeader) {
     taskId = taskHeader.dataset.taskId;
     loadDataAndPopulate(taskId);
-
-    // downloadTaskBtn.addEventListener('click', function () {
-    //   downloadTaskBtn.textContent = 'Downloading...';
-    //   // generateTaskPDF(uploadedImages);
-    //   makeScreenshot();
-    //   downloadTaskBtn.textContent = 'Download Task';
-    // });
+    if (downloadTaskBtn) {
+      downloadTaskBtn.addEventListener('click', function () {
+        const screenshotContainers = createShortcutContainer(uploadedImages);
+        backToTasks.insertAdjacentHTML('afterend', screenshotContainers);
+        let imagesToCapture = document.querySelectorAll(
+          '.screenshot-container',
+        );
+        imagesToCapture.forEach((image) => {
+          const imgName = image.dataset.filename;
+          const dents = dentsTemp[imgName];
+          if (dents) {
+            dents.forEach((dent) => {
+              placeMarker(dent.bigDent, dent.paintDamaged, dent.coords, image);
+            });
+          }
+        });
+        generateTaskPDF();
+      });
+    }
   }
 
   uploadPhoto.addEventListener('click', async (e) => {

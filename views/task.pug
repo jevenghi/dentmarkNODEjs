@@ -29,14 +29,15 @@ block content
           input(type="text", placeholder=`€${totalCost}`, class="total-cost", data-task-id=taskId)
             
         .task-cost-wrapper
-          p Remark:
+          p Notes:
           input(type="text", value=remark, class="task-remark", data-task-id=taskId)
              
       if role === 'user'
         p Task status: #{taskStatus}
         p Total cost: € #{totalCost}
-        p Remark: #{remark}
-      //- button(class='download-task-report', data-task-id=taskId) Download Task 
+        p Notes: #{remark}
+    if role === 'admin'    
+      button(class='download-task-report', data-task-id=taskId) Download Task 
   
     
 
@@ -48,7 +49,7 @@ block content
   
       .choose.choose__side
         h1 Choose side
-      .marker-container
+      .marker-container.hidden
         .row
           label
             | Paint damaged
@@ -68,7 +69,7 @@ block content
         button.remove_mark_btn.remove__last Undo
         button.remove_mark_btn.remove--marks Clear All Marks
 
-    button(type="button" class='save-new-dents') Save added dents
+    button(type="button" class='save-new-dents hidden') Save added dents
     button(type="button" class='back-tasks') Back to tasks           
   .overlay.hidden
             
