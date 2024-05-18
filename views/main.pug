@@ -40,13 +40,15 @@ block content
         div#search-results.dropdown-content
 
     .send-container.hidden
-      //- label.form__label Vehicle Model
-      input.form__input.form__input--model(type="text" placeholder="Vehicle model...")
-      //- label.form__label Year
-      select#year(name="year")
-        option(value="") Year
-        each year in Array.from({ length: 2025 - 1990 }, (_, index) => 1990 + index)
-          option(value=year)= year
+      .vehicle-model
+        input.form__input.form__input--model(type="text" placeholder="Vehicle model...")
+        //- label.form__label Year
+        select#year(name="year")
+          option(value="") Year
+          each year in Array.from({ length: 2025 - 1990 }, (_, index) => 1990 + index)
+            option(value=year)= year
+      input.form__input.form__input--note(type="text" placeholder="Additional notes...")
+    
           
     .form__row.form__row--button
       button.form__btn.send-marks.hidden Send Task  

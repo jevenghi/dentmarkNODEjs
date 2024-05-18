@@ -73,7 +73,7 @@ const taskSchema = new mongoose.Schema(
     remark: {
       type: String,
       trim: true,
-      maxlength: [100, 'Remark must not exceed 100 characters'],
+      maxlength: [150, 'Note must not exceed 150 characters'],
     },
   },
   {

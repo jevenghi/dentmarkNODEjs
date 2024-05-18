@@ -27,6 +27,7 @@ const uploadPhoto = document.querySelector('.upload_photo');
 const sendContainer = document.querySelector('.send-container');
 const sendMarksBtn = document.querySelector('.send-marks');
 const vehicleModel = document.querySelector('.form__input--model');
+const newTaskNote = document.querySelector('.form__input--note');
 const removeLastMarkBtn = document.querySelector('.remove__last');
 const removeMarksBtn = document.querySelector('.remove--marks');
 
@@ -412,7 +413,10 @@ if (uploadPhoto) {
       const year = selectedYear.value;
       if (!year) return showAlert('error', 'Please choose model year');
       model += ` ${year}`;
-      await sendTask(customer, model, dents, uploadedImages, specialCase);
+      const note = newTaskNote.value.trim();
+      if (note.length > 150)
+        return showAlert('error', 'Note must not exceed 150 characters');
+      await sendTask(customer, model, dents, uploadedImages, specialCase, note);
     });
   }
 }

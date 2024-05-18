@@ -30,7 +30,9 @@ block content
             
         .task-cost-wrapper
           p Notes:
-          input(type="text", value=remark, class="task-remark", data-task-id=taskId)
+          //- input(type="text", value=remark, class="task-remark", data-task-id=taskId)
+          textarea.task-remark(data-task-id=taskId)= remark
+
              
       if role === 'user'
         p Task status: #{taskStatus}
