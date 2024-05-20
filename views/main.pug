@@ -26,13 +26,18 @@ block content
           | Special case
           input.m_checkbox.m_checkbox--hail(type="checkbox" id="special-case")
 
+    .remove-container.hidden
+      button.remove_mark_btn.remove__last Clear Last Mark
+      button.remove_mark_btn.remove__photo Delete Image
+      button.remove_mark_btn.remove--marks Clear All Marks
     .image-container
       img#vehicleImage(src="")
       div#marker
 
-    .remove-container.hidden
-      button.remove_mark_btn.remove__last Undo
-      button.remove_mark_btn.remove--marks Clear All Marks
+    //- .remove-container.hidden
+    //-   button.remove_mark_btn.remove__last Undo
+    //-   button.remove_mark_btn.remove__photo Delete Image
+    //-   button.remove_mark_btn.remove--marks Clear All Marks
     
     if (role === 'admin')
       .search-bar.hidden
@@ -45,8 +50,9 @@ block content
         //- label.form__label Year
         select#year(name="year")
           option(value="") Year
-          each year in Array.from({ length: 2025 - 1990 }, (_, index) => 1990 + index)
+          each year in Array.from({ length: 2025 - 2000 }, (_, index) => 2025 - index)
             option(value=year)= year
+          option(value="older") Older
       input.form__input.form__input--note(type="text" placeholder="Additional notes...")
     
           

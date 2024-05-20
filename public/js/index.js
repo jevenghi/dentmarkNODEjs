@@ -30,6 +30,7 @@ const vehicleModel = document.querySelector('.form__input--model');
 const newTaskNote = document.querySelector('.form__input--note');
 const removeLastMarkBtn = document.querySelector('.remove__last');
 const removeMarksBtn = document.querySelector('.remove--marks');
+const deleteImage = document.querySelector('.remove__photo');
 
 const downloadTaskBtn = document.querySelector('.download-task-report');
 const removeMarksContainer = document.querySelector('.remove-container');
@@ -80,6 +81,8 @@ const searchResults = document.getElementById('search-results');
 const selectedYear = document.getElementById('year');
 const taskHeader = document.querySelector('.task-header');
 const addNewDentsToTask = document.querySelector('.save-new-dents');
+let buttonsSide = document.querySelectorAll('.button--side');
+
 let url = new URL(window.location.href);
 
 // function getMarkers() {
@@ -135,7 +138,7 @@ const populateSidesWithDents = (dents, folder) => {
       vehicleImage.setAttribute('data-image-id', img);
 
       removeMarksContainer.classList.remove('hidden');
-      addNewDentsToTask.classList.remove('hidden');
+      if (addNewDentsToTask) addNewDentsToTask.classList.remove('hidden');
       // sendMarksBtn.classList.remove('hidden');
       paintDamagedCheck.checked = false;
       bigDentCheck.checked = false;
@@ -217,9 +220,26 @@ if (uploadPhoto) {
       const confirmed = confirm('Remove all markers?');
       if (confirmed) {
         removeAllMarkers(markers);
-        dents = [];
-        dentsTemp = {};
+        dents = dents.filter((element) => element.imageId !== img);
+        if (dentsTemp[img]) delete dentsTemp[img];
+        // dents = [];
+        // dentsTemp = {};
       }
+    });
+    deleteImage.addEventListener('click', (e) => {
+      e.preventDefault();
+      uploadedImages = uploadedImages.filter((element) => element !== img);
+      dents = dents.filter((element) => element.imageId !== img);
+      if (dentsTemp[img]) delete dentsTemp[img];
+      if (vehicleImage) vehicleImage.src = '';
+      renderVehicleImageFromUploads(uploadedImages);
+
+      populateSidesWithDents(dentsTemp);
+      sideSelection = document.querySelector('.sides-container');
+
+      setTimeout(function () {
+        sideSelection.classList.add('visible');
+      }, 50);
     });
   }
   if (markerContainer) {
@@ -287,7 +307,7 @@ if (uploadPhoto) {
     setTimeout(function () {
       sideSelection.classList.add('visible');
     }, 50);
-    const buttonsSide = document.querySelectorAll('.button--side');
+    buttonsSide = document.querySelectorAll('.button--side');
     const markers = imageContainer.getElementsByClassName('marker');
 
     buttonsSide.forEach((button) => {
@@ -304,7 +324,7 @@ if (uploadPhoto) {
         button.style.border = '0.3rem solid coral';
         img = button.value;
         let vehicleImage = document.getElementById('vehicleImage');
-        vehicleImage.style.width = '1000px';
+        vehicleImage.style.width = UPLOADED_IMAGE_WIDTH;
         vehicleImage.src = `/pics/tasks/${img}`;
         vehicleImage.setAttribute('data-image-id', img);
 
@@ -398,9 +418,11 @@ if (uploadPhoto) {
   }
   if (addNewDentsToTask) {
     addNewDentsToTask.addEventListener('click', async () => {
-      if (dents.length === 0)
-        return showAlert('error', `You haven't added any dent`);
-      addDentsToTask(taskId, dents, uploadedImages);
+      // if (dents.length === 0)
+      //   return showAlert('error', `You haven't added any dent`);
+      addNewDentsToTask.textContent = 'Saving...';
+      await addDentsToTask(taskId, dents, uploadedImages);
+      addNewDentsToTask.textContent = 'Save changes';
     });
   }
   if (sendMarksBtn) {

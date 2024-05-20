@@ -63,15 +63,21 @@ block content
             | Special case
             input.m_checkbox.m_checkbox--hail(type="checkbox" id="special-case")
 
+      .remove-container.hidden
+        button.remove_mark_btn.remove__last Undo
+        button.remove_mark_btn.remove__photo Delete Image
+        button.remove_mark_btn.remove--marks Clear All Marks
+
       .image-container
         img#vehicleImage(src="")
         div#marker
 
-      .remove-container.hidden
-        button.remove_mark_btn.remove__last Undo
-        button.remove_mark_btn.remove--marks Clear All Marks
+      //- .remove-container.hidden
+      //-   button.remove_mark_btn.remove__last Undo
+      //-   button.remove_mark_btn.remove__photo Delete Image
+      //-   button.remove_mark_btn.remove--marks Clear All Marks
 
-    button(type="button" class='save-new-dents hidden') Save added dents
+    button(type="button" class='save-new-dents hidden') Save changes
     button(type="button" class='back-tasks') Back to tasks           
   .overlay.hidden
             

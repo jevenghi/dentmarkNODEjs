@@ -38,25 +38,32 @@ exports.resizeTaskPhotos = catchAsyncErr(async (req, res, next) => {
   await Promise.all(
     req.files.images.map(async (file, i) => {
       const filename = `user-${req.user.id}-${Date.now()}-${i + 1}.png`;
-      const metadata = await sharp(file.buffer).metadata();
 
-      const isPortrait = metadata.width < metadata.height;
+      //FOR ROTATING VERTICAL IMAGES
+      // const metadata = await sharp(file.buffer).metadata();
 
-      if (isPortrait) {
-        await sharp(file.buffer)
-          .rotate(90)
-          .resize(1000)
-          .toFormat('png')
-          .png({ quality: 70 })
-          .toFile(`public/pics/tasks/${filename}`);
-      } else {
-        await sharp(file.buffer)
-          .resize(1000)
-          .toFormat('png')
-          .png({ quality: 70 })
-          .toFile(`public/pics/tasks/${filename}`);
-      }
-      // await sharp(file.buffer).resize(800).toFormat('png').png({ quality: 70 }).toFile(`public/pics/tasks/${filename}`);
+      // const isPortrait = metadata.width < metadata.height;
+
+      // if (isPortrait) {
+      //   await sharp(file.buffer)
+      //     // .rotate(90)
+      //     // .resize(1000)
+      //     .resize(500)
+      //     .toFormat('png')
+      //     .png({ quality: 70 })
+      //     .toFile(`public/pics/tasks/${filename}`);
+      // } else {
+      //   await sharp(file.buffer)
+      //     .resize(1000)
+      //     .toFormat('png')
+      //     .png({ quality: 70 })
+      //     .toFile(`public/pics/tasks/${filename}`);
+      // }
+      await sharp(file.buffer)
+        .resize(1000)
+        .toFormat('png')
+        .png({ quality: 70 })
+        .toFile(`public/pics/tasks/${filename}`);
       imageNames.push(filename);
     }),
   );
