@@ -40,30 +40,37 @@ exports.resizeTaskPhotos = catchAsyncErr(async (req, res, next) => {
       const filename = `user-${req.user.id}-${Date.now()}-${i + 1}.png`;
 
       //FOR ROTATING VERTICAL IMAGES
-      // const metadata = await sharp(file.buffer).metadata();
+      const metadata = await sharp(file.buffer).metadata();
 
       // const isPortrait = metadata.width < metadata.height;
 
       // if (isPortrait) {
       //   await sharp(file.buffer)
       //     // .rotate(90)
-      //     // .resize(1000)
-      //     .resize(500)
+      //     .rotate()
+      //     .resize(1000, null, { fit: 'contain' })
       //     .toFormat('png')
       //     .png({ quality: 70 })
       //     .toFile(`public/pics/tasks/${filename}`);
       // } else {
       //   await sharp(file.buffer)
-      //     .resize(1000)
+      //     .resize(1000, null, { fit: 'contain' })
       //     .toFormat('png')
       //     .png({ quality: 70 })
       //     .toFile(`public/pics/tasks/${filename}`);
       // }
-      await sharp(file.buffer)
-        .resize(1000)
+      let image = sharp(file.buffer);
+
+      if (metadata.orientation) {
+        image = image.rotate();
+      }
+
+      await image
+        .resize(1000, null, { fit: 'contain' }) // Resize while preserving aspect ratio
         .toFormat('png')
         .png({ quality: 70 })
         .toFile(`public/pics/tasks/${filename}`);
+
       imageNames.push(filename);
     }),
   );
