@@ -227,19 +227,21 @@ if (uploadPhoto) {
       }
     });
     deleteImage.addEventListener('click', (e) => {
-      e.preventDefault();
-      uploadedImages = uploadedImages.filter((element) => element !== img);
-      dents = dents.filter((element) => element.imageId !== img);
-      if (dentsTemp[img]) delete dentsTemp[img];
-      if (vehicleImage) vehicleImage.src = '';
-      renderVehicleImageFromUploads(uploadedImages);
+      const confirmed = confirm('Delete this image?');
+      if (confirmed) {
+        uploadedImages = uploadedImages.filter((element) => element !== img);
+        dents = dents.filter((element) => element.imageId !== img);
+        if (dentsTemp[img]) delete dentsTemp[img];
+        if (vehicleImage) vehicleImage.src = '';
+        renderVehicleImageFromUploads(uploadedImages);
 
-      populateSidesWithDents(dentsTemp);
-      sideSelection = document.querySelector('.sides-container');
+        populateSidesWithDents(dentsTemp);
+        sideSelection = document.querySelector('.sides-container');
 
-      setTimeout(function () {
-        sideSelection.classList.add('visible');
-      }, 50);
+        setTimeout(function () {
+          sideSelection.classList.add('visible');
+        }, 50);
+      }
     });
   }
   if (markerContainer) {
