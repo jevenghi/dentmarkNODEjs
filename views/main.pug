@@ -25,11 +25,12 @@ block content
         label
           | Special case
           input.m_checkbox.m_checkbox--hail(type="checkbox" id="special-case")
+      .row    
+        .remove-container
+          button.remove_mark_btn.remove__last Clear Last Mark
+          button.remove_mark_btn.remove__photo Delete Image
+          button.remove_mark_btn.remove--marks Clear All Marks
 
-    .remove-container.hidden
-      button.remove_mark_btn.remove__last Clear Last Mark
-      button.remove_mark_btn.remove__photo Delete Image
-      button.remove_mark_btn.remove--marks Clear All Marks
     .image-container
       img#vehicleImage(src="")
       div#marker

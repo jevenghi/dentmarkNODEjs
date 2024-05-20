@@ -245,6 +245,17 @@ if (uploadPhoto) {
     });
   }
   if (markerContainer) {
+    const markerContainerOffset =
+      markerContainer.offsetTop + markerContainer.offsetHeight;
+
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > markerContainerOffset) {
+        markerContainer.classList.add('sticky');
+      } else {
+        markerContainer.classList.remove('sticky');
+      }
+    });
+
     paintDamagedCheck.addEventListener('click', () => {
       dentPaintDamaged = dentPaintDamaged ? false : true;
     });

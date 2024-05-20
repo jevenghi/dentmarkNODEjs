@@ -40,6 +40,7 @@ body {
   font-weight: 400;
   font-style: normal;
 }
+
 .main-container {
   width: 100%;
   max-width: 400px;
@@ -330,7 +331,15 @@ input[type='file'] {
 /* .remove__photo {
   background-color: rgb(255, 87, 34);
 } */
-
+.sticky {
+  position: fixed;
+  top: 0;
+  left: 1;
+  width: 100%;
+  z-index: 1000;
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
 .marker-container {
   /* margin: 1rem; */
   /* opacity: 0; */
@@ -338,7 +347,7 @@ input[type='file'] {
   border-radius: 2px;
   transition: opacity 0.5s ease-in-out;
   width: 98%;
-  position: relative;
+  /* position: relative; */
   display: inline-block;
   font-size: 1.4rem;
   /* position: fixed;
