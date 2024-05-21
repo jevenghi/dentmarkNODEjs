@@ -114,7 +114,26 @@ const convertImagesToBase64 = async () => {
     );
     const taskHeaderContainer = document.querySelector('.task-header');
     if (taskHeaderContainer) {
-      imageContainers.unshift(taskHeaderContainer);
+      const canvas = await html2canvas(taskHeaderContainer);
+      const blob = await new Promise((resolve) =>
+        canvas.toBlob(resolve, 'image/png'),
+      );
+
+      const compressedBlob = await compress(blob, {
+        quality: 1,
+        width: 500,
+      });
+
+      const base64Data = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(compressedBlob);
+        reader.onloadend = function () {
+          resolve(reader.result.split(',')[1]);
+        };
+        reader.onerror = reject;
+      });
+
+      base64Images.push(base64Data);
     }
 
     await Promise.all(
@@ -175,7 +194,7 @@ export const generateTaskPDF = async () => {
         width: 500, // Adjust the width as needed
       });
     });
-
+    //TODO: uncomment download
     pdfMake.createPdf(docDefinition).download();
     document.querySelectorAll('.screenshot-container').forEach((container) => {
       container.remove();
