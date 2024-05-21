@@ -123,10 +123,13 @@ input[type='file'] {
 .rotate {
   transform: rotate(180deg); /* Rotate the arrow */
 }
-
+.form__upload {
+  display: none;
+}
 .header {
   display: flex;
-  background-color: rgb(34, 40, 49);
+  background-color: rgb(45, 64, 89);
+
   padding: 0.5rem;
   justify-content: flex-end;
 }
@@ -894,10 +897,17 @@ button[type='submit']:hover {
   gap: 1rem;
   margin-bottom: 2rem;
 }
+.photo-upload_container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  gap: 1rem;
+}
 .delete-task,
 .add-dents,
 .back-tasks,
-.upload_photo {
+.upload_photo,
+.choose-photo-btn {
   background-color: rgb(255, 87, 34);
   color: #fff;
   border-radius: 0.3rem;
@@ -907,7 +917,9 @@ button[type='submit']:hover {
   font-size: 1.5rem;
   text-decoration: none;
 }
-
+/* .choose-photo-btn {
+  margin-right: 10rem;
+} */
 .save-new-dents {
   background-color: rgb(255, 255, 255);
   color: #000000;

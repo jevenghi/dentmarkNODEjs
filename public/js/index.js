@@ -100,6 +100,15 @@ let url = new URL(window.location.href);
 //   });
 // }
 
+const fileInput = document.getElementById('photo');
+if (fileInput) {
+  fileInput.addEventListener('change', function () {
+    if (fileInput.files.length > 0) {
+      uploadPhoto.classList.remove('hidden');
+    }
+  });
+}
+
 let img;
 let customer;
 let storedCoordinates;
