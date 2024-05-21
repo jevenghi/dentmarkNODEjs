@@ -81,7 +81,13 @@ h1 {
   font-family: 'Tourney', sans-serif; */
   color: #ffffff;
 }
+h2 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 200;
+  margin-top: 0;
 
+  color: #ffffff;
+}
 input[type='file'] {
   color: rgb(255, 255, 255);
 }
@@ -910,7 +916,11 @@ button[type='submit']:hover {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  gap: 1rem;
+  align-items: center;
+  gap: 0.5rem;
+  border: 2px dashed white;
+  border-radius: 0.4rem;
+  padding: 1rem;
 }
 .delete-task,
 .add-dents,
@@ -921,14 +931,14 @@ button[type='submit']:hover {
   color: #fff;
   border-radius: 0.3rem;
   border: none;
-  margin-top: 1rem;
+  margin-top: 0.5rem;
   padding: 0.5rem;
   font-size: 2rem;
   text-decoration: none;
 }
-/* .choose-photo-btn {
-  margin-right: 10rem;
-} */
+.choose-photo-btn {
+  justify-content: center;
+}
 .save-new-dents {
   background-color: rgb(255, 255, 255);
   color: #000000;
