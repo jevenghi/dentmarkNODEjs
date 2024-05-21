@@ -52,6 +52,8 @@ const taskStatusBtn = document.querySelector('.task-status-select');
 const backToTasks = document.querySelector('.back-tasks');
 const deleteTaskBtn = document.querySelector('.delete-task');
 const emailInputSignup = document.getElementById('email-signup');
+const logoImage = document.getElementById('logoImage');
+const logoContainer = document.querySelector('.logo-container');
 const paginationBtns = document.querySelector('.pagination-buttons');
 const filterOptions = document.querySelector('.filter-menu');
 const forgotPassBtn = document.getElementById('forgot-pass');
@@ -293,7 +295,9 @@ if (uploadPhoto) {
 
   uploadPhoto.addEventListener('click', async (e) => {
     e.preventDefault();
-
+    if (logoImage) {
+      logoImage.src = '';
+    }
     const vehicleImage = imageContainer.querySelector('#vehicleImage');
     if (vehicleImage) vehicleImage.src = '';
     const form = new FormData();

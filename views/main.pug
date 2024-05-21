@@ -10,6 +10,8 @@ block content
     .photo-upload_container
       input.form__upload(type="file" accept="image/*" id="photo" name="photo" multiple)
       button.form__btn.upload_photo Upload
+    //- .logo-container
+    //-     img#logoImage(src="/pics/amlogo.png")
     
     .choose.choose__side.hidden
       h1 Choose side
@@ -34,6 +36,8 @@ block content
     .image-container
       img#vehicleImage(src="")
       div#marker
+    .logo-container
+      img#logoImage(src="/pics/amlogo.png")  
 
     //- .remove-container.hidden
     //-   button.remove_mark_btn.remove__last Undo
@@ -59,5 +63,6 @@ block content
           
     .form__row.form__row--button
       button.form__btn.send-marks.hidden Send Task  
+
   .overlay.hidden            
     

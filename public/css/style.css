@@ -327,7 +327,10 @@ input[type='file'] {
 
   /* margin-left: 2rem; */
 }
-
+#logoImage {
+  width: 300px;
+  /* margin-top: 5rem; */
+}
 /* .remove__photo {
   background-color: rgb(255, 87, 34);
 } */
