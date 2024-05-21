@@ -3,18 +3,20 @@ block styles
   link(rel="stylesheet" href="/css/style.css")
   link(href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz@9..40&family=Tourney:wght@100&display=swap&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
       rel="stylesheet")
+  link(href='https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap' rel='stylesheet')
+    
 
 block content
   .main-container
-    //- h1 Upload photos
+    h1 Welcome to DentMarker!
     .photo-upload_container
       input.form__upload(type="file" accept="image/*" id="photo" name="photo" multiple)
-      label(class="choose-photo-btn" for="photo") Choose Photos
-
-
+      label(class="choose-photo-btn" for="photo") Choose photos
       button.form__btn.upload_photo.hidden Upload
-    //- .logo-container
-    //-     img#logoImage(src="/pics/amlogo.png")
+    .logo-container
+      img#logoImage(src="/pics/amlogo.png")
+    .need-help-link
+      a(href="") Need help with the app? Press here  
     
     .choose.choose__side.hidden
       h1 Choose side
@@ -39,8 +41,8 @@ block content
     .image-container
       img#vehicleImage(src="")
       div#marker
-    .logo-container
-      img#logoImage(src="/pics/amlogo.png")  
+    //- .logo-container
+    //-   img#logoImage(src="/pics/amlogo.png")  
 
     //- .remove-container.hidden
     //-   button.remove_mark_btn.remove__last Undo

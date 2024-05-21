@@ -74,8 +74,11 @@ html {
 h1 {
   margin-bottom: 5px;
   margin-top: 10px;
-  font-family: 'DM Sans', sans-serif;
-  font-family: 'Tourney', sans-serif;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+
+  /* font-family: 'DM Sans', sans-serif;
+  font-family: 'Tourney', sans-serif; */
   color: #ffffff;
 }
 
@@ -332,7 +335,7 @@ input[type='file'] {
 }
 #logoImage {
   width: 300px;
-  /* margin-top: 5rem; */
+  margin-top: 1rem;
 }
 /* .remove__photo {
   background-color: rgb(255, 87, 34);
@@ -683,16 +686,22 @@ button[type='submit'] {
 button[type='submit']:hover {
   background-color: #0056b3;
 }
-.privacy-policy-link {
+.privacy-policy-link,
+.need-help-link {
   text-align: center;
   margin-top: 2rem;
-  text-decoration: underline rgb(255, 87, 34);
+  text-decoration: underline rgb(255, 255, 255);
 }
 
-.privacy-policy-link a {
-  color: rgb(255, 87, 34);
+.privacy-policy-link a,
+.need-help-link a {
+  color: rgb(255, 255, 255);
   text-decoration: none;
+  font-size: 1.8rem;
+  font-family: Poppins;
+  font-weight: 200;
 }
+
 .alert {
   position: fixed;
   top: 0;

@@ -161,6 +161,7 @@ const populateSidesWithDents = (dents, folder) => {
       setTimeout(function () {
         markerContainer.classList.add('visible');
       }, 50);
+      makeMarkerContainerFloating();
       const searchBar = document.querySelector('.search-bar');
       if (searchBar) searchBar.classList.remove('hidden');
 
@@ -178,7 +179,18 @@ const populateSidesWithDents = (dents, folder) => {
     });
   });
 };
+const makeMarkerContainerFloating = () => {
+  const markerContainerOffset =
+    markerContainer.offsetTop + markerContainer.offsetHeight;
 
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > markerContainerOffset) {
+      markerContainer.classList.add('sticky');
+    } else {
+      markerContainer.classList.remove('sticky');
+    }
+  });
+};
 const removeLastMarker = (markers, dents) => {
   if (markers.length > 0) {
     const lastMarker = markers[markers.length - 1];
@@ -256,16 +268,16 @@ if (uploadPhoto) {
     });
   }
   if (markerContainer) {
-    const markerContainerOffset =
-      markerContainer.offsetTop + markerContainer.offsetHeight;
+    // const markerContainerOffset =
+    //   markerContainer.offsetTop + markerContainer.offsetHeight;
 
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > markerContainerOffset) {
-        markerContainer.classList.add('sticky');
-      } else {
-        markerContainer.classList.remove('sticky');
-      }
-    });
+    // window.addEventListener('scroll', () => {
+    //   if (window.scrollY > markerContainerOffset) {
+    //     markerContainer.classList.add('sticky');
+    //   } else {
+    //     markerContainer.classList.remove('sticky');
+    //   }
+    // });
 
     paintDamagedCheck.addEventListener('click', () => {
       dentPaintDamaged = dentPaintDamaged ? false : true;
@@ -306,6 +318,7 @@ if (uploadPhoto) {
     e.preventDefault();
     if (logoImage) {
       logoImage.src = '';
+      logoImage.style.width = 0;
     }
     const vehicleImage = imageContainer.querySelector('#vehicleImage');
     if (vehicleImage) vehicleImage.src = '';
@@ -366,6 +379,19 @@ if (uploadPhoto) {
         setTimeout(function () {
           markerContainer.classList.add('visible');
         }, 50);
+        //TODO: make a func
+        // const markerContainerOffset =
+        //   markerContainer.offsetTop + markerContainer.offsetHeight;
+
+        // window.addEventListener('scroll', () => {
+        //   if (window.scrollY > markerContainerOffset) {
+        //     markerContainer.classList.add('sticky');
+        //   } else {
+        //     markerContainer.classList.remove('sticky');
+        //   }
+        // });
+        makeMarkerContainerFloating();
+
         const searchBar = document.querySelector('.search-bar');
         if (searchBar) searchBar.classList.remove('hidden');
 
