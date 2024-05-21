@@ -294,7 +294,8 @@ if (uploadPhoto) {
     taskId = taskHeader.dataset.taskId;
     loadDataAndPopulate(taskId);
     if (downloadTaskBtn) {
-      downloadTaskBtn.addEventListener('click', function () {
+      downloadTaskBtn.addEventListener('click', async function () {
+        downloadTaskBtn.disabled = true;
         const screenshotContainers = createShortcutContainer(uploadedImages);
         backToTasks.insertAdjacentHTML('afterend', screenshotContainers);
         let imagesToCapture = document.querySelectorAll(
@@ -309,7 +310,8 @@ if (uploadPhoto) {
             });
           }
         });
-        generateTaskPDF();
+        await generateTaskPDF();
+        downloadTaskBtn.disabled = false;
       });
     }
   }
