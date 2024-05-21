@@ -132,9 +132,9 @@ input[type='file'] {
 .rotate {
   transform: rotate(180deg); /* Rotate the arrow */
 }
-.form__upload {
+/* .form__upload {
   display: none;
-}
+} */
 .header {
   display: flex;
   background-color: rgb(45, 64, 89);
@@ -361,10 +361,12 @@ input[type='file'] {
   background-color: #ffffff;
   border-radius: 2px;
   transition: opacity 0.5s ease-in-out;
+
   width: 98%;
   /* position: relative; */
   display: inline-block;
   font-size: 1.4rem;
+
   /* position: fixed;
   width: 100%; */
 }
