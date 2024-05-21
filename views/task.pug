@@ -47,7 +47,9 @@ block content
     .main-container
       .photo-upload_container
         input.form__upload(type="file" accept="image/*" id="photo" name="photo" multiple)
-        button.form__btn.upload_photo Upload
+        label(class="choose-photo-btn" for="photo") Choose Photos
+
+        button.form__btn.upload_photo.hidden Upload
   
       .choose.choose__side
         h1 Choose side
