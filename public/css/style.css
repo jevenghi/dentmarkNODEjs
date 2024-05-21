@@ -916,11 +916,11 @@ button[type='submit']:hover {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  align-items: center;
+  /* align-items: center; */
   gap: 0.5rem;
-  border: 1.5px dashed white;
+  /* border: 1.5px dashed white;
   border-radius: 0.4rem;
-  padding: 1rem;
+  padding: 1rem; */
 }
 .delete-task,
 .add-dents,
