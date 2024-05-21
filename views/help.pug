@@ -5,14 +5,16 @@ block styles
 
 block content
 
-  .container
-    h1 How to use:
-    div.how_to(class="left-align")
-      
-      ol
-        li Choose vehicle type.
-        li Select the side or upload your photo.
-        li Choose shape, length and also orientation if the dent is elongated. If dent comes with paint damage, tick that option. 
-        li Mark the dents. If vehicle suffered from hail damage and has multiple amount of dents, you don't have to mark every dent, just tick "Hail damage" option and upload the photos.
-        li Enter vehicle model and press "Send". You will be notified if task was succesfully sent. You can now find it in "My tasks". If you have any questions or issues using the app please let us know at info@am-place.nl
-    a.btn(href="/main") Back to main page
+  .main-container
+    .help-container
+      .contact-container If you are experiencing some issues with the app or have a question which is not covered in "How-to" below, please contact us at info@am-place.com
+      a(href="info@am-place.com")
+      h3 How to use:
+      div.how_to(class="left-align")
+        
+        ol
+          li Upload photos (up to 10). 
+          li Select uploaded photo.
+          li Default marker is for dents shorter than 5 cm and without paint damage. If dent exceeds 5 cm or comes with paint damage, tick that option/options accordingly. 
+          li Mark the dents. If vehicle suffered from extreme damage, like deep all-side long dent, or hail damage and has multiple amount of dents, you don't have to mark every dent, just tick "Special case" option.
+          li Enter vehicle model, year (additional remarks optionally) and press "Send Task". You will be notified if task was successfully sent. You can now find it in "My tasks". 
