@@ -16,13 +16,9 @@ export const updateSettings = async (data, type) => {
       data,
     });
     if (res.data.status === 'success') {
-      showAlert(
-        'success',
-        `${type.toUpperCase()} updated successfully!`,
-        () => {
-          location.reload();
-        },
-      );
+      showAlert('success', `${type} updated successfully!`, () => {
+        location.reload();
+      });
     }
   } catch (err) {
     // if (err.response.status === 429) {

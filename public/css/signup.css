@@ -7,7 +7,7 @@ body {
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  height: 100vh;
+  /* height: 100vh; */
 }
 
 .container {
@@ -16,13 +16,15 @@ body {
 .signup-form,
 .login-form,
 .forgot-pass-form,
-.reset-form {
+.reset-form,
+.form-user-password {
   background-color: rgb(238, 238, 238);
   padding: 1.25rem;
   border-radius: 0.5rem;
   box-shadow: 0 0 0.625rem rgba(0, 0, 0, 0.1);
   width: 18.75rem;
-  margin-top: 2rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 .signup-form,
 .login-form h2 {

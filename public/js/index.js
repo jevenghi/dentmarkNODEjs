@@ -650,7 +650,7 @@ if (userDataForm) {
     const name = document.getElementById('name').value;
     const email = document.getElementById('email').value;
     const language = document.getElementById('language').value;
-    updateSettings({ name, email, language }, 'data');
+    updateSettings({ name, email, language }, 'Settings');
   });
 }
 
@@ -663,7 +663,7 @@ if (userPasswordForm) {
       document.getElementById('confirmNewPassword').value;
     updateSettings(
       { oldPassword, newPassword, newPasswordConfirm },
-      'password',
+      'Password',
     );
   });
 }
