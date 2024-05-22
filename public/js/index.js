@@ -20,6 +20,8 @@ import { sendTask } from './sendTask';
 import { searchUsers } from './searchUsers';
 import { generateTaskPDF, createShortcutContainer } from './makeScreenshot';
 import { UPLOADED_IMAGE_WIDTH } from '../../constants/markerConstants';
+import { translations } from './translations';
+
 // const imageCanvas =
 const mainContainer = document.querySelector('.main-container');
 const passwordResetForm = document.querySelector('.reset-form');
@@ -100,6 +102,20 @@ let url = new URL(window.location.href);
 //   });
 // }
 
+document.addEventListener('DOMContentLoaded', () => {
+  const elementsToTranslate = document.querySelectorAll('[data-key]');
+
+  const defaultLang = 'nl';
+  setLanguage(defaultLang);
+
+  function setLanguage(language) {
+    elementsToTranslate.forEach((element) => {
+      const key = element.getAttribute('data-key');
+      element.textContent = translations[language][key];
+    });
+  }
+});
+
 const fileInput = document.getElementById('photo');
 if (fileInput) {
   fileInput.addEventListener('change', function () {
@@ -156,7 +172,7 @@ const populateSidesWithDents = (dents, folder) => {
       dentPaintDamaged = false;
       bigDent = false;
 
-      // sendContainer.classList.remove('hidden');
+      if (sendContainer) sendContainer.classList.remove('hidden');
       markerContainer.classList.remove('hidden');
       setTimeout(function () {
         markerContainer.classList.add('visible');
@@ -252,6 +268,8 @@ if (uploadPhoto) {
     deleteImage.addEventListener('click', (e) => {
       const confirmed = confirm('Delete this image?');
       if (confirmed) {
+        markerContainer.classList.add('hidden');
+        uploadPhoto.classList.remove('hidden');
         uploadedImages = uploadedImages.filter((element) => element !== img);
         dents = dents.filter((element) => element.imageId !== img);
         if (dentsTemp[img]) delete dentsTemp[img];
@@ -264,6 +282,9 @@ if (uploadPhoto) {
         setTimeout(function () {
           sideSelection.classList.add('visible');
         }, 50);
+        if (sendContainer) sendContainer.classList.add('hidden');
+        if (sendMarksBtn) sendMarksBtn.classList.add('hidden');
+        if (uploadedImages.length === 0) sideText.classList.add('hidden');
       }
     });
   }
@@ -341,6 +362,7 @@ if (uploadPhoto) {
     }
     uploadPhoto.textContent = 'Upload';
     renderVehicleImageFromUploads(uploadedImages, 'tasks');
+    uploadPhoto.classList.add('hidden');
 
     sideText.classList.remove('hidden');
     sideSelection = document.querySelector('.sides-container');
@@ -381,17 +403,7 @@ if (uploadPhoto) {
         setTimeout(function () {
           markerContainer.classList.add('visible');
         }, 50);
-        //TODO: make a func
-        // const markerContainerOffset =
-        //   markerContainer.offsetTop + markerContainer.offsetHeight;
 
-        // window.addEventListener('scroll', () => {
-        //   if (window.scrollY > markerContainerOffset) {
-        //     markerContainer.classList.add('sticky');
-        //   } else {
-        //     markerContainer.classList.remove('sticky');
-        //   }
-        // });
         makeMarkerContainerFloating();
 
         const searchBar = document.querySelector('.search-bar');

@@ -32,8 +32,7 @@ const userSchema = new mongoose.Schema(
     },
     language: {
       type: String,
-      enum: ['english', 'nederlands'],
-      default: 'nederlands',
+      enum: ['en', 'nl'],
     },
     password: {
       type: String,

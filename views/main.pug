@@ -8,8 +8,8 @@ block styles
 
 block content
   .main-container
-    h1 Welcome to DentMarker!
-    h2 Please choose photos to upload:
+    h1(data-key="welcome")
+    h2(data-key="choosePhotos")
     .photo-upload_container
 
       //- h2 Please choose photos to upload:
@@ -19,21 +19,21 @@ block content
     .logo-container
       img#logoImage(src="/pics/amlogo.png")
     .need-help-link
-      a(href="/help") Need help with the app? Press here  
+      a(href="/help" data-key="needHelp")
     
     .choose.choose__side.hidden
-      h1 Choose side
+      h1(data-key="chooseSide")
       
     .marker-container.hidden
       .row
         label
-          | Paint damaged
+          div(data-key="paintDamaged")
           input.m_checkbox.m_checkbox--paint(type="checkbox" id="paint-damaged")
         label
           | 5+ cm
           input.m_checkbox.m_checkbox--hail(type="checkbox" id="big-dent")
         label
-          | Special case
+          div(data-key="specialCase")
           input.m_checkbox.m_checkbox--hail(type="checkbox" id="special-case")
       .row    
         .remove-container
@@ -52,25 +52,29 @@ block content
     //-   button.remove_mark_btn.remove__photo Delete Image
     //-   button.remove_mark_btn.remove--marks Clear All Marks
     
-    if (role === 'admin')
-      .search-bar.hidden
-        input(type="text" placeholder="Customer name..." id="search-input")
-        div#search-results.dropdown-content
+    //- if (role === 'admin')
+    //-   .search-bar.hidden
+    //-     input(type="text" placeholder="Customer name..." id="search-input")
+    //-     div#search-results.dropdown-content
 
     .send-container.hidden
+      if (role === 'admin')
+        .search-bar.hidden
+          input(type="text" placeholder="Customer name..." id="search-input" class="form__input--customer")
+          div#search-results.dropdown-content
       .vehicle-model
         input.form__input.form__input--model(type="text" placeholder="Vehicle model...")
         //- label.form__label Year
         select#year(name="year")
-          option(value="") Year
+          option(value="" data-key="year")
           each year in Array.from({ length: 2025 - 2000 }, (_, index) => 2025 - index)
             option(value=year)= year
-          option(value="older") Older
+          option(value="older" data-key="older")
       input.form__input.form__input--note(type="text" placeholder="Additional notes...")
     
           
     .form__row.form__row--button
-      button.form__btn.send-marks.hidden Send Task  
+      button.form__btn.send-marks.hidden(data-key="sendTask")
 
   .overlay.hidden            
     

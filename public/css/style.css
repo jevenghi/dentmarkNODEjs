@@ -396,7 +396,11 @@ input[type='file'] {
   padding: 0.2rem;
   justify-content: space-between;
 }
-
+.row label {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
 .m_button {
   background-color: #ffffff;
   border-radius: 0.5rem;
@@ -465,9 +469,11 @@ input[type='file'] {
   justify-content: center;
 }
 
-.form__input--note {
-  width: 22rem;
+.form__input--note,
+.form__input--customer {
+  width: 23rem;
 }
+
 .send-container {
   /* background-color: rgb(34, 40, 49); */
   border-radius: 5px;
