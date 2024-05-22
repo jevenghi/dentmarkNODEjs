@@ -40,31 +40,28 @@ const createAndSendToken = (user, statusCode, res) => {
 };
 
 exports.isLoggedIn = async (req, res, next) => {
-  if (req.cookies.jwt) {
-    try {
-      const decoded = await promisify(jwt.verify)(
-        req.cookies.jwt,
-        process.env.JWT_SECRET,
-      );
+  if (!req.cookies.jwt) {
+    return next();
+  }
 
-      const currentUser = await User.findById(decoded.id);
-      if (!currentUser) {
-        return next();
-      }
+  try {
+    const decoded = await promisify(jwt.verify)(
+      req.cookies.jwt,
+      process.env.JWT_SECRET,
+    );
+    const currentUser = await User.findById(decoded.id);
 
-      if (currentUser.changedPasswordAfter(decoded.iat)) {
-        return next();
-      }
-
-      res.locals.user = currentUser;
-      return next();
-    } catch (err) {
+    if (!currentUser || currentUser.changedPasswordAfter(decoded.iat)) {
       return next();
     }
+
+    req.user = currentUser;
+  } catch (err) {
+    console.log('Error checking authorization for lang detect:', err);
   }
+
   next();
 };
-
 exports.sendAuthStatus = (req, res) => {
   if (res.locals.user && res.locals.user.emailConfirmed) {
     res.json({ loggedIn: true, user: res.locals.user });
@@ -77,6 +74,7 @@ exports.signup = catchAsyncError(async (req, res, next) => {
   const newUser = await User.create({
     name: req.body.name,
     email: req.body.email,
+    language: req.body.language,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
   });

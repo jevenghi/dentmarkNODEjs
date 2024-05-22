@@ -29,7 +29,13 @@ export const checkFieldAvailability = async (field, endpoint) => {
   }
 };
 
-export const signup = async (name, email, password, passwordConfirm) => {
+export const signup = async (
+  name,
+  email,
+  language,
+  password,
+  passwordConfirm,
+) => {
   try {
     const res = await axios({
       method: 'POST',
@@ -37,6 +43,7 @@ export const signup = async (name, email, password, passwordConfirm) => {
       data: {
         name,
         email,
+        language,
         password,
         passwordConfirm,
       },
@@ -61,7 +68,5 @@ export const signup = async (name, email, password, passwordConfirm) => {
     }
   } catch (err) {
     showAlert('error', err.response.data.message);
-    console.log(err.response.data);
-    // alert(err.response.data.message);
   }
 };

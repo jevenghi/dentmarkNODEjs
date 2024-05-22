@@ -29,7 +29,7 @@ exports.getMe = catchAsyncErr(async (req, res, next) => {
 
 exports.updateMe = catchAsyncErr(async (req, res, next) => {
   //Prevent unauthorized altering of permission fields, like user role
-  const filteredBody = filterObj(req.body, 'name', 'email');
+  const filteredBody = filterObj(req.body, 'name', 'email', 'language');
   const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
     new: true,
     runValidators: true,
@@ -79,6 +79,21 @@ exports.getUser = factory.getOne(User, 'tasks');
 //     data: { customer },
 //   });
 // });
+exports.getUserLangPref = catchAsyncErr(async (req, res, next) => {
+  let language;
+  if (req.user) {
+    const user = await User.findById(req.user.id);
+    // eslint-disable-next-line prefer-destructuring
+    language = user.language;
+  } else {
+    language = 'en';
+  }
+  res.status(200).json({
+    status: 'success',
+    language,
+  });
+});
+
 exports.suggestUser = catchAsyncErr(async (req, res, next) => {
   const query = req.query.q;
   try {

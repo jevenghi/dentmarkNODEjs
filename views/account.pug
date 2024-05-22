@@ -18,8 +18,8 @@ block content
       div.form-group
         label(for="language") Language
         select#language(name="language")
-          option(value="en") English
-          option(value="nl") Nederlands
+          option(value="en" selected=user.language === "en") English
+          option(value="nl" selected=user.language === "nl") Nederlands
 
       button(type="submit") Save changes 
 

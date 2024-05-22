@@ -17,7 +17,7 @@ import {
   getImagesAndDents,
 } from './photosHandler';
 import { sendTask } from './sendTask';
-import { searchUsers } from './searchUsers';
+import { searchUsers, getUserLanguagePref } from './searchUsers';
 import { generateTaskPDF, createShortcutContainer } from './makeScreenshot';
 import { UPLOADED_IMAGE_WIDTH } from '../../constants/markerConstants';
 import { translations } from './translations';
@@ -101,12 +101,12 @@ let url = new URL(window.location.href);
 //       sidesContainer.style.display === 'none' ? 'grid' : 'none';
 //   });
 // }
-
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   const elementsToTranslate = document.querySelectorAll('[data-key]');
 
-  const defaultLang = 'nl';
-  setLanguage(defaultLang);
+  const appLanguage = await getUserLanguagePref();
+
+  setLanguage(appLanguage);
 
   function setLanguage(language) {
     elementsToTranslate.forEach((element) => {
@@ -627,11 +627,11 @@ if (signupForm) {
   signupForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const email = document.getElementById('email-signup').value;
+    const language = document.getElementById('language').value;
     const password = document.getElementById('password').value;
     const passwordConfirm = document.getElementById('confirm_password').value;
     const name = document.getElementById('company').value;
-
-    signup(name, email, password, passwordConfirm);
+    signup(name, email, language, password, passwordConfirm);
   });
 }
 
@@ -649,7 +649,8 @@ if (userDataForm) {
     e.preventDefault();
     const name = document.getElementById('name').value;
     const email = document.getElementById('email').value;
-    updateSettings({ name, email }, 'data');
+    const language = document.getElementById('language').value;
+    updateSettings({ name, email, language }, 'data');
   });
 }
 
