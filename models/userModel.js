@@ -30,6 +30,11 @@ const userSchema = new mongoose.Schema(
       default: 'user',
       // select: false,
     },
+    language: {
+      type: String,
+      enum: ['english', 'nederlands'],
+      default: 'nederlands',
+    },
     password: {
       type: String,
       required: [true, 'Please provide a password.'],
