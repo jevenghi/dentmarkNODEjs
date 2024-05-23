@@ -27,6 +27,9 @@ export const translations = {
     addShortDescription: 'Please add short description',
     costPositiveNumber: 'Cost must be a positive number',
     costMaxValue: 'Cost must not exceed 10,000',
+    taskSent: 'Your task is sent successfully! We will contact you soon.',
+    taskSendFailed: 'Sending task failed',
+    reportFailed: 'Error making the report',
   },
   nl: {
     welcome: 'Welkom bij DentMarker!',
@@ -56,5 +59,9 @@ export const translations = {
     addShortDescription: 'Voeg een korte beschrijving toe',
     costPositiveNumber: 'Kosten moeten een positief getal zijn',
     costMaxValue: 'Kosten mogen niet hoger zijn dan 10.000',
+    taskSent:
+      'Je taak is succesvol verzonden! We nemen binnenkort contact met je op.',
+    taskSendFailed: 'Verzenden van taak mislukt',
+    reportFailed: 'Het maken van het rapport mislukt',
   },
 };

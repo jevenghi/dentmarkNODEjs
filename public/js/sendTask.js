@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { showAlert } from './alerts';
+import { translations } from './translations';
 
 export const sendTask = async (
   customer = '',
@@ -8,6 +9,7 @@ export const sendTask = async (
   images,
   specialCase,
   remark,
+  defaultLang,
 ) => {
   try {
     const res = await axios({
@@ -16,7 +18,7 @@ export const sendTask = async (
       data: { user: customer, carModel, dents, images, specialCase, remark },
     });
     if (res.data.status === 'success') {
-      alert('Your task is sent successfully! We will contact you soon.');
+      alert(translations[defaultLang]['taskSent']);
 
       window.setTimeout(() => {
         window.scrollTo(0, 0);
@@ -24,7 +26,7 @@ export const sendTask = async (
       }, 50);
     }
   } catch (err) {
-    console.log(err.response.data.message);
-    showAlert('error', 'Sending task failed');
+    console.log(err);
+    showAlert('error', translations[defaultLang]['taskSendFailed']);
   }
 };

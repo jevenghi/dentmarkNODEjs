@@ -1,5 +1,6 @@
 import { showAlert } from './alerts.js';
 import axios from 'axios';
+import { translations } from './translations';
 
 const pdfFonts = require('pdfmake/build/vfs_fonts.js');
 const pdfMake = require('pdfmake/build/pdfmake.js');

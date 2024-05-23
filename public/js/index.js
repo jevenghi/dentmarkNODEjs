@@ -136,6 +136,16 @@ let specialCase = false;
 let bigDent = false;
 let taskId;
 
+window.addEventListener('beforeunload', function (event) {
+  if (uploadedImages.length > 0) {
+    const confirmationMessage =
+      'You have unsaved changes. Are you sure you want to leave this page?';
+    event.preventDefault();
+    event.returnValue = confirmationMessage;
+    return confirmationMessage;
+  }
+});
+
 const removeAllMarkers = (markers) => {
   if (markers.length > 0) {
     while (markers.length > 0) {
@@ -516,7 +526,15 @@ if (uploadPhoto) {
           'error',
           translations[defaultLang]['addShortDescription'],
         );
-      await sendTask(customer, model, dents, uploadedImages, specialCase, note);
+      await sendTask(
+        customer,
+        model,
+        dents,
+        uploadedImages,
+        specialCase,
+        note,
+        defaultLang,
+      );
     });
   }
 }
