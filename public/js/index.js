@@ -88,7 +88,7 @@ const addNewDentsToTask = document.querySelector('.save-new-dents');
 let buttonsSide = document.querySelectorAll('.button--side');
 
 let url = new URL(window.location.href);
-
+let defaultLang = 'en';
 // function getMarkers() {
 //   return document.querySelectorAll('.marker');
 // }
@@ -104,9 +104,9 @@ let url = new URL(window.location.href);
 document.addEventListener('DOMContentLoaded', async () => {
   const elementsToTranslate = document.querySelectorAll('[data-key]');
 
-  const appLanguage = await getUserLanguagePref();
+  defaultLang = await getUserLanguagePref();
 
-  setLanguage(appLanguage);
+  setLanguage(defaultLang);
 
   function setLanguage(language) {
     elementsToTranslate.forEach((element) => {
@@ -256,7 +256,9 @@ if (uploadPhoto) {
       if (dentsTemp[img]) dentsTemp[img].pop();
     });
     removeMarksBtn.addEventListener('click', () => {
-      const confirmed = confirm('Remove all markers?');
+      const confirmed = confirm(translations[defaultLang]['removeAllMarks']);
+
+      // const confirmed = confirm('Remove all markers?');
       if (confirmed) {
         removeAllMarkers(markers);
         dents = dents.filter((element) => element.imageId !== img);
@@ -266,7 +268,7 @@ if (uploadPhoto) {
       }
     });
     deleteImage.addEventListener('click', (e) => {
-      const confirmed = confirm('Delete this image?');
+      const confirmed = confirm(translations[defaultLang]['deleteImage']);
       if (confirmed) {
         markerContainer.classList.add('hidden');
         uploadPhoto.classList.remove('hidden');
@@ -347,7 +349,8 @@ if (uploadPhoto) {
     if (vehicleImage) vehicleImage.src = '';
     const form = new FormData();
     const images = document.getElementById('photo').files;
-    if (images.length === 0) return showAlert('error', 'No files chosen');
+    if (images.length === 0)
+      return showAlert('error', translations[defaultLang]['noFilesChosen']);
     uploadPhoto.textContent = 'Uploading...';
 
     Array.from(images).forEach((file) => {
@@ -494,17 +497,26 @@ if (uploadPhoto) {
   if (sendMarksBtn) {
     sendMarksBtn.addEventListener('click', async () => {
       if (dents.length === 0 && !specialCase)
-        return showAlert('error', 'You have not placed any dent yet');
+        return showAlert('error', translations[defaultLang]['noDentsMarked']);
       let model = vehicleModel.value;
       if (model.length < 5)
-        return showAlert('error', 'Model name must have at least 5 characters');
+        return showAlert(
+          'error',
+          translations[defaultLang]['modelNameMinLength'],
+        );
       const year = selectedYear.value;
-      if (!year) return showAlert('error', 'Please choose model year');
+      if (!year)
+        return showAlert('error', translations[defaultLang]['chooseModelYear']);
       model += ` ${year}`;
       const note = newTaskNote.value.trim();
       if (note.length > 150)
-        return showAlert('error', 'Note must not exceed 150 characters');
-      await sendTask(customer, model, dents, uploadedImages, specialCase, note);
+        return showAlert('error', translations[defaultLang]['noteMaxLength']);
+      if (specialCase && note.length < 5)
+        return showAlert(
+          'error',
+          translations[defaultLang]['addShortDescription'],
+        );
+      // await sendTask(customer, model, dents, uploadedImages, specialCase, note);
     });
   }
 }
