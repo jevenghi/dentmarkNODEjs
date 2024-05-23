@@ -11,8 +11,11 @@ const factory = require('./handlerFactory');
 // const { showAlert } = require('../public/js/alerts');
 
 exports.getHelp = catchAsyncError(async (req, res, next) => {
-  res.status(200).render('help', {
+  const { language } = req.user;
+
+  res.status(200).render(`help`, {
     title: 'Instruction',
+    language,
   });
 });
 

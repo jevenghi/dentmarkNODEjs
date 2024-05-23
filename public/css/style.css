@@ -130,13 +130,14 @@ input[type='file'] {
   transition: transform 0.3s;
 }
 .help-container {
+  width: 98%;
   text-align: left;
   max-width: 60rem;
-  padding: 20px;
+  padding: 1rem;
   background-color: #fff;
   border-radius: 0.5rem;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-family: 'Kanit', sans-serif;
   font-weight: 200;
   font-style: normal;
