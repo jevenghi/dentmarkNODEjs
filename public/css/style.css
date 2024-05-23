@@ -6,7 +6,6 @@ body {
   /* background-image: linear-gradient(to right, rgb(45, 64, 89), rgb(45, 64, 89)); */
 
   overflow-y: auto;
-
   /* display: flex;
   flex-direction: column;
   justify-content: center;
@@ -130,7 +129,7 @@ input[type='file'] {
   transition: transform 0.3s;
 }
 .help-container {
-  width: 98%;
+  width: 90%;
   text-align: left;
   max-width: 60rem;
   padding: 1rem;
@@ -141,6 +140,7 @@ input[type='file'] {
   font-family: 'Kanit', sans-serif;
   font-weight: 200;
   font-style: normal;
+  margin-bottom: 1rem;
 }
 .rotate {
   transform: rotate(180deg); /* Rotate the arrow */
@@ -1010,7 +1010,20 @@ button[type='submit']:hover {
 .dropdown-content a:hover {
   background-color: #f1f1f1;
 }
-
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 2rem;
+}
+.footer p,
+.footer a {
+  font-size: 1.4rem;
+  color: #f9f9f9;
+  font-family: 'Kanit', sans-serif;
+  font-weight: 200;
+  text-align: center;
+}
 /* #search-input {
   width: 36rem;
 } */

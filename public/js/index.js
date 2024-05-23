@@ -137,7 +137,7 @@ let bigDent = false;
 let taskId;
 
 window.addEventListener('beforeunload', function (event) {
-  if (uploadedImages.length > 0) {
+  if (uploadedImages.length > 0 && dents.length > 0) {
     const confirmationMessage =
       'You have unsaved changes. Are you sure you want to leave this page?';
     event.preventDefault();
