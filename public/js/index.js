@@ -516,7 +516,7 @@ if (uploadPhoto) {
           'error',
           translations[defaultLang]['addShortDescription'],
         );
-      // await sendTask(customer, model, dents, uploadedImages, specialCase, note);
+      await sendTask(customer, model, dents, uploadedImages, specialCase, note);
     });
   }
 }
