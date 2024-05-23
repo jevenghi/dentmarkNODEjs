@@ -1014,7 +1014,8 @@ button[type='submit']:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 2rem;
+  /* height: 2rem; */
+  margin: 0;
 }
 .footer p,
 .footer a {
@@ -1023,6 +1024,7 @@ button[type='submit']:hover {
   font-family: 'Kanit', sans-serif;
   font-weight: 200;
   text-align: center;
+  margin-bottom: 0;
 }
 /* #search-input {
   width: 36rem;
