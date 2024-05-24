@@ -3,6 +3,7 @@ const sharp = require('sharp');
 const path = require('path');
 let Client = require('ssh2-sftp-client');
 const fs = require('fs');
+const slugify = require('slugify');
 
 const catchAsyncErr = require('../utils/catchAsyncError');
 const AppError = require('../utils/appError');
@@ -37,7 +38,8 @@ exports.resizeTaskPhotos = catchAsyncErr(async (req, res, next) => {
   const imageNames = [];
   await Promise.all(
     req.files.images.map(async (file, i) => {
-      const filename = `user-${req.user.id}-${Date.now()}-${i + 1}.png`;
+      const userName = slugify(req.user.name, { lower: true, strict: true });
+      const filename = `${userName}-${Date.now()}-${i + 1}.png`;
 
       //FOR ROTATING VERTICAL IMAGES
       const metadata = await sharp(file.buffer).metadata();
