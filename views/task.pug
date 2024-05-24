@@ -1,4 +1,5 @@
 extends base
+include mixins.pug
 
 block styles
   link(rel="stylesheet" href="/css/style.css")
@@ -53,22 +54,24 @@ block content
   
       .choose.choose__side
         h1 Choose side
-      .marker-container.hidden
-        .row
-          label
-            | Paint damaged
-            input.m_checkbox.m_checkbox--paint(type="checkbox" id="paint-damaged")
-          label
-            | 5+ cm
-            input.m_checkbox.m_checkbox--hail(type="checkbox" id="big-dent")
-          label
-            | Special case
-            input.m_checkbox.m_checkbox--hail(type="checkbox" id="special-case")
-        .row
-          .remove-container.hidden
-            button.remove_mark_btn.remove__last Clear last mark
-            button.remove_mark_btn.remove__photo Delete Image
-            button.remove_mark_btn.remove--marks Clear All Marks
+      +markerContainer()
+  
+      //- .marker-container.hidden
+      //-   .row
+      //-     label
+      //-       | Paint damaged
+      //-       input.m_checkbox.m_checkbox--paint(type="checkbox" id="paint-damaged")
+      //-     label
+      //-       | 5+ cm
+      //-       input.m_checkbox.m_checkbox--hail(type="checkbox" id="big-dent")
+      //-     label
+      //-       | Special case
+      //-       input.m_checkbox.m_checkbox--hail(type="checkbox" id="special-case")
+      //-   .row
+      //-     .remove-container.hidden
+      //-       button.remove_mark_btn.remove__last Clear last mark
+      //-       button.remove_mark_btn.remove__photo Delete Image
+      //-       button.remove_mark_btn.remove--marks Clear All Marks
 
       .image-container
         img#vehicleImage(src="")
@@ -79,7 +82,7 @@ block content
       //-   button.remove_mark_btn.remove__photo Delete Image
       //-   button.remove_mark_btn.remove--marks Clear All Marks
 
-    button(type="button" class='save-new-dents') Save changes
+    button(type="button" class='save-new-dents' class='hidden') Save changes
     button(type="button" class='back-tasks') Back to tasks           
   .overlay.hidden
             

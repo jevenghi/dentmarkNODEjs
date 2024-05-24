@@ -693,7 +693,7 @@ if (userPasswordForm) {
       document.getElementById('confirmNewPassword').value;
     updateSettings(
       { oldPassword, newPassword, newPasswordConfirm },
-      'Password',
+      'password',
     );
   });
 }

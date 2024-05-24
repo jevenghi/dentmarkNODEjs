@@ -7,34 +7,34 @@ block styles
 block content
   .main-container
     form.form-user-data
-      h2 Change your account settings
+      h2(data-key="changeAccountSettings")
 
       div.form-group
-        label(for="email") Email
+        label(for="email" ) Email
         input(type="email" id="email" name="email" value=`${user.email}` required)
       div.form-group
-        label(for="name") Company / Name
+        label(for="name" data-key="companyName")
         input(type="text" id="name" name="name" value=`${user.name}` required)
       div.form-group
-        label(for="language") Language
+        label(for="language" data-key="language")
         select#language(name="language")
           option(value="en" selected=user.language === "en") English
           option(value="nl" selected=user.language === "nl") Nederlands
 
-      button(type="submit") Save changes 
+      button(type="submit" data-key="saveChanges") 
 
     form.form-user-password
-      h2 Change your password
+      h2(data-key="changePassword")
       
       div.form-group
-        label(for="oldPassword") Current password
+        label(for="oldPassword" data-key="currentPassword")
         input(type="password" id="oldPassword" name="oldPassword" required)
       div.form-group
-        label(for="newPassword") New password
+        label(for="newPassword" data-key="newPassword")
         input(type="password" id="newPassword" name="newPassword" required)
       div.form-group
-        label(for="confirmNewPassword") Confirm new password
+        label(for="confirmNewPassword" data-key="confirmNewPassword")
         input(type="password" id="confirmNewPassword" name="confirmNewPassword" required)
-      button(type="submit") Change password
-  .overlay.hidden            
+      button(type="submit" data-key="changePasswordButton")
+  .overlay.hidden
     

@@ -1,4 +1,6 @@
 extends base
+include mixins.pug
+
 block styles
   link(rel="stylesheet" href="/css/style.css")
   link(href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz@9..40&family=Tourney:wght@100&display=swap&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
@@ -23,23 +25,24 @@ block content
     
     .choose.choose__side.hidden
       h1(data-key="chooseSide")
+    +markerContainer()  
       
-    .marker-container.hidden
-      .row
-        label
-          div(data-key="paintDamaged")
-          input.m_checkbox.m_checkbox--paint(type="checkbox" id="paint-damaged")
-        label
-          | 5+ cm
-          input.m_checkbox.m_checkbox--hail(type="checkbox" id="big-dent")
-        label
-          div(data-key="specialCase")
-          input.m_checkbox.m_checkbox--hail(type="checkbox" id="special-case")
-      .row    
-        .remove-container
-          button.remove_mark_btn.remove__last Clear Last Mark
-          button.remove_mark_btn.remove__photo Delete Image
-          button.remove_mark_btn.remove--marks Clear All Marks
+    //- .marker-container.hidden
+    //-   .row
+    //-     label
+    //-       div(data-key="paintDamaged")
+    //-       input.m_checkbox.m_checkbox--paint(type="checkbox" id="paint-damaged")
+    //-     label
+    //-       | 5+ cm
+    //-       input.m_checkbox.m_checkbox--hail(type="checkbox" id="big-dent")
+    //-     label
+    //-       div(data-key="specialCase")
+    //-       input.m_checkbox.m_checkbox--hail(type="checkbox" id="special-case")
+    //-   .row    
+    //-     .remove-container
+    //-       button.remove_mark_btn.remove__last Clear Last Mark
+    //-       button.remove_mark_btn.remove__photo Delete Image
+    //-       button.remove_mark_btn.remove--marks Clear All Marks
 
     .image-container
       img#vehicleImage(src="")

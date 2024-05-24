@@ -75,7 +75,7 @@ h1 {
   margin-top: 10px;
   font-family: 'Poppins', sans-serif;
   font-weight: 300;
-  font-size: 2.3rem;
+  font-size: 2rem;
 
   /* font-family: 'DM Sans', sans-serif;
   font-family: 'Tourney', sans-serif; */
@@ -827,6 +827,7 @@ button[type='submit']:hover {
   text-align: center;
   margin-bottom: 1.25rem;
   color: #000000;
+  font-size: 2rem;
 }
 
 .form-user-password {
@@ -1016,6 +1017,7 @@ button[type='submit']:hover {
   justify-content: center;
   /* height: 2rem; */
   margin: 0;
+  position: sticky;
 }
 .footer p,
 .footer a {
