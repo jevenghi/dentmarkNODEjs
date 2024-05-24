@@ -233,12 +233,13 @@ exports.protect = catchAsyncError(async (req, res, next) => {
   }
 
   if (currentUser.changedPasswordAfter(decoded.iat)) {
-    return next(
-      new AppError(
-        `Invalid credentials or session expired. Please log in again.`,
-        401,
-      ),
-    );
+    return res.redirect('/landing');
+    // return next(
+    //   new AppError(
+    //     `Invalid credentials or session expired. Please log in again.`,
+    //     401,
+    //   ),
+    // );
   }
 
   req.user = currentUser;
