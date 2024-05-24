@@ -135,9 +135,11 @@ let dentPaintDamaged = false;
 let specialCase = false;
 let bigDent = false;
 let taskId;
+let warnBeforeUnload = true;
 
 window.addEventListener('beforeunload', function (event) {
-  if (uploadedImages.length > 0 && dents.length > 0) {
+  console.log(warnBeforeUnload);
+  if (uploadedImages.length > 0 && dents.length > 0 && warnBeforeUnload) {
     const confirmationMessage =
       'You have unsaved changes. Are you sure you want to leave this page?';
     event.preventDefault();
@@ -166,6 +168,7 @@ const populateSidesWithDents = (dents, folder) => {
       });
 
       removeAllMarkers(markers);
+      const addNewDentsToTask = document.querySelector('.save-new-dents');
 
       button.style.border = '0.3rem solid coral';
       img = button.value;
@@ -499,6 +502,8 @@ if (uploadPhoto) {
     addNewDentsToTask.addEventListener('click', async () => {
       // if (dents.length === 0)
       //   return showAlert('error', `You haven't added any dent`);
+      warnBeforeUnload = false;
+
       addNewDentsToTask.textContent = 'Saving...';
       await addDentsToTask(taskId, dents, uploadedImages);
       addNewDentsToTask.textContent = 'Save changes';
@@ -526,6 +531,7 @@ if (uploadPhoto) {
           'error',
           translations[defaultLang]['addShortDescription'],
         );
+      warnBeforeUnload = false;
       await sendTask(
         customer,
         model,
