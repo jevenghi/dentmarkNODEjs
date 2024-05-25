@@ -17,11 +17,11 @@ block content
       //- h2 Please choose photos to upload:
       input.form__upload(type="file" accept="image/*" id="photo" name="photo" multiple)
       //- label(class="choose-photo-btn" for="photo") Browse photos
-      button.form__btn.upload_photo.hidden Upload
+      button.form__btn.upload_photo Upload
     .logo-container
       img#logoImage(src="/pics/amlogo.png")
-    .need-help-link
-      a(href="/help" data-key="needHelp")
+    //- .need-help-link
+    //-   a(href="/help" data-key="needHelp")
     
     .choose.choose__side.hidden
       h1(data-key="chooseSide")
@@ -78,6 +78,8 @@ block content
           
     .form__row.form__row--button
       button.form__btn.send-marks.hidden(data-key="sendTask")
+    .need-help-link
+      a(href="/help" data-key="needHelp") 
 
   .overlay.hidden            
     

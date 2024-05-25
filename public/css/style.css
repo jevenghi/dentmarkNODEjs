@@ -630,7 +630,7 @@ input[type='file'] {
   background-color: rgb(238, 238, 238);
   /* padding: 1rem; */
   margin: 1rem;
-  margin-bottom: 0;
+  /* margin-bottom: 0; */
   font-size: 2rem;
 }
 
@@ -960,7 +960,7 @@ button[type='submit']:hover {
   border: none;
   margin-top: 0.5rem;
   padding: 0.5rem;
-  font-size: 2rem;
+  font-size: 1.8rem;
   text-decoration: none;
 }
 .choose-photo-btn {

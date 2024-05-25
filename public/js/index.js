@@ -116,14 +116,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
-const fileInput = document.getElementById('photo');
-if (fileInput) {
-  fileInput.addEventListener('change', function () {
-    if (fileInput.files.length > 0) {
-      uploadPhoto.classList.remove('hidden');
-    }
-  });
-}
+// const fileInput = document.getElementById('photo');
+// if (fileInput) {
+//   fileInput.addEventListener('change', function () {
+//     if (fileInput.files.length > 0) {
+//       uploadPhoto.classList.remove('hidden');
+//     }
+//   });
+// }
 
 let img;
 let customer;
@@ -284,7 +284,7 @@ if (uploadPhoto) {
       const confirmed = confirm(translations[defaultLang]['deleteImage']);
       if (confirmed) {
         markerContainer.classList.add('hidden');
-        uploadPhoto.classList.remove('hidden');
+        // uploadPhoto.classList.remove('hidden');
         uploadedImages = uploadedImages.filter((element) => element !== img);
         dents = dents.filter((element) => element.imageId !== img);
         if (dentsTemp[img]) delete dentsTemp[img];
@@ -299,7 +299,7 @@ if (uploadPhoto) {
         }, 50);
         if (sendContainer) sendContainer.classList.add('hidden');
         if (sendMarksBtn) sendMarksBtn.classList.add('hidden');
-        if (uploadedImages.length === 0) sideText.classList.add('hidden');
+        // if (uploadedImages.length === 0) sideText.classList.add('hidden');
       }
     });
   }
@@ -378,7 +378,7 @@ if (uploadPhoto) {
     }
     uploadPhoto.textContent = 'Upload';
     renderVehicleImageFromUploads(uploadedImages, 'tasks');
-    uploadPhoto.classList.add('hidden');
+    // uploadPhoto.classList.add('hidden');
 
     sideText.classList.remove('hidden');
     sideSelection = document.querySelector('.sides-container');
