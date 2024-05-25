@@ -353,16 +353,17 @@ if (uploadPhoto) {
 
   uploadPhoto.addEventListener('click', async (e) => {
     e.preventDefault();
-    if (logoImage) {
-      logoImage.src = '';
-      logoImage.style.width = 0;
-    }
+
     const vehicleImage = imageContainer.querySelector('#vehicleImage');
     if (vehicleImage) vehicleImage.src = '';
     const form = new FormData();
     const images = document.getElementById('photo').files;
     if (images.length === 0)
       return showAlert('error', translations[defaultLang]['noFilesChosen']);
+    if (logoImage) {
+      logoImage.src = '';
+      logoImage.style.width = 0;
+    }
     uploadPhoto.textContent = 'Uploading...';
 
     Array.from(images).forEach((file) => {
