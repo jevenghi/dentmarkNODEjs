@@ -138,7 +138,6 @@ let taskId;
 let warnBeforeUnload = true;
 
 window.addEventListener('beforeunload', function (event) {
-  console.log(warnBeforeUnload);
   if (uploadedImages.length > 0 && dents.length > 0 && warnBeforeUnload) {
     const confirmationMessage =
       'You have unsaved changes. Are you sure you want to leave this page?';
@@ -379,6 +378,8 @@ if (uploadPhoto) {
     uploadPhoto.textContent = 'Upload';
     renderVehicleImageFromUploads(uploadedImages, 'tasks');
     // uploadPhoto.classList.add('hidden');
+    const fileInput = document.getElementById('photo');
+    fileInput.value = '';
 
     sideText.classList.remove('hidden');
     sideSelection = document.querySelector('.sides-container');
