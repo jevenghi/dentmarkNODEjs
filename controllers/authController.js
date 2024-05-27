@@ -229,7 +229,8 @@ exports.protect = catchAsyncError(async (req, res, next) => {
   const currentUser = await User.findById(decoded.id);
 
   if (!currentUser) {
-    return next(new AppError(`The user does no longer exist.`, 401));
+    return res.redirect('/landing');
+    // return next(new AppError(`The user does no longer exist.`, 401));
   }
 
   if (currentUser.changedPasswordAfter(decoded.iat)) {
