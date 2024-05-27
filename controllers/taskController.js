@@ -10,6 +10,7 @@ const factory = require('./handlerFactory');
 const AppError = require('../utils/appError');
 const multer = require('multer');
 const sendMail = require('../utils/email');
+const Email = require('../utils/email');
 
 // const multerStorage = multer.diskStorage({
 //   destination: (req, file, cb) => {
@@ -188,6 +189,7 @@ exports.addDentsToTask = catchAsyncErr(async (req, res, next) => {
     task.dents.push(...req.body.dents);
     task.images = [...req.body.images];
     await task.save();
+    req.taskId = taskId;
     res.status(201).json({
       status: 'success',
     });
@@ -197,6 +199,7 @@ exports.addDentsToTask = catchAsyncErr(async (req, res, next) => {
       message: err,
     });
   }
+  next();
 });
 
 //REFERENCED DENTS
@@ -351,17 +354,33 @@ exports.sendTaskCreationEmail = async (req, res, next) => {
     const task = await Task.findById(taskId);
     const userName = task.user.name;
 
-    const emailOptions = {
-      email: 'info@am-place.com',
-      // email: 'jevenghi@gmail.com',
+    const subject = 'New Task submitted';
+    const message = `${userName} has submitted new task ${req.protocol}://${req.get('host')}/tasks/${taskId}.`;
 
-      subject: 'New Task submitted',
-      message: `${userName} has submitted new task ${req.protocol}://${req.get('host')}/tasks/${taskId}.`,
-    };
+    const email = new Email('info@am-place.com');
 
-    await sendMail(emailOptions);
+    await email.send(subject, message);
   } catch (error) {
     console.error('Error sending task creation email:', error);
+    // You might choose to respond with an error here
+    // res.status(500).json({ error: 'Failed to send task creation email' });
+  }
+};
+exports.sendTaskChangeEmail = async (req, res, next) => {
+  try {
+    const { taskId } = req;
+
+    const task = await Task.findById(taskId);
+    const userName = task.user.name;
+
+    const subject = 'Changes made to task';
+    const message = `${userName} has made changes to task: ${req.protocol}://${req.get('host')}/tasks/${taskId}.`;
+
+    const email = new Email('info@am-place.com');
+
+    await email.send(subject, message);
+  } catch (error) {
+    console.error('Error sending task change email:', error);
     // You might choose to respond with an error here
     // res.status(500).json({ error: 'Failed to send task creation email' });
   }

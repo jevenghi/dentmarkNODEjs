@@ -337,7 +337,11 @@ exports.confirmEmail = catchAsyncError(async (req, res, next) => {
   });
 
   if (!user) {
-    return next(new AppError('Token is invalid or expired'), 403);
+    // return next(new AppError('Token is invalid or expired'), 403);
+    return res.status(403).render('error', {
+      title: 'Something went wrong!',
+      msg: 'Email is already confirmed or confirmation token is invalid / expired.',
+    });
   }
 
   user.emailConfirmed = true;

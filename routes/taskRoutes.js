@@ -18,8 +18,8 @@ router.post(
   '/sendTask/:id',
   authController.protect,
   imageController.transferFiles,
-
   taskController.addDentsToTask,
+  taskController.sendTaskChangeEmail,
 );
 
 // Restrict all routes after this middleware to admin & super admin

@@ -2,18 +2,14 @@ const nodemailer = require('nodemailer');
 const pug = require('pug');
 const htmlToText = require('html-to-text');
 
-module.exports = class Email {
-  constructor(user, url) {
-    this.to = user.email;
-    this.url = url;
-    this.from = `Dentmark App <${process.env.EMAIL_MAIN}>`;
+class Email {
+  constructor(userEmail) {
+    this.to = userEmail;
+    this.from = 'Dentmarker App <info@am-place.com>';
   }
 
-  newTransport() {
-    if (process.env.NODE_ENV === 'production') {
-      return 1;
-    }
-    return nodemailer.createTransport({
+  async send(subject, message) {
+    const transport = nodemailer.createTransport({
       host: process.env.EMAIL_HOST,
       port: process.env.EMAIL_PORT,
       auth: {
@@ -21,28 +17,18 @@ module.exports = class Email {
         pass: process.env.EMAIL_PASSWORD,
       },
     });
-  }
 
-  async send(template, subject) {
-    const html = pug.renderFile(`${__dirname}/../views/welcome.pug`, {
-      url: this.url,
-      subject,
-    });
     const mailOptions = {
       from: this.from,
       to: this.to,
-      subject,
-      html,
-      text: htmlToText.fromString(html),
+      subject: subject,
+      text: message,
+      // html: can be added if needed
     };
 
-    await this.newTransport().sendMail(mailOptions);
+    await transport.sendMail(mailOptions);
   }
-
-  async sendWelcome() {
-    await this.send('welcome', 'Welcome to the DentMark App!');
-  }
-};
+}
 
 const sendMail = async (options) => {
   const transport = nodemailer.createTransport({
@@ -65,4 +51,4 @@ const sendMail = async (options) => {
   await transport.sendMail(mailOptions);
 };
 
-module.exports = sendMail;
+module.exports = Email;
