@@ -515,7 +515,7 @@ if (uploadPhoto) {
     sendMarksBtn.addEventListener('click', async () => {
       if (dents.length === 0 && !specialCase)
         return showAlert('error', translations[defaultLang]['noDentsMarked']);
-      let model = vehicleModel.value;
+      let model = vehicleModel.value.trim();
       if (model.length < 5)
         return showAlert(
           'error',
