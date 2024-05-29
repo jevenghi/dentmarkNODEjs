@@ -94,6 +94,10 @@ module.exports = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
 
+  if (err.statusCode === 404 && err.message.startsWith("Can't find")) {
+    return res.status(404).send('Not Found');
+  }
+
   if (process.env.NODE_ENV === 'development') {
     sendErrorDev(err, req, res, next);
   } else if (process.env.NODE_ENV === 'production') {
