@@ -4,7 +4,8 @@ const crypto = require('crypto');
 const User = require('../models/userModel');
 const AppError = require('../utils/appError');
 const catchAsyncError = require('../utils/catchAsyncError');
-const sendEmail = require('../utils/email');
+const Email = require('../utils/email');
+
 const {
   MAX_LOGIN_ATTEMPTS,
   LOCK_TIME,
@@ -84,13 +85,11 @@ exports.signup = catchAsyncError(async (req, res, next) => {
 
   const confirmationURL = `${req.protocol}://${req.get('host')}/api/v1/auth/confirmEmail/${confirmationToken}`;
   const message = `Please confirm your registration at DentMarker by clicking the link below:\n${confirmationURL}. \nUnverified accounts are automatically deleted 30 days after signup. If you didn't request this, please ignore this email. \nKind Regards,\nDentMarker Team`;
+  const email = new Email(newUser.email);
+  const subject = 'Confirm your signup at DentMarker App';
 
   try {
-    await sendEmail({
-      email: newUser.email,
-      subject: 'Confirm your signup at DentMarker App',
-      message,
-    });
+    await email.send(subject, message);
 
     res.status(201).json({
       status: 'success',
@@ -281,13 +280,16 @@ exports.forgotPassword = catchAsyncError(async (req, res, next) => {
   const resetURL = `${req.protocol}://${req.get('host')}/reset-password?token=${resetToken}`;
 
   const message = `Follow the link to reset your password: ${resetURL}`;
+  const subject = 'Password reset';
+  const email = new Email(user.email);
 
   try {
-    await sendEmail({
-      email: user.email,
-      subject: 'Password reset',
-      message,
-    });
+    // await sendEmail({
+    //   email: user.email,
+    //   subject: 'Password reset',
+    //   message,
+    // });
+    await email.send(subject, message);
     res.status(200).json({
       status: 'success',
       message: 'Instructions sent to your e-mail address.',

@@ -1,7 +1,8 @@
 import { showAlert } from './alerts.js';
 import axios from 'axios';
 
-const forgotPassword = async (email) => {
+export const forgotPassword = async (email) => {
+  console.log(email);
   try {
     const res = await axios({
       method: 'POST',
@@ -29,8 +30,8 @@ const forgotPassword = async (email) => {
   }
 };
 
-document.querySelector('.login-form').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const email = document.getElementById('email').value;
-  forgotPassword(email);
-});
+// document.querySelector('.login-form').addEventListener('submit', (e) => {
+//   e.preventDefault();
+//   const email = document.getElementById('email').value;
+//   forgotPassword(email);
+// });

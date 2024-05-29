@@ -550,7 +550,7 @@ if (uploadPhoto) {
 if (forgotPassBtn) {
   forgotPassBtn.addEventListener('click', function (e) {
     e.preventDefault();
-    const email = document.getElementById('email-forgot-pass').value;
+    const email = document.getElementById('email-forgot-pass').value.trim();
     forgotPassword(email);
   });
 }
