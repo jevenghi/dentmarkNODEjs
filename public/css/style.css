@@ -373,6 +373,7 @@ input[type='file'] {
   background-color: white;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
+
 .marker-container {
   /* margin: 1rem; */
   /* opacity: 0; */
@@ -387,6 +388,12 @@ input[type='file'] {
 
   /* position: fixed;
   width: 100%; */
+}
+.marker-container-placeholder {
+  display: none;
+}
+.marker-container-placeholder.visible {
+  display: block;
 }
 
 .row {

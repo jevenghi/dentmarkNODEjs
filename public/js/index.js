@@ -207,18 +207,48 @@ const populateSidesWithDents = (dents, folder) => {
     });
   });
 };
-const makeMarkerContainerFloating = () => {
-  const markerContainerOffset =
-    markerContainer.offsetTop + markerContainer.offsetHeight;
 
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > markerContainerOffset) {
-      markerContainer.classList.add('sticky');
-    } else {
-      markerContainer.classList.remove('sticky');
-    }
-  });
+const makeMarkerContainerFloating = () => {
+  const sentinel = document.querySelector('.sentinel');
+  const markerContainerHeight = markerContainer.getBoundingClientRect().height;
+  const markerContainerPlaceholder = document.querySelector(
+    '.marker-container-placeholder',
+  );
+
+  markerContainerPlaceholder.style.height = `${markerContainerHeight}px`;
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.intersectionRatio === 0) {
+          markerContainer.classList.add('sticky');
+          markerContainerPlaceholder.classList.add('visible');
+        } else {
+          markerContainer.classList.remove('sticky');
+          markerContainerPlaceholder.classList.remove('visible');
+        }
+      });
+    },
+    {
+      root: null,
+      threshold: 0,
+      rootMargin: `+${markerContainerHeight}px`,
+    },
+  );
+
+  observer.observe(sentinel);
+  // const markerContainerOffset =
+  //   markerContainer.offsetTop + markerContainer.offsetHeight;
+
+  // window.addEventListener('scroll', () => {
+  //   if (window.scrollY > markerContainerOffset) {
+  //     markerContainer.classList.add('sticky');
+  //   } else {
+  //     markerContainer.classList.remove('sticky');
+  //   }
+  // });
 };
+
 const removeLastMarker = (markers, dents) => {
   if (markers.length > 0) {
     const lastMarker = markers[markers.length - 1];
