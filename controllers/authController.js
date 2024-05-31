@@ -352,7 +352,14 @@ exports.confirmEmail = catchAsyncError(async (req, res, next) => {
   user.emailConfirmationTokenExpires = undefined;
 
   await user.save({ validateBeforeSave: false });
-
+  try {
+    const email = new Email('info@am-place.com');
+    const subject = 'New user registered';
+    const message = `${user.name} has succesfully completed registration.`;
+    await email.send(subject, message);
+  } catch (err) {
+    console.log(err);
+  }
   res.redirect('/welcome');
 });
 
