@@ -186,6 +186,7 @@ exports.addDentsToTask = catchAsyncErr(async (req, res, next) => {
     const task = await Task.findById(taskId);
     if (!task)
       return next(new AppError(`Task with this ID does not exist`, 404));
+
     task.dents.push(...req.body.dents);
     task.images = [...req.body.images];
     await task.save();
@@ -377,6 +378,7 @@ exports.sendTaskChangeEmail = async (req, res, next) => {
     const message = `${userName} has made changes to task: ${req.protocol}://${req.get('host')}/tasks/${taskId}.`;
 
     const email = new Email('info@am-place.com');
+    // const email = new Email('jevenghi@gmail.com');
 
     await email.send(subject, message);
   } catch (error) {

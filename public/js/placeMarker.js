@@ -5,6 +5,13 @@ import * as markerConstants from '../../constants/markerConstants';
 export const placeMarker = (bigDent, paintDamaged, coords, image) => {
   const marker = document.createElement('div');
   marker.className = 'marker';
+  let currentWidth = parseInt(markerConstants.UPLOADED_IMAGE_WIDTH) * 1;
+  let currentHeight = image.clientHeight;
+  let markerLeftPercent = parseFloat(coords.relativeX);
+  let markerTopPercent = parseFloat(coords.relativeY);
+
+  let markerLeftPx = (markerLeftPercent / 100) * currentWidth;
+  let markerTopPx = (markerTopPercent / 100) * currentHeight;
   if (paintDamaged) {
     marker.style.borderStyle = 'dotted';
     marker.style.borderWidth = '0.2rem';
@@ -12,15 +19,20 @@ export const placeMarker = (bigDent, paintDamaged, coords, image) => {
 
   if (bigDent) {
     marker.style.width = marker.style.height = markerConstants.MARKER_BIG;
-    marker.style.left = `${coords.x - markerConstants.MARKER_BIG_CORR}px`;
-    marker.style.top = `${coords.y - markerConstants.MARKER_BIG_CORR}px`;
+    marker.style.left = `${markerLeftPx - markerConstants.MARKER_BIG_CORR}px`;
+    marker.style.top = `${markerTopPx - markerConstants.MARKER_BIG_CORR}px`;
+    //ABSOLUTE
+    // marker.style.left = `${coords.x - markerConstants.MARKER_BIG_CORR}px`;
+    // marker.style.top = `${coords.y - markerConstants.MARKER_BIG_CORR}px`;
+    //RELATIVE
     // marker.style.left = `${coords.relativeX - markerConstants.MARKER_BIG_CORR}%`;
     // marker.style.top = `${coords.relativeY - markerConstants.MARKER_BIG_CORR}%`;
   } else {
-    marker.style.left = `${coords.x - markerConstants.MARKER_SMALL_CORR}px`;
-    marker.style.top = `${coords.y - markerConstants.MARKER_SMALL_CORR}px`;
-    // marker.style.left = `${coords.relativeX - markerConstants.MARKER_SMALL_CORR}%`;
-    // marker.style.top = `${coords.relativeY - markerConstants.MARKER_SMALL_CORR}%`;
+    marker.style.left = `${markerLeftPx - markerConstants.MARKER_SMALL_CORR}px`;
+    marker.style.top = `${markerTopPx - markerConstants.MARKER_SMALL_CORR}px`;
+
+    // marker.style.left = `${coords.x - markerConstants.MARKER_SMALL_CORR}px`;
+    // marker.style.top = `${coords.y - markerConstants.MARKER_SMALL_CORR}px`;
   }
 
   image.appendChild(marker);
