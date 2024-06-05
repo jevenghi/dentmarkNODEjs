@@ -46,15 +46,14 @@ export const addDentsToTask = async (taskId, dents, images) => {
       data: { dents, images },
     });
     if (res.data.status === 'success') {
-      // alert('Dents successfully added!');
-      window.setTimeout(() => {
-        // window.scrollTo(0, 0);
-        location.reload();
-      }, 0);
+      showAlert('success', 'Changes saved successfully!');
+      // window.setTimeout(() => {
+      //   // window.scrollTo(0, 0);
+      //   location.reload();
+      // }, 0);
     }
   } catch (err) {
-    console.log(err);
-    showAlert('error', err);
+    showAlert('error', err.response.data.message);
   }
 };
 //TODO: move to index.js

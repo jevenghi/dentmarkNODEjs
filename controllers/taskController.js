@@ -180,6 +180,28 @@ exports.sendTask = catchAsyncErr(async (req, res, next) => {
   next();
 });
 
+// exports.addDentsToTask = catchAsyncErr(async (req, res, next) => {
+//   const taskId = req.params.id;
+//   try {
+//     const task = await Task.findById(taskId);
+//     if (!task)
+//       return next(new AppError(`Task with this ID does not exist`, 404));
+
+//     task.dents.push(...req.body.dents);
+//     task.images = [...req.body.images];
+//     await task.save();
+//     req.taskId = taskId;
+//     res.status(201).json({
+//       status: 'success',
+//     });
+//   } catch (err) {
+//     res.status(404).json({
+//       status: 'fail',
+//       message: err.response.data.message,
+//     });
+//   }
+//   next();
+// });
 exports.addDentsToTask = catchAsyncErr(async (req, res, next) => {
   const taskId = req.params.id;
   try {
@@ -195,16 +217,11 @@ exports.addDentsToTask = catchAsyncErr(async (req, res, next) => {
       status: 'success',
     });
   } catch (err) {
-    res.status(404).json({
-      status: 'fail',
-      message: err,
-    });
+    console.log(err);
+    return next(new AppError(err, 404));
   }
   next();
 });
-
-//REFERENCED DENTS
-// exports.sendTask = catchAsyncErr(async (req, res, next) => {});
 
 exports.updateTask = factory.updateOne(Task);
 

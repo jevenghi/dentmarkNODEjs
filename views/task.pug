@@ -25,6 +25,7 @@ block content
               option(value="in-progress", selected=taskStatus === "in-progress") In Progress
               option(value="pending", selected=taskStatus === "pending") Complete/Not paid
               option(value="complete", selected=taskStatus === "complete") Paid
+
         .task-cost-wrapper
           p Total cost:
           input(type="text", placeholder=`€${totalCost}`, class="total-cost", data-task-id=taskId)
