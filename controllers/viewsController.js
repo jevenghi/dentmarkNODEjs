@@ -1,3 +1,7 @@
+const EventEmitter = require('events');
+
+EventEmitter.defaultMaxListeners = 11;
+
 let Client = require('ssh2-sftp-client');
 const path = require('path');
 
@@ -98,6 +102,7 @@ exports.getUser = catchAsyncError(async (req, res, next) => {
     limit,
   });
 });
+
 //TODO: fix error handling
 exports.getTask = catchAsyncError(async (req, res, next) => {
   const task = await Task.findById(req.params.id);
@@ -130,6 +135,7 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
     );
 
     client.end();
+
     // res.status(201).json({ status: 'success' });
   } catch (err) {
     console.error('SFTP Error:', err);
