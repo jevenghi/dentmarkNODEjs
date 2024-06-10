@@ -21,6 +21,8 @@ import { searchUsers, getUserLanguagePref } from './searchUsers';
 import { generateTaskPDF, createShortcutContainer } from './makeScreenshot';
 import { UPLOADED_IMAGE_WIDTH } from '../../constants/markerConstants';
 import { translations } from './translations';
+const events = require('events');
+events.EventEmitter.setMaxListeners = 20;
 
 // const imageCanvas =
 const mainContainer = document.querySelector('.main-container');

@@ -106,6 +106,68 @@ import { showAlert } from './alerts';
 // };
 
 //LAST IN USE
+const convertImagesToBase64 = async () => {
+  try {
+    const base64Images = [];
+
+    const imageContainers = Array.from(
+      document.querySelectorAll('.screenshot-container'),
+    );
+    const taskHeaderContainer = document.querySelector('.task-header');
+    if (taskHeaderContainer) {
+      const canvas = await html2canvas(taskHeaderContainer);
+      const blob = await new Promise((resolve) =>
+        canvas.toBlob(resolve, 'image/png'),
+      );
+
+      const compressedBlob = await compress(blob, {
+        quality: 1,
+        width: 500,
+      });
+
+      const base64Data = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(compressedBlob);
+        reader.onloadend = function () {
+          resolve(reader.result.split(',')[1]);
+        };
+        reader.onerror = reject;
+      });
+
+      base64Images.push(base64Data);
+    }
+
+    await Promise.all(
+      imageContainers.map(async (container) => {
+        const canvas = await html2canvas(container);
+        const blob = await new Promise((resolve) =>
+          canvas.toBlob(resolve, 'image/png'),
+        );
+
+        const compressedBlob = await compress(blob, {
+          quality: 1,
+          width: 500,
+        });
+
+        const base64Data = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(compressedBlob);
+          reader.onloadend = function () {
+            resolve(reader.result.split(',')[1]);
+          };
+          reader.onerror = reject;
+        });
+
+        base64Images.push(base64Data);
+      }),
+    );
+
+    return base64Images;
+  } catch (error) {
+    console.error('Error converting screenshots to Base64:', error);
+    return [];
+  }
+};
 
 export const generateTaskPDF = async () => {
   const downloadTaskBtn = document.querySelector('.download-task-report');
@@ -113,6 +175,7 @@ export const generateTaskPDF = async () => {
   downloadTaskBtn.textContent = 'Downloading...';
   try {
     const images = await convertImagesToBase64();
+
     // const taskSummary = await convertImagesToBase64('.task-header');
     const docDefinition = {
       content: [],
