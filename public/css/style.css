@@ -1052,7 +1052,7 @@ button[type='submit']:hover {
   height: 24px;
   animation: spin 1s linear infinite;
   position: absolute;
-  top: 25%;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
 }
