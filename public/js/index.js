@@ -86,6 +86,8 @@ const selectedYear = document.getElementById('year');
 const taskHeader = document.querySelector('.task-header');
 const addNewDentsToTask = document.querySelector('.save-new-dents');
 let buttonsSide = document.querySelectorAll('.button--side');
+const uploadContainer = document.querySelector('.photo-upload_container');
+const fileInput = document.getElementById('photo');
 
 let url = new URL(window.location.href);
 let defaultLang = 'en';
@@ -330,7 +332,7 @@ const clearResults = () => {
   searchResults.style.display = 'none';
 };
 
-if (uploadPhoto) {
+if (uploadContainer) {
   if (removeLastMarkBtn) {
     const markers = imageContainer.getElementsByClassName('marker');
     removeLastMarkBtn.addEventListener('click', () => {
@@ -420,98 +422,194 @@ if (uploadPhoto) {
       });
     }
   }
+  if (fileInput) {
+    const spinner = document.getElementById('spinner');
 
-  uploadPhoto.addEventListener('click', async (e) => {
-    e.preventDefault();
+    fileInput.addEventListener('change', async (e) => {
+      e.preventDefault();
+      spinner.style.display = 'block';
 
-    const vehicleImage = imageContainer.querySelector('#vehicleImage');
-    if (vehicleImage) vehicleImage.src = '';
-    const form = new FormData();
-    const images = document.getElementById('photo').files;
-    if (images.length === 0)
-      return showAlert('error', translations[defaultLang]['noFilesChosen']);
-    if (logoImage) {
-      logoImage.src = '';
-      logoImage.style.width = 0;
-    }
-    uploadPhoto.textContent = 'Uploading...';
+      const vehicleImage = imageContainer.querySelector('#vehicleImage');
+      if (vehicleImage) vehicleImage.src = '';
+      const form = new FormData();
+      const images = document.getElementById('photo').files;
 
-    Array.from(images).forEach((file) => {
-      form.append('images', file);
-    });
+      if (logoImage) {
+        logoImage.src = '';
+        logoImage.style.width = 0;
+      }
 
-    try {
-      const imagesProcessed = await uploadPhotosTemp(form);
-      uploadedImages.push(...imagesProcessed);
-    } catch (error) {
-      showAlert('error', error);
-    }
-    uploadPhoto.textContent = 'Upload';
-    renderVehicleImageFromUploads(uploadedImages, 'tasks');
-    // uploadPhoto.classList.add('hidden');
-    const fileInput = document.getElementById('photo');
-    fileInput.value = '';
+      Array.from(images).forEach((file) => {
+        form.append('images', file);
+      });
 
-    sideText.classList.remove('hidden');
-    sideSelection = document.querySelector('.sides-container');
+      try {
+        const imagesProcessed = await uploadPhotosTemp(form);
+        uploadedImages.push(...imagesProcessed);
+      } catch (error) {
+        showAlert('error', error);
+      }
+      // uploadPhoto.textContent = 'Upload';
+      renderVehicleImageFromUploads(uploadedImages, 'tasks');
+      // uploadPhoto.classList.add('hidden');
+      spinner.style.display = 'none';
 
-    setTimeout(function () {
-      sideSelection.classList.add('visible');
-    }, 50);
-    buttonsSide = document.querySelectorAll('.button--side');
-    const markers = imageContainer.getElementsByClassName('marker');
+      fileInput.value = '';
 
-    buttonsSide.forEach((button) => {
-      button.addEventListener('click', () => {
-        buttonsSide.forEach((btn) => {
-          btn.style.border = 'none';
-        });
-        if (markers.length > 0) {
-          while (markers.length > 0) {
-            imageContainer.removeChild(markers[0]);
-          }
-        }
+      sideText.classList.remove('hidden');
+      sideSelection = document.querySelector('.sides-container');
 
-        button.style.border = '0.3rem solid coral';
-        img = button.value;
-        let vehicleImage = document.getElementById('vehicleImage');
-        vehicleImage.style.width = UPLOADED_IMAGE_WIDTH;
-        vehicleImage.src = `/pics/tasks/${img}`;
-        vehicleImage.setAttribute('data-image-id', img);
+      setTimeout(function () {
+        sideSelection.classList.add('visible');
+      }, 50);
+      buttonsSide = document.querySelectorAll('.button--side');
+      const markers = imageContainer.getElementsByClassName('marker');
 
-        removeMarksContainer.classList.remove('hidden');
-        if (sendMarksBtn) sendMarksBtn.classList.remove('hidden');
-        paintDamagedCheck.checked = false;
-        bigDentCheck.checked = false;
-        dentPaintDamaged = false;
-        bigDent = false;
-
-        if (sendContainer) sendContainer.classList.remove('hidden');
-        markerContainer.classList.remove('hidden');
-        setTimeout(function () {
-          markerContainer.classList.add('visible');
-        }, 50);
-
-        makeMarkerContainerFloating();
-
-        const searchBar = document.querySelector('.search-bar');
-        if (searchBar) searchBar.classList.remove('hidden');
-
-        const sideDents = dentsTemp[img];
-
-        if (sideDents && sideDents.length > 0) {
-          sideDents.forEach((dent) => {
-            placeMarker(
-              dent.bigDent,
-              dent.paintDamaged,
-              dent.coords,
-              imageContainer,
-            );
+      buttonsSide.forEach((button) => {
+        button.addEventListener('click', () => {
+          buttonsSide.forEach((btn) => {
+            btn.style.border = 'none';
           });
-        }
+          if (markers.length > 0) {
+            while (markers.length > 0) {
+              imageContainer.removeChild(markers[0]);
+            }
+          }
+
+          button.style.border = '0.3rem solid coral';
+          img = button.value;
+          let vehicleImage = document.getElementById('vehicleImage');
+          vehicleImage.style.width = UPLOADED_IMAGE_WIDTH;
+          vehicleImage.src = `/pics/tasks/${img}`;
+          vehicleImage.setAttribute('data-image-id', img);
+
+          removeMarksContainer.classList.remove('hidden');
+          if (sendMarksBtn) sendMarksBtn.classList.remove('hidden');
+          paintDamagedCheck.checked = false;
+          bigDentCheck.checked = false;
+          dentPaintDamaged = false;
+          bigDent = false;
+
+          if (sendContainer) sendContainer.classList.remove('hidden');
+          markerContainer.classList.remove('hidden');
+          setTimeout(function () {
+            markerContainer.classList.add('visible');
+          }, 50);
+
+          makeMarkerContainerFloating();
+
+          const searchBar = document.querySelector('.search-bar');
+          if (searchBar) searchBar.classList.remove('hidden');
+
+          const sideDents = dentsTemp[img];
+
+          if (sideDents && sideDents.length > 0) {
+            sideDents.forEach((dent) => {
+              placeMarker(
+                dent.bigDent,
+                dent.paintDamaged,
+                dent.coords,
+                imageContainer,
+              );
+            });
+          }
+        });
       });
     });
-  });
+  }
+  // WITH UPLOAD BUTTON
+
+  // uploadPhoto.addEventListener('click', async (e) => {
+  //   e.preventDefault();
+
+  //   const vehicleImage = imageContainer.querySelector('#vehicleImage');
+  //   if (vehicleImage) vehicleImage.src = '';
+  //   const form = new FormData();
+  //   const images = document.getElementById('photo').files;
+  //   if (images.length === 0)
+  //     return showAlert('error', translations[defaultLang]['noFilesChosen']);
+  //   if (logoImage) {
+  //     logoImage.src = '';
+  //     logoImage.style.width = 0;
+  //   }
+  //   uploadPhoto.textContent = 'Uploading...';
+
+  //   Array.from(images).forEach((file) => {
+  //     form.append('images', file);
+  //   });
+
+  //   try {
+  //     const imagesProcessed = await uploadPhotosTemp(form);
+  //     uploadedImages.push(...imagesProcessed);
+  //   } catch (error) {
+  //     showAlert('error', error);
+  //   }
+  //   uploadPhoto.textContent = 'Upload';
+  //   renderVehicleImageFromUploads(uploadedImages, 'tasks');
+  //   // uploadPhoto.classList.add('hidden');
+  //   const fileInput = document.getElementById('photo');
+  //   fileInput.value = '';
+
+  //   sideText.classList.remove('hidden');
+  //   sideSelection = document.querySelector('.sides-container');
+
+  //   setTimeout(function () {
+  //     sideSelection.classList.add('visible');
+  //   }, 50);
+  //   buttonsSide = document.querySelectorAll('.button--side');
+  //   const markers = imageContainer.getElementsByClassName('marker');
+
+  //   buttonsSide.forEach((button) => {
+  //     button.addEventListener('click', () => {
+  //       buttonsSide.forEach((btn) => {
+  //         btn.style.border = 'none';
+  //       });
+  //       if (markers.length > 0) {
+  //         while (markers.length > 0) {
+  //           imageContainer.removeChild(markers[0]);
+  //         }
+  //       }
+
+  //       button.style.border = '0.3rem solid coral';
+  //       img = button.value;
+  //       let vehicleImage = document.getElementById('vehicleImage');
+  //       vehicleImage.style.width = UPLOADED_IMAGE_WIDTH;
+  //       vehicleImage.src = `/pics/tasks/${img}`;
+  //       vehicleImage.setAttribute('data-image-id', img);
+
+  //       removeMarksContainer.classList.remove('hidden');
+  //       if (sendMarksBtn) sendMarksBtn.classList.remove('hidden');
+  //       paintDamagedCheck.checked = false;
+  //       bigDentCheck.checked = false;
+  //       dentPaintDamaged = false;
+  //       bigDent = false;
+
+  //       if (sendContainer) sendContainer.classList.remove('hidden');
+  //       markerContainer.classList.remove('hidden');
+  //       setTimeout(function () {
+  //         markerContainer.classList.add('visible');
+  //       }, 50);
+
+  //       makeMarkerContainerFloating();
+
+  //       const searchBar = document.querySelector('.search-bar');
+  //       if (searchBar) searchBar.classList.remove('hidden');
+
+  //       const sideDents = dentsTemp[img];
+
+  //       if (sideDents && sideDents.length > 0) {
+  //         sideDents.forEach((dent) => {
+  //           placeMarker(
+  //             dent.bigDent,
+  //             dent.paintDamaged,
+  //             dent.coords,
+  //             imageContainer,
+  //           );
+  //         });
+  //       }
+  //     });
+  //   });
+  // });
 
   vehicleImage.addEventListener('click', (event) => {
     event.preventDefault();

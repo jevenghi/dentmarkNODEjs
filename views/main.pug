@@ -16,8 +16,9 @@ block content
 
       //- h2 Please choose photos to upload:
       input.form__upload(type="file" accept="image/*" id="photo" name="photo" multiple)
+      .spinner(id="spinner")
       //- label(class="choose-photo-btn" for="photo") Browse photos
-      button.form__btn.upload_photo Upload
+      //- button.form__btn.upload_photo Upload
     .logo-container
       img#logoImage(src="/pics/amlogo.png")
     //- .need-help-link
