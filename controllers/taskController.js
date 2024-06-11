@@ -209,7 +209,7 @@ exports.addDentsToTask = catchAsyncErr(async (req, res, next) => {
     if (!task)
       return next(new AppError(`Task with this ID does not exist`, 404));
 
-    task.dents.push(...req.body.dents);
+    task.dents = [...req.body.dents];
     task.images = [...req.body.images];
     await task.save();
     req.taskId = taskId;
@@ -375,7 +375,8 @@ exports.sendTaskCreationEmail = async (req, res, next) => {
     const subject = 'New Task submitted';
     const message = `${userName} has submitted new task ${req.protocol}://${req.get('host')}/tasks/${taskId}.`;
 
-    const email = new Email('info@am-place.com');
+    // const email = new Email('info@am-place.com');
+    const email = new Email('jevenghi@gmail.com');
 
     await email.send(subject, message);
   } catch (error) {
@@ -394,8 +395,8 @@ exports.sendTaskChangeEmail = async (req, res, next) => {
     const subject = 'Changes made to task';
     const message = `${userName} has made changes to task: ${req.protocol}://${req.get('host')}/tasks/${taskId}.`;
 
-    const email = new Email('info@am-place.com');
-    // const email = new Email('jevenghi@gmail.com');
+    // const email = new Email('info@am-place.com');
+    const email = new Email('jevenghi@gmail.com');
 
     await email.send(subject, message);
   } catch (error) {

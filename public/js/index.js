@@ -157,7 +157,7 @@ const removeAllMarkers = (markers) => {
   }
 };
 
-const populateSidesWithDents = (dents, folder) => {
+const populateSidesWithDents = (dents) => {
   const imageContainer = document.querySelector('.image-container');
 
   const markers = imageContainer.getElementsByClassName('marker');
@@ -195,7 +195,7 @@ const populateSidesWithDents = (dents, folder) => {
       const searchBar = document.querySelector('.search-bar');
       if (searchBar) searchBar.classList.remove('hidden');
 
-      const sideDents = dents[img];
+      let sideDents = dents[img];
       if (sideDents && sideDents.length > 0) {
         sideDents.forEach((dent) => {
           placeMarker(
@@ -203,9 +203,21 @@ const populateSidesWithDents = (dents, folder) => {
             dent.paintDamaged,
             dent.coords,
             imageContainer,
+            dent._id,
           );
         });
       }
+      document.querySelectorAll('.marker').forEach((marker) => {
+        marker.addEventListener('click', () => {
+          const confirmed = confirm('Remove this marker?');
+          if (confirmed) {
+            marker.remove();
+            dentsTemp[img] = dents[img].filter(
+              (obj) => obj._id !== marker.dataset.markerId,
+            );
+          }
+        });
+      });
     });
   });
 };
@@ -400,6 +412,7 @@ if (uploadContainer) {
   if (taskHeader) {
     taskId = taskHeader.dataset.taskId;
     loadDataAndPopulate(taskId);
+
     if (downloadTaskBtn) {
       downloadTaskBtn.addEventListener('click', async function () {
         downloadTaskBtn.disabled = true;
@@ -675,6 +688,11 @@ if (uploadContainer) {
       warnBeforeUnload = false;
 
       addNewDentsToTask.textContent = 'Saving...';
+
+      const dents = Object.values(dentsTemp).flat();
+
+      console.log(dents);
+
       await addDentsToTask(taskId, dents, uploadedImages);
       addNewDentsToTask.textContent = 'Save changes';
     });

@@ -2,9 +2,19 @@ import { showAlert } from './alerts.js';
 import axios from 'axios';
 import * as markerConstants from '../../constants/markerConstants';
 
-export const placeMarker = (bigDent, paintDamaged, coords, image) => {
+export const placeMarker = (
+  bigDent,
+  paintDamaged,
+  coords,
+  image,
+  id = null,
+) => {
   const marker = document.createElement('div');
   marker.className = 'marker';
+  if (id !== null) {
+    marker.dataset.markerId = id;
+  }
+
   let currentWidth = parseInt(markerConstants.UPLOADED_IMAGE_WIDTH) * 1;
   let currentHeight = image.clientHeight;
   let markerLeftPercent = parseFloat(coords.relativeX);

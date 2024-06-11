@@ -626,12 +626,13 @@ input[type='file'] {
   border-radius: 4px; /* Optionally set border radius */
 }
 .task-remark {
-  width: 30rem;
+  width: 28rem;
   height: 4rem;
   resize: none; /* Prevent resizing */
   white-space: pre-wrap; /* Preserve whitespace and wrap text */
   overflow-wrap: break-word;
   margin-bottom: 0.5rem;
+  margin-right: 0.5rem;
 }
 
 .task-header {
@@ -748,7 +749,7 @@ button[type='submit']:hover {
 
 .alert {
   position: fixed;
-  top: 0;
+  top: 50%;
   left: 50%;
   -webkit-transform: translateX(-50%);
   transform: translateX(-50%);
@@ -757,8 +758,9 @@ button[type='submit']:hover {
   font-size: 2rem;
   /* font-weight: 400; */
   text-align: center;
-  border-bottom-left-radius: 5px;
-  border-bottom-right-radius: 5px;
+  border-radius: 0.3rem;
+  /* border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px; */
   padding: 1rem 1rem;
   -webkit-box-shadow: 0 2rem 4rem rgba(0, 0, 0, 0.25);
   box-shadow: 0 2rem 4rem rgba(0, 0, 0, 0.25);
