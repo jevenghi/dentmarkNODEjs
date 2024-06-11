@@ -281,7 +281,7 @@ exports.getTaskStats = async (req, res) => {
 
 exports.updateDents = catchAsyncErr(async (req, res, next) => {
   const taskId = req.params.id;
-  const { dentId, cost, taskStatus, remark } = req.body;
+  const { dentId, cost, taskStatus, remark, carModel } = req.body;
   // try {
   const updatedDent = await Task.findOneAndUpdate(
     // { _id: taskId, 'dents._id': dentId },
@@ -300,6 +300,9 @@ exports.updateDents = catchAsyncErr(async (req, res, next) => {
   }
   if (taskStatus) {
     await Task.findByIdAndUpdate(taskId, { taskStatus });
+  }
+  if (carModel) {
+    await Task.findByIdAndUpdate(taskId, { carModel });
   }
 
   res.status(201).json({

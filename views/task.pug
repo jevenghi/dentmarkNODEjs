@@ -12,8 +12,12 @@ block content
     .task-header(data-task-id=taskId)
       if role === 'admin'
         p Customer: #{customer}
-      p Model: #{model}
       p Task created: #{date}
+      .task-model-wrapper
+        p Model:  
+        input(type="text", value=model, class="model-input", data-task-id=taskId)
+      //- p Model: #{model}
+      
       //- button.add-dents(data-task-id=taskId) Add dents
               if role === 'admin'
               if role === 'admin'
@@ -49,9 +53,10 @@ block content
     .main-container
       .photo-upload_container
         input.form__upload(type="file" accept="image/*" id="photo" name="photo" multiple)
+        .spinner(id="spinner")
         //- label(class="choose-photo-btn" for="photo") Choose Photos
 
-        button.form__btn.upload_photo Upload
+        //- button.form__btn.upload_photo Upload
   
       .choose.choose__side
         h2(data-key="chooseSide")

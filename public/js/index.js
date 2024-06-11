@@ -51,6 +51,7 @@ const modalLinks = document.querySelectorAll('.modal__link');
 const overlay = document.querySelector('.overlay');
 const downloadReportBtn = document.querySelector('.download-report');
 const taskStatusBtn = document.querySelector('.task-status-select');
+const modelNameInput = document.querySelector('.model-input');
 const backToTasks = document.querySelector('.back-tasks');
 const deleteTaskBtn = document.querySelector('.delete-task');
 const emailInputSignup = document.getElementById('email-signup');
@@ -933,6 +934,15 @@ if (totalCostInput) {
     }
   });
 }
+
+if (modelNameInput) {
+  modelNameInput.addEventListener('change', () => {
+    const taskId = modelNameInput.dataset.taskId;
+    const carModel = modelNameInput.value;
+    updateTask(taskId, { carModel });
+  });
+}
+
 if (remarkInput) {
   remarkInput.addEventListener('change', () => {
     const taskId = remarkInput.dataset.taskId;
