@@ -23,3 +23,18 @@ export const getUserLanguagePref = async () => {
     console.log(err);
   }
 };
+
+export const translateContent = async (defaultLang, translations) => {
+  const elementsToTranslate = document.querySelectorAll('[data-key]');
+
+  defaultLang = await getUserLanguagePref();
+
+  setLanguage(defaultLang);
+
+  function setLanguage(language) {
+    elementsToTranslate.forEach((element) => {
+      const key = element.getAttribute('data-key');
+      element.textContent = translations[language][key];
+    });
+  }
+};

@@ -120,3 +120,10 @@ export const addDentsToTask = async (taskId, dents, images) => {
 //     });
 //   });
 // };
+export const removeAllMarkers = (markers, imageContainer) => {
+  if (markers.length > 0) {
+    while (markers.length > 0) {
+      imageContainer.removeChild(markers[0]);
+    }
+  }
+};

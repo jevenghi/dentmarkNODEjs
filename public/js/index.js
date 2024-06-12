@@ -8,6 +8,7 @@ import { deleteTask } from './deleteTask';
 import {
   placeMarker,
   addDentsToTask,
+  removeAllMarkers,
   // populateSidesWithDents,
 } from './placeMarker';
 import { resetPassword } from './resetPassword';
@@ -17,10 +18,18 @@ import {
   getImagesAndDents,
 } from './photosHandler';
 import { sendTask } from './sendTask';
-import { searchUsers, getUserLanguagePref } from './searchUsers';
+import {
+  searchUsers,
+  getUserLanguagePref,
+  translateContent,
+} from './searchUsers';
 import { generateTaskPDF, createShortcutContainer } from './makeScreenshot';
 import { UPLOADED_IMAGE_WIDTH } from '../../constants/markerConstants';
 import { translations } from './translations';
+import {
+  makeMarkerContainerFloating,
+  warnUnsavedChanges,
+} from './elementsHandler';
 
 // const imageCanvas =
 const mainContainer = document.querySelector('.main-container');
@@ -71,15 +80,7 @@ const paintDamagedCheck = document.getElementById('paint-damaged');
 const specialCaseCheck = document.getElementById('special-case');
 const bigDentCheck = document.getElementById('big-dent');
 
-// let buttonsSide = document.querySelectorAll('.button--side');
-const sidesContainer = document.querySelector('.sides-container');
-const markerParameters = document.querySelector('.choose-marker');
-const addAnotherSide = document.querySelector('.choose__side');
-const arrowParams = document.querySelector('.arrow__params');
-const arrowSide = document.querySelector('.arrow__side');
 const imageContainer = document.querySelector('.image-container');
-
-const searchBar = document.querySelector('.search-bar');
 
 const searchInput = document.getElementById('search-input');
 const searchResults = document.getElementById('search-results');
@@ -90,44 +91,13 @@ let buttonsSide = document.querySelectorAll('.button--side');
 const uploadContainer = document.querySelector('.photo-upload_container');
 const fileInput = document.getElementById('photo');
 
-let url = new URL(window.location.href);
-let defaultLang = 'en';
 // function getMarkers() {
 //   return document.querySelectorAll('.marker');
 // }
 // let markers = getMarkers();
 
-// if (addAnotherSide) {
-//   addAnotherSide.addEventListener('click', () => {
-//     arrowSide.classList.toggle('rotate');
-//     sidesContainer.style.display =
-//       sidesContainer.style.display === 'none' ? 'grid' : 'none';
-//   });
-// }
-document.addEventListener('DOMContentLoaded', async () => {
-  const elementsToTranslate = document.querySelectorAll('[data-key]');
-
-  defaultLang = await getUserLanguagePref();
-
-  setLanguage(defaultLang);
-
-  function setLanguage(language) {
-    elementsToTranslate.forEach((element) => {
-      const key = element.getAttribute('data-key');
-      element.textContent = translations[language][key];
-    });
-  }
-});
-
-// const fileInput = document.getElementById('photo');
-// if (fileInput) {
-//   fileInput.addEventListener('change', function () {
-//     if (fileInput.files.length > 0) {
-//       uploadPhoto.classList.remove('hidden');
-//     }
-//   });
-// }
-
+let url = new URL(window.location.href);
+let defaultLang = 'en';
 let img;
 let customer;
 let storedCoordinates;
@@ -140,22 +110,34 @@ let bigDent = false;
 let taskId;
 let warnBeforeUnload = true;
 
-window.addEventListener('beforeunload', function (event) {
-  if (uploadedImages.length > 0 && dents.length > 0 && warnBeforeUnload) {
-    const confirmationMessage =
-      'You have unsaved changes. Are you sure you want to leave this page?';
-    event.preventDefault();
-    event.returnValue = confirmationMessage;
-    return confirmationMessage;
-  }
+document.addEventListener('DOMContentLoaded', async () => {
+  translateContent(defaultLang, translations);
 });
 
-const removeAllMarkers = (markers) => {
-  if (markers.length > 0) {
-    while (markers.length > 0) {
-      imageContainer.removeChild(markers[0]);
-    }
-  }
+window.addEventListener('beforeunload', () => {
+  warnUnsavedChanges(uploadedImages, dents, warnBeforeUnload);
+});
+
+// const removeAllMarkers = (markers) => {
+//   if (markers.length > 0) {
+//     while (markers.length > 0) {
+//       imageContainer.removeChild(markers[0]);
+//     }
+//   }
+// };
+
+const markerRemover = (dentsTemp, dents) => {
+  document.querySelectorAll('.marker').forEach((marker) => {
+    marker.addEventListener('click', () => {
+      const confirmed = confirm('Remove this marker?');
+      if (confirmed) {
+        marker.remove();
+        dentsTemp[img] = dents[img].filter(
+          (obj) => obj._id !== marker.dataset.markerId,
+        );
+      }
+    });
+  });
 };
 
 const populateSidesWithDents = (dents) => {
@@ -169,7 +151,7 @@ const populateSidesWithDents = (dents) => {
         btn.style.border = 'none';
       });
 
-      removeAllMarkers(markers);
+      removeAllMarkers(markers, imageContainer);
       const addNewDentsToTask = document.querySelector('.save-new-dents');
 
       button.style.border = '0.3rem solid coral';
@@ -208,100 +190,20 @@ const populateSidesWithDents = (dents) => {
           );
         });
       }
-      document.querySelectorAll('.marker').forEach((marker) => {
-        marker.addEventListener('click', () => {
-          const confirmed = confirm('Remove this marker?');
-          if (confirmed) {
-            marker.remove();
-            dentsTemp[img] = dents[img].filter(
-              (obj) => obj._id !== marker.dataset.markerId,
-            );
-          }
-        });
-      });
+      markerRemover(dentsTemp, dents);
+      // document.querySelectorAll('.marker').forEach((marker) => {
+      //   marker.addEventListener('click', () => {
+      //     const confirmed = confirm('Remove this marker?');
+      //     if (confirmed) {
+      //       marker.remove();
+      //       dentsTemp[img] = dents[img].filter(
+      //         (obj) => obj._id !== marker.dataset.markerId,
+      //       );
+      //     }
+      //   });
+      // });
     });
   });
-};
-
-// const makeMarkerContainerFloating = () => {
-//   const sentinel = document.querySelector('.sentinel');
-//   const markerContainerHeight = markerContainer.getBoundingClientRect().height;
-//   const markerContainerPlaceholder = document.querySelector(
-//     '.marker-container-placeholder',
-//   );
-
-//   markerContainerPlaceholder.style.height = `${markerContainerHeight}px`;
-
-//   const observer = new IntersectionObserver(
-//     (entries) => {
-//       entries.forEach((entry) => {
-//         if (entry.intersectionRatio === 0) {
-//           markerContainer.classList.add('sticky');
-//           markerContainerPlaceholder.classList.add('visible');
-//         } else {
-//           markerContainer.classList.remove('sticky');
-//           markerContainerPlaceholder.classList.remove('visible');
-//         }
-//       });
-//     },
-//     {
-//       root: null,
-//       threshold: 0,
-//       rootMargin: `+${markerContainerHeight}px`,
-//     },
-//   );
-
-//   observer.observe(sentinel);
-//   // const markerContainerOffset =
-//   //   markerContainer.offsetTop + markerContainer.offsetHeight;
-
-//   // window.addEventListener('scroll', () => {
-//   //   if (window.scrollY > markerContainerOffset) {
-//   //     markerContainer.classList.add('sticky');
-//   //   } else {
-//   //     markerContainer.classList.remove('sticky');
-//   //   }
-//   // });
-// };
-const makeMarkerContainerFloating = () => {
-  const sentinel = document.querySelector('.sentinel');
-  const markerContainer = document.querySelector('.marker-container');
-  const markerContainerHeight = markerContainer.getBoundingClientRect().height;
-  const markerContainerPlaceholder = document.querySelector(
-    '.marker-container-placeholder',
-  );
-
-  markerContainerPlaceholder.style.height = `${markerContainerHeight}px`;
-
-  let lastScrollY = window.scrollY;
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        const currentScrollY = window.scrollY;
-
-        if (entry.intersectionRatio === 0 && currentScrollY > lastScrollY) {
-          markerContainer.classList.add('sticky');
-          markerContainerPlaceholder.classList.add('visible');
-        } else if (
-          entry.intersectionRatio > 0 ||
-          currentScrollY < lastScrollY
-        ) {
-          markerContainer.classList.remove('sticky');
-          markerContainerPlaceholder.classList.remove('visible');
-        }
-
-        lastScrollY = currentScrollY;
-      });
-    },
-    {
-      root: null,
-      threshold: 0,
-      rootMargin: `+${markerContainerHeight}px`,
-    },
-  );
-
-  observer.observe(sentinel);
 };
 
 const removeLastMarker = (markers, dents) => {
@@ -357,7 +259,7 @@ if (uploadContainer) {
 
       // const confirmed = confirm('Remove all markers?');
       if (confirmed) {
-        removeAllMarkers(markers);
+        removeAllMarkers(markers, imageContainer);
         dents = dents.filter((element) => element.imageId !== img);
         if (dentsTemp[img]) delete dentsTemp[img];
         // dents = [];
@@ -527,6 +429,20 @@ if (uploadContainer) {
               );
             });
           }
+          if (taskHeader) {
+            document.querySelectorAll('.marker').forEach((marker) => {
+              marker.addEventListener('click', () => {
+                const confirmed = confirm('Remove this marker?');
+                if (confirmed) {
+                  marker.remove();
+                  console.log('dents', dents);
+                  dentsTemp[img] = dents[img].filter(
+                    (obj) => obj._id !== marker.dataset.markerId,
+                  );
+                }
+              });
+            });
+          }
         });
       });
     });
@@ -691,8 +607,6 @@ if (uploadContainer) {
       addNewDentsToTask.textContent = 'Saving...';
 
       const dents = Object.values(dentsTemp).flat();
-
-      console.log(dents);
 
       await addDentsToTask(taskId, dents, uploadedImages);
       addNewDentsToTask.textContent = 'Save changes';
