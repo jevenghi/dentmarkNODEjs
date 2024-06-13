@@ -250,71 +250,57 @@ exports.deleteTask = async (req, res, next) => {
     });
   }
 };
-exports.getTaskStats = async (req, res) => {
-  try {
-    const stats = await Task.aggregate([
-      {
-        $match: { difficulty: { $gte: 1 } },
-      },
-      {
-        $group: {
-          _id: '$user',
-          numTasks: { $sum: 1 },
-          avgDifficulty: { $avg: '$difficulty' },
-        },
-      },
-      {
-        $sort: { avgDifficulty: 1 },
-      },
-    ]);
-    res.status(200).json({
-      status: 'success',
-      message: { stats },
-    });
-  } catch (err) {
-    res.status(404).json({
-      status: 'fail',
-      message: err,
-    });
-  }
-};
+// exports.getTaskStats = async (req, res) => {
+//   try {
+//     const stats = await Task.aggregate([
+//       {
+//         $match: { difficulty: { $gte: 1 } },
+//       },
+//       {
+//         $group: {
+//           _id: '$user',
+//           numTasks: { $sum: 1 },
+//           avgDifficulty: { $avg: '$difficulty' },
+//         },
+//       },
+//       {
+//         $sort: { avgDifficulty: 1 },
+//       },
+//     ]);
+//     res.status(200).json({
+//       status: 'success',
+//       message: { stats },
+//     });
+//   } catch (err) {
+//     res.status(404).json({
+//       status: 'fail',
+//       message: err,
+//     });
+//   }
+// };
 
 exports.updateDents = catchAsyncErr(async (req, res, next) => {
   const taskId = req.params.id;
-  const { dentId, cost, taskStatus, remark, carModel } = req.body;
-  // try {
-  const updatedDent = await Task.findOneAndUpdate(
-    // { _id: taskId, 'dents._id': dentId },
-    // { $set: { 'dents.$.cost': cost } },
-    { _id: taskId },
-    // { totalCost: cost },
-    { $pull: { dents: { _id: dentId } } },
+  const { cost, taskStatus, remark, carModel } = req.body;
+  if (req.user.role === 'admin') {
+    if (cost) {
+      await Task.findByIdAndUpdate(taskId, { totalCost: cost });
+    }
+    if (taskStatus) {
+      await Task.findByIdAndUpdate(taskId, { taskStatus });
+    }
+    if (remark) {
+      await Task.findByIdAndUpdate(taskId, { remark });
+    }
+  }
 
-    { new: true, runValidators: true },
-  );
-  if (remark) {
-    await Task.findByIdAndUpdate(taskId, { remark });
-  }
-  if (cost) {
-    await Task.findByIdAndUpdate(taskId, { totalCost: cost });
-  }
-  if (taskStatus) {
-    await Task.findByIdAndUpdate(taskId, { taskStatus });
-  }
   if (carModel) {
     await Task.findByIdAndUpdate(taskId, { carModel });
   }
 
   res.status(201).json({
     status: 'success',
-    data: updatedDent,
   });
-  //   } catch (err) {
-  //     res.status(400).json({
-  //       status: 'fail',
-  //       message: err,
-  //     });
-  //   }
 });
 
 exports.generateUserReport = catchAsyncErr(async (req, res, next) => {

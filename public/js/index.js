@@ -9,6 +9,8 @@ import {
   placeMarker,
   addDentsToTask,
   removeAllMarkers,
+  markerRemover,
+  removeLastMarker,
   // populateSidesWithDents,
 } from './placeMarker';
 import { resetPassword } from './resetPassword';
@@ -19,9 +21,9 @@ import {
 } from './photosHandler';
 import { sendTask } from './sendTask';
 import {
-  searchUsers,
   getUserLanguagePref,
   translateContent,
+  userAutoSuggest,
 } from './searchUsers';
 import { generateTaskPDF, createShortcutContainer } from './makeScreenshot';
 import { UPLOADED_IMAGE_WIDTH } from '../../constants/markerConstants';
@@ -31,7 +33,6 @@ import {
   warnUnsavedChanges,
 } from './elementsHandler';
 
-// const imageCanvas =
 const mainContainer = document.querySelector('.main-container');
 const passwordResetForm = document.querySelector('.reset-form');
 const uploadPhoto = document.querySelector('.upload_photo');
@@ -69,7 +70,7 @@ const logoContainer = document.querySelector('.logo-container');
 const paginationBtns = document.querySelector('.pagination-buttons');
 const filterOptions = document.querySelector('.filter-menu');
 const forgotPassBtn = document.getElementById('forgot-pass');
-// const vehicleImage = document.getElementById('vehicleImage');
+let vehicleImage = document.getElementById('vehicleImage');
 // const vehicleImages = document.querySelectorAll('#vehicleImage');
 const sideText = document.querySelector('.choose__side');
 
@@ -118,26 +119,50 @@ window.addEventListener('beforeunload', () => {
   warnUnsavedChanges(uploadedImages, dents, warnBeforeUnload);
 });
 
-// const removeAllMarkers = (markers) => {
-//   if (markers.length > 0) {
-//     while (markers.length > 0) {
-//       imageContainer.removeChild(markers[0]);
-//     }
-//   }
-// };
-
-const markerRemover = (dentsTemp, dents) => {
-  document.querySelectorAll('.marker').forEach((marker) => {
-    marker.addEventListener('click', () => {
-      const confirmed = confirm('Remove this marker?');
-      if (confirmed) {
-        marker.remove();
-        dentsTemp[img] = dents[img].filter(
-          (obj) => obj._id !== marker.dataset.markerId,
-        );
-      }
-    });
+const butonsSideHandler = (button, markers) => {
+  buttonsSide.forEach((btn) => {
+    btn.style.border = 'none';
   });
+  removeAllMarkers(markers, imageContainer);
+
+  button.style.border = '0.3rem solid coral';
+  img = button.value;
+  let vehicleImage = document.getElementById('vehicleImage');
+  vehicleImage.style.width = UPLOADED_IMAGE_WIDTH;
+  vehicleImage.src = `/pics/tasks/${img}`;
+  vehicleImage.setAttribute('data-image-id', img);
+
+  removeMarksContainer.classList.remove('hidden');
+  if (sendMarksBtn) sendMarksBtn.classList.remove('hidden');
+  paintDamagedCheck.checked = false;
+  bigDentCheck.checked = false;
+  dentPaintDamaged = false;
+  bigDent = false;
+
+  if (sendContainer) sendContainer.classList.remove('hidden');
+  markerContainer.classList.remove('hidden');
+  setTimeout(function () {
+    markerContainer.classList.add('visible');
+  }, 50);
+
+  makeMarkerContainerFloating();
+
+  const searchBar = document.querySelector('.search-bar');
+  if (searchBar) searchBar.classList.remove('hidden');
+
+  const sideDents = dentsTemp[img];
+
+  if (sideDents && sideDents.length > 0) {
+    sideDents.forEach((dent) => {
+      placeMarker(
+        dent.bigDent,
+        dent.paintDamaged,
+        dent.coords,
+        imageContainer,
+        dent._id,
+      );
+    });
+  }
 };
 
 const populateSidesWithDents = (dents) => {
@@ -147,71 +172,10 @@ const populateSidesWithDents = (dents) => {
   const buttonsSide = document.querySelectorAll('.button--side');
   buttonsSide.forEach((button) => {
     button.addEventListener('click', () => {
-      buttonsSide.forEach((btn) => {
-        btn.style.border = 'none';
-      });
-
-      removeAllMarkers(markers, imageContainer);
-      const addNewDentsToTask = document.querySelector('.save-new-dents');
-
-      button.style.border = '0.3rem solid coral';
-      img = button.value;
-      let vehicleImage = document.getElementById('vehicleImage');
-      vehicleImage.style.width = UPLOADED_IMAGE_WIDTH;
-      vehicleImage.src = `/pics/tasks/${img}`;
-      vehicleImage.setAttribute('data-image-id', img);
-
-      removeMarksContainer.classList.remove('hidden');
-      if (addNewDentsToTask) addNewDentsToTask.classList.remove('hidden');
-      // sendMarksBtn.classList.remove('hidden');
-      paintDamagedCheck.checked = false;
-      bigDentCheck.checked = false;
-      dentPaintDamaged = false;
-      bigDent = false;
-
-      if (sendContainer) sendContainer.classList.remove('hidden');
-      markerContainer.classList.remove('hidden');
-      setTimeout(function () {
-        markerContainer.classList.add('visible');
-      }, 50);
-      makeMarkerContainerFloating();
-      const searchBar = document.querySelector('.search-bar');
-      if (searchBar) searchBar.classList.remove('hidden');
-
-      let sideDents = dents[img];
-      if (sideDents && sideDents.length > 0) {
-        sideDents.forEach((dent) => {
-          placeMarker(
-            dent.bigDent,
-            dent.paintDamaged,
-            dent.coords,
-            imageContainer,
-            dent._id,
-          );
-        });
-      }
-      markerRemover(dentsTemp, dents);
-      // document.querySelectorAll('.marker').forEach((marker) => {
-      //   marker.addEventListener('click', () => {
-      //     const confirmed = confirm('Remove this marker?');
-      //     if (confirmed) {
-      //       marker.remove();
-      //       dentsTemp[img] = dents[img].filter(
-      //         (obj) => obj._id !== marker.dataset.markerId,
-      //       );
-      //     }
-      //   });
-      // });
+      butonsSideHandler(button, markers);
+      markerRemover(dentsTemp, dents, img);
     });
   });
-};
-
-const removeLastMarker = (markers, dents) => {
-  if (markers.length > 0) {
-    const lastMarker = markers[markers.length - 1];
-    imageContainer.removeChild(lastMarker);
-  }
-  if (dents) dents.pop();
 };
 
 async function loadDataAndPopulate(taskId) {
@@ -226,433 +190,267 @@ async function loadDataAndPopulate(taskId) {
   }
 }
 
-const displayResults = (results) => {
-  clearResults();
+// SEND NEW TASK / MAIN PAGE also on TASK page
 
-  if (results.length > 0) {
-    results.forEach(function (result) {
-      const link = document.createElement('a');
-      link.textContent = result;
-      searchResults.appendChild(link);
-    });
-    searchResults.style.display = 'block';
-  } else {
-    searchResults.style.display = 'none';
-  }
-};
-const clearResults = () => {
-  while (searchResults.firstChild) {
-    searchResults.removeChild(searchResults.firstChild);
-  }
-  searchResults.style.display = 'none';
-};
+if (fileInput) {
+  const spinner = document.getElementById('spinner');
 
-if (uploadContainer) {
-  if (removeLastMarkBtn) {
-    const markers = imageContainer.getElementsByClassName('marker');
-    removeLastMarkBtn.addEventListener('click', () => {
-      removeLastMarker(markers, dents);
-      if (dentsTemp[img]) dentsTemp[img].pop();
-    });
-    removeMarksBtn.addEventListener('click', () => {
-      const confirmed = confirm(translations[defaultLang]['removeAllMarks']);
+  fileInput.addEventListener('change', async (e) => {
+    e.preventDefault();
+    spinner.style.display = 'block';
 
-      // const confirmed = confirm('Remove all markers?');
-      if (confirmed) {
-        removeAllMarkers(markers, imageContainer);
-        dents = dents.filter((element) => element.imageId !== img);
-        if (dentsTemp[img]) delete dentsTemp[img];
-        // dents = [];
-        // dentsTemp = {};
-      }
-    });
-    deleteImage.addEventListener('click', (e) => {
-      const confirmed = confirm(translations[defaultLang]['deleteImage']);
-      if (confirmed) {
-        markerContainer.classList.add('hidden');
-        // uploadPhoto.classList.remove('hidden');
-        uploadedImages = uploadedImages.filter((element) => element !== img);
-        dents = dents.filter((element) => element.imageId !== img);
-        if (dentsTemp[img]) delete dentsTemp[img];
-        if (vehicleImage) vehicleImage.src = '';
-        renderVehicleImageFromUploads(uploadedImages);
+    vehicleImage = imageContainer.querySelector('#vehicleImage');
+    if (vehicleImage) vehicleImage.src = '';
+    const form = new FormData();
+    const images = document.getElementById('photo').files;
 
-        populateSidesWithDents(dentsTemp);
-        sideSelection = document.querySelector('.sides-container');
-
-        setTimeout(function () {
-          sideSelection.classList.add('visible');
-        }, 50);
-        if (sendContainer) sendContainer.classList.add('hidden');
-        if (sendMarksBtn) sendMarksBtn.classList.add('hidden');
-        // if (uploadedImages.length === 0) sideText.classList.add('hidden');
-      }
-    });
-  }
-  if (markerContainer) {
-    // const markerContainerOffset =
-    //   markerContainer.offsetTop + markerContainer.offsetHeight;
-
-    // window.addEventListener('scroll', () => {
-    //   if (window.scrollY > markerContainerOffset) {
-    //     markerContainer.classList.add('sticky');
-    //   } else {
-    //     markerContainer.classList.remove('sticky');
-    //   }
-    // });
-
-    paintDamagedCheck.addEventListener('click', () => {
-      dentPaintDamaged = dentPaintDamaged ? false : true;
-    });
-    bigDentCheck.addEventListener('click', () => {
-      bigDent = bigDent ? false : true;
-    });
-    specialCaseCheck.addEventListener('click', () => {
-      specialCase = specialCase ? false : true;
-    });
-  }
-
-  if (taskHeader) {
-    taskId = taskHeader.dataset.taskId;
-    loadDataAndPopulate(taskId);
-
-    if (downloadTaskBtn) {
-      downloadTaskBtn.addEventListener('click', async function () {
-        downloadTaskBtn.disabled = true;
-        const screenshotContainers = createShortcutContainer(uploadedImages);
-        backToTasks.insertAdjacentHTML('afterend', screenshotContainers);
-        let imagesToCapture = document.querySelectorAll(
-          '.screenshot-container',
-        );
-        imagesToCapture.forEach((image) => {
-          const imgName = image.dataset.filename;
-          const dents = dentsTemp[imgName];
-          if (dents) {
-            dents.forEach((dent) => {
-              placeMarker(dent.bigDent, dent.paintDamaged, dent.coords, image);
-            });
-          }
-        });
-        await generateTaskPDF();
-        downloadTaskBtn.disabled = false;
-      });
+    if (logoImage) {
+      logoImage.src = '';
+      logoImage.style.width = 0;
     }
-  }
-  if (fileInput) {
-    const spinner = document.getElementById('spinner');
 
-    fileInput.addEventListener('change', async (e) => {
-      e.preventDefault();
-      spinner.style.display = 'block';
+    Array.from(images).forEach((file) => {
+      form.append('images', file);
+    });
 
-      const vehicleImage = imageContainer.querySelector('#vehicleImage');
-      if (vehicleImage) vehicleImage.src = '';
-      const form = new FormData();
-      const images = document.getElementById('photo').files;
+    try {
+      const imagesProcessed = await uploadPhotosTemp(form);
+      uploadedImages.push(...imagesProcessed);
+    } catch (error) {
+      showAlert('error', error);
+    }
+    renderVehicleImageFromUploads(uploadedImages, 'tasks');
+    spinner.style.display = 'none';
 
-      if (logoImage) {
-        logoImage.src = '';
-        logoImage.style.width = 0;
-      }
+    fileInput.value = '';
 
-      Array.from(images).forEach((file) => {
-        form.append('images', file);
+    sideText.classList.remove('hidden');
+    sideSelection = document.querySelector('.sides-container');
+
+    setTimeout(function () {
+      sideSelection.classList.add('visible');
+    }, 50);
+    buttonsSide = document.querySelectorAll('.button--side');
+    const markers = imageContainer.getElementsByClassName('marker');
+
+    buttonsSide.forEach((button) => {
+      button.addEventListener('click', () => {
+        buttonsSide.forEach((btn) => {
+          btn.style.border = 'none';
+        });
+        removeAllMarkers(markers, imageContainer);
+
+        button.style.border = '0.3rem solid coral';
+        img = button.value;
+        let vehicleImage = document.getElementById('vehicleImage');
+        vehicleImage.style.width = UPLOADED_IMAGE_WIDTH;
+        vehicleImage.src = `/pics/tasks/${img}`;
+        vehicleImage.setAttribute('data-image-id', img);
+
+        removeMarksContainer.classList.remove('hidden');
+        if (sendMarksBtn) sendMarksBtn.classList.remove('hidden');
+        paintDamagedCheck.checked = false;
+        bigDentCheck.checked = false;
+        dentPaintDamaged = false;
+        bigDent = false;
+
+        if (sendContainer) sendContainer.classList.remove('hidden');
+        markerContainer.classList.remove('hidden');
+        setTimeout(function () {
+          markerContainer.classList.add('visible');
+        }, 50);
+
+        makeMarkerContainerFloating();
+
+        const searchBar = document.querySelector('.search-bar');
+        if (searchBar) searchBar.classList.remove('hidden');
+
+        const sideDents = dentsTemp[img];
+
+        if (sideDents && sideDents.length > 0) {
+          sideDents.forEach((dent) => {
+            placeMarker(
+              dent.bigDent,
+              dent.paintDamaged,
+              dent.coords,
+              imageContainer,
+            );
+          });
+        }
+        if (taskHeader) {
+          document.querySelectorAll('.marker').forEach((marker) => {
+            marker.addEventListener('click', () => {
+              const confirmed = confirm('Remove this marker?');
+              if (confirmed) {
+                marker.remove();
+                console.log('dentsTemp', dentsTemp[img]);
+                dentsTemp[img] = dents[img].filter(
+                  (obj) => obj._id !== marker.dataset.markerId,
+                );
+              }
+            });
+          });
+        }
       });
+    });
+  });
+}
 
-      try {
-        const imagesProcessed = await uploadPhotosTemp(form);
-        uploadedImages.push(...imagesProcessed);
-      } catch (error) {
-        showAlert('error', error);
-      }
-      // uploadPhoto.textContent = 'Upload';
-      renderVehicleImageFromUploads(uploadedImages, 'tasks');
-      // uploadPhoto.classList.add('hidden');
-      spinner.style.display = 'none';
+if (markerContainer) {
+  const markers = imageContainer.getElementsByClassName('marker');
 
-      fileInput.value = '';
+  removeLastMarkBtn.addEventListener('click', () => {
+    removeLastMarker(markers, dents, imageContainer);
+    if (dentsTemp[img]) dentsTemp[img].pop();
+  });
 
-      sideText.classList.remove('hidden');
+  removeMarksBtn.addEventListener('click', () => {
+    const confirmed = confirm(translations[defaultLang]['removeAllMarks']);
+
+    if (confirmed) {
+      removeAllMarkers(markers, imageContainer);
+      dents = dents.filter((element) => element.imageId !== img);
+      if (dentsTemp[img]) delete dentsTemp[img];
+    }
+  });
+
+  deleteImage.addEventListener('click', (e) => {
+    const confirmed = confirm(translations[defaultLang]['deleteImage']);
+    if (confirmed) {
+      markerContainer.classList.add('hidden');
+      uploadedImages = uploadedImages.filter((element) => element !== img);
+      dents = dents.filter((element) => element.imageId !== img);
+      if (dentsTemp[img]) delete dentsTemp[img];
+      if (vehicleImage) vehicleImage.src = '';
+      renderVehicleImageFromUploads(uploadedImages);
+
+      populateSidesWithDents(dentsTemp);
       sideSelection = document.querySelector('.sides-container');
 
       setTimeout(function () {
         sideSelection.classList.add('visible');
       }, 50);
-      buttonsSide = document.querySelectorAll('.button--side');
-      const markers = imageContainer.getElementsByClassName('marker');
-
-      buttonsSide.forEach((button) => {
-        button.addEventListener('click', () => {
-          buttonsSide.forEach((btn) => {
-            btn.style.border = 'none';
-          });
-          if (markers.length > 0) {
-            while (markers.length > 0) {
-              imageContainer.removeChild(markers[0]);
-            }
-          }
-
-          button.style.border = '0.3rem solid coral';
-          img = button.value;
-          let vehicleImage = document.getElementById('vehicleImage');
-          vehicleImage.style.width = UPLOADED_IMAGE_WIDTH;
-          vehicleImage.src = `/pics/tasks/${img}`;
-          vehicleImage.setAttribute('data-image-id', img);
-
-          removeMarksContainer.classList.remove('hidden');
-          if (sendMarksBtn) sendMarksBtn.classList.remove('hidden');
-          paintDamagedCheck.checked = false;
-          bigDentCheck.checked = false;
-          dentPaintDamaged = false;
-          bigDent = false;
-
-          if (sendContainer) sendContainer.classList.remove('hidden');
-          markerContainer.classList.remove('hidden');
-          setTimeout(function () {
-            markerContainer.classList.add('visible');
-          }, 50);
-
-          makeMarkerContainerFloating();
-
-          const searchBar = document.querySelector('.search-bar');
-          if (searchBar) searchBar.classList.remove('hidden');
-
-          const sideDents = dentsTemp[img];
-
-          if (sideDents && sideDents.length > 0) {
-            sideDents.forEach((dent) => {
-              placeMarker(
-                dent.bigDent,
-                dent.paintDamaged,
-                dent.coords,
-                imageContainer,
-              );
-            });
-          }
-          if (taskHeader) {
-            document.querySelectorAll('.marker').forEach((marker) => {
-              marker.addEventListener('click', () => {
-                const confirmed = confirm('Remove this marker?');
-                if (confirmed) {
-                  marker.remove();
-                  console.log('dents', dents);
-                  dentsTemp[img] = dents[img].filter(
-                    (obj) => obj._id !== marker.dataset.markerId,
-                  );
-                }
-              });
-            });
-          }
-        });
-      });
-    });
-  }
-  // WITH UPLOAD BUTTON
-
-  // uploadPhoto.addEventListener('click', async (e) => {
-  //   e.preventDefault();
-
-  //   const vehicleImage = imageContainer.querySelector('#vehicleImage');
-  //   if (vehicleImage) vehicleImage.src = '';
-  //   const form = new FormData();
-  //   const images = document.getElementById('photo').files;
-  //   if (images.length === 0)
-  //     return showAlert('error', translations[defaultLang]['noFilesChosen']);
-  //   if (logoImage) {
-  //     logoImage.src = '';
-  //     logoImage.style.width = 0;
-  //   }
-  //   uploadPhoto.textContent = 'Uploading...';
-
-  //   Array.from(images).forEach((file) => {
-  //     form.append('images', file);
-  //   });
-
-  //   try {
-  //     const imagesProcessed = await uploadPhotosTemp(form);
-  //     uploadedImages.push(...imagesProcessed);
-  //   } catch (error) {
-  //     showAlert('error', error);
-  //   }
-  //   uploadPhoto.textContent = 'Upload';
-  //   renderVehicleImageFromUploads(uploadedImages, 'tasks');
-  //   // uploadPhoto.classList.add('hidden');
-  //   const fileInput = document.getElementById('photo');
-  //   fileInput.value = '';
-
-  //   sideText.classList.remove('hidden');
-  //   sideSelection = document.querySelector('.sides-container');
-
-  //   setTimeout(function () {
-  //     sideSelection.classList.add('visible');
-  //   }, 50);
-  //   buttonsSide = document.querySelectorAll('.button--side');
-  //   const markers = imageContainer.getElementsByClassName('marker');
-
-  //   buttonsSide.forEach((button) => {
-  //     button.addEventListener('click', () => {
-  //       buttonsSide.forEach((btn) => {
-  //         btn.style.border = 'none';
-  //       });
-  //       if (markers.length > 0) {
-  //         while (markers.length > 0) {
-  //           imageContainer.removeChild(markers[0]);
-  //         }
-  //       }
-
-  //       button.style.border = '0.3rem solid coral';
-  //       img = button.value;
-  //       let vehicleImage = document.getElementById('vehicleImage');
-  //       vehicleImage.style.width = UPLOADED_IMAGE_WIDTH;
-  //       vehicleImage.src = `/pics/tasks/${img}`;
-  //       vehicleImage.setAttribute('data-image-id', img);
-
-  //       removeMarksContainer.classList.remove('hidden');
-  //       if (sendMarksBtn) sendMarksBtn.classList.remove('hidden');
-  //       paintDamagedCheck.checked = false;
-  //       bigDentCheck.checked = false;
-  //       dentPaintDamaged = false;
-  //       bigDent = false;
-
-  //       if (sendContainer) sendContainer.classList.remove('hidden');
-  //       markerContainer.classList.remove('hidden');
-  //       setTimeout(function () {
-  //         markerContainer.classList.add('visible');
-  //       }, 50);
-
-  //       makeMarkerContainerFloating();
-
-  //       const searchBar = document.querySelector('.search-bar');
-  //       if (searchBar) searchBar.classList.remove('hidden');
-
-  //       const sideDents = dentsTemp[img];
-
-  //       if (sideDents && sideDents.length > 0) {
-  //         sideDents.forEach((dent) => {
-  //           placeMarker(
-  //             dent.bigDent,
-  //             dent.paintDamaged,
-  //             dent.coords,
-  //             imageContainer,
-  //           );
-  //         });
-  //       }
-  //     });
-  //   });
-  // });
-
-  vehicleImage.addEventListener('click', (event) => {
-    event.preventDefault();
-    const imageId = vehicleImage.dataset.imageId;
-    const imageRect = vehicleImage.getBoundingClientRect();
-
-    storedCoordinates = {
-      x: event.offsetX,
-      y: event.offsetY,
-      relativeX: ((event.clientX - imageRect.left) / imageRect.width) * 100,
-      relativeY: ((event.clientY - imageRect.top) / imageRect.height) * 100,
-    };
-    const coords = storedCoordinates;
-    placeMarker(bigDent, dentPaintDamaged, coords, imageContainer);
-    const newObj = {
-      imageId: imageId,
-      paintDamaged: dentPaintDamaged,
-      bigDent: bigDent,
-      coords: storedCoordinates,
-      status: 'open',
-    };
-    dents.push(newObj);
-    if (!dentsTemp[imageId]) {
-      dentsTemp[imageId] = [];
+      if (sendContainer) sendContainer.classList.add('hidden');
+      if (sendMarksBtn) sendMarksBtn.classList.add('hidden');
     }
-    dentsTemp[imageId].push(newObj);
+  });
+  paintDamagedCheck.addEventListener('click', () => {
+    dentPaintDamaged = dentPaintDamaged ? false : true;
+  });
+  bigDentCheck.addEventListener('click', () => {
+    bigDent = bigDent ? false : true;
+  });
+  specialCaseCheck.addEventListener('click', () => {
+    specialCase = specialCase ? false : true;
+  });
+}
+
+// TASK PAGE /tasks/:id
+
+if (taskHeader) {
+  taskId = taskHeader.dataset.taskId;
+  loadDataAndPopulate(taskId);
+
+  modelNameInput.addEventListener('change', () => {
+    const taskId = modelNameInput.dataset.taskId;
+    const carModel = modelNameInput.value;
+    updateTask(taskId, { carModel });
   });
 
-  if (searchInput) {
-    searchInput.addEventListener('input', async function () {
-      const userInput = searchInput.value.trim();
-      if (userInput.length > 0) {
-        try {
-          const response = await searchUsers(userInput);
-          displayResults(response);
-        } catch (error) {
-          showAlert('error', error);
-        }
+  if (totalCostInput) {
+    totalCostInput.addEventListener('change', () => {
+      const taskId = totalCostInput.dataset.taskId;
+      const cost = parseFloat(totalCostInput.value);
+      let taskStatus = document.querySelector('.task-status-select').value;
+
+      if (isNaN(cost) || cost < 0) {
+        return showAlert('error', 'Cost must be a positive number');
+      } else if (cost > 10000) {
+        return showAlert('error', 'Cost must not exceed 10,000');
+      }
+      if (taskStatus === 'open') {
+        taskStatus = 'in-progress';
+        updateTask(taskId, { taskStatus, cost });
       } else {
-        clearResults();
-      }
-    });
-    searchResults.addEventListener('click', function (event) {
-      if (event.target.tagName === 'A') {
-        searchInput.value = customer = event.target.textContent;
-        searchResults.style.display = 'none';
-      }
-    });
-
-    document.addEventListener('click', function (event) {
-      if (
-        !searchInput.contains(event.target) &&
-        !searchResults.contains(event.target)
-      ) {
-        searchResults.style.display = 'none';
+        updateTask(taskId, { cost });
       }
     });
   }
-  if (addNewDentsToTask) {
-    addNewDentsToTask.addEventListener('click', async () => {
-      // if (dents.length === 0)
-      //   return showAlert('error', `You haven't added any dent`);
-      warnBeforeUnload = false;
 
-      addNewDentsToTask.textContent = 'Saving...';
-
-      const dents = Object.values(dentsTemp).flat();
-
-      await addDentsToTask(taskId, dents, uploadedImages);
-      addNewDentsToTask.textContent = 'Save changes';
+  if (remarkInput) {
+    remarkInput.addEventListener('change', () => {
+      const taskId = remarkInput.dataset.taskId;
+      const remark = remarkInput.value;
+      updateTask(taskId, { remark });
     });
   }
-  if (sendMarksBtn) {
-    sendMarksBtn.addEventListener('click', async () => {
-      if (dents.length === 0 && !specialCase)
-        return showAlert('error', translations[defaultLang]['noDentsMarked']);
-      let model = vehicleModel.value.trim();
-      if (model.length < 5)
-        return showAlert(
-          'error',
-          translations[defaultLang]['modelNameMinLength'],
-        );
-      const year = selectedYear.value;
-      if (!year)
-        return showAlert('error', translations[defaultLang]['chooseModelYear']);
-      model += ` ${year}`;
-      const note = newTaskNote.value.trim();
-      if (note.length > 150)
-        return showAlert('error', translations[defaultLang]['noteMaxLength']);
-      if (specialCase && note.length < 5)
-        return showAlert(
-          'error',
-          translations[defaultLang]['addShortDescription'],
-        );
-      warnBeforeUnload = false;
-      await sendTask(
-        customer,
-        model,
-        dents,
-        uploadedImages,
-        specialCase,
-        note,
-        defaultLang,
-      );
+
+  if (taskStatusBtn) {
+    taskStatusBtn.addEventListener('change', () => {
+      const taskId = taskStatusBtn.dataset.taskId;
+      const taskStatus = document.querySelector('.task-status-select').value;
+      updateTask(taskId, { taskStatus });
     });
   }
 }
 
-if (forgotPassBtn) {
-  forgotPassBtn.addEventListener('click', function (e) {
-    e.preventDefault();
-    const email = document.getElementById('email-forgot-pass').value.trim();
-    forgotPassword(email);
+if (deleteTaskBtn) {
+  deleteTaskBtn.addEventListener('click', function () {
+    const confirmed = confirm('Delete this task?');
+    if (confirmed) {
+      dents = [];
+      const taskId = deleteTaskBtn.dataset.taskId;
+      deleteTask(taskId);
+    }
+  });
+}
+
+if (downloadTaskBtn) {
+  downloadTaskBtn.addEventListener('click', async function () {
+    downloadTaskBtn.disabled = true;
+    const screenshotContainers = createShortcutContainer(uploadedImages);
+    backToTasks.insertAdjacentHTML('afterend', screenshotContainers);
+    let imagesToCapture = document.querySelectorAll('.screenshot-container');
+    imagesToCapture.forEach((image) => {
+      const imgName = image.dataset.filename;
+      const dents = dentsTemp[imgName];
+      if (dents) {
+        dents.forEach((dent) => {
+          placeMarker(dent.bigDent, dent.paintDamaged, dent.coords, image);
+        });
+      }
+    });
+    await generateTaskPDF();
+    downloadTaskBtn.disabled = false;
+  });
+}
+
+if (addNewDentsToTask) {
+  addNewDentsToTask.addEventListener('click', async () => {
+    // if (dents.length === 0)
+    //   return showAlert('error', `You haven't added any dent`);
+    warnBeforeUnload = false;
+
+    addNewDentsToTask.textContent = 'Saving...';
+
+    const dents = Object.values(dentsTemp).flat();
+
+    await addDentsToTask(taskId, dents, uploadedImages);
+    addNewDentsToTask.textContent = 'Save changes';
+  });
+}
+
+if (backToTasks) {
+  backToTasks.addEventListener('click', function () {
+    window.location.href = '/tasks';
+  });
+}
+
+// TASKS PAGE /tasks
+
+if (downloadReportBtn) {
+  downloadReportBtn.addEventListener('click', function () {
+    generatePDF();
   });
 }
 
@@ -677,12 +475,6 @@ if (paginationBtns) {
       window.location.href = url.toString();
     });
   }
-}
-
-if (downloadReportBtn) {
-  downloadReportBtn.addEventListener('click', function () {
-    generatePDF();
-  });
 }
 
 if (filterOptions) {
@@ -727,6 +519,97 @@ if (filterOptions) {
   });
 }
 
+// INPUT FOR USER AUTO-SUGGESTION (Option for admin to register task to specific customer)
+if (searchInput) {
+  searchInput.addEventListener('input', async function () {
+    const userInput = searchInput.value.trim();
+    userAutoSuggest(userInput, searchResults);
+  });
+  searchResults.addEventListener('click', function (event) {
+    if (event.target.tagName === 'A') {
+      searchInput.value = customer = event.target.textContent;
+      searchResults.style.display = 'none';
+    }
+  });
+
+  document.addEventListener('click', function (event) {
+    if (
+      !searchInput.contains(event.target) &&
+      !searchResults.contains(event.target)
+    ) {
+      searchResults.style.display = 'none';
+    }
+  });
+}
+
+// ALSO ON TASK page
+
+if (vehicleImage) {
+  vehicleImage.addEventListener('click', (event) => {
+    event.preventDefault();
+    const imageId = vehicleImage.dataset.imageId;
+    const imageRect = vehicleImage.getBoundingClientRect();
+
+    storedCoordinates = {
+      x: event.offsetX,
+      y: event.offsetY,
+      relativeX: ((event.clientX - imageRect.left) / imageRect.width) * 100,
+      relativeY: ((event.clientY - imageRect.top) / imageRect.height) * 100,
+    };
+    const coords = storedCoordinates;
+    placeMarker(bigDent, dentPaintDamaged, coords, imageContainer);
+    const newObj = {
+      imageId: imageId,
+      paintDamaged: dentPaintDamaged,
+      bigDent: bigDent,
+      coords: storedCoordinates,
+      status: 'open',
+    };
+    dents.push(newObj);
+    if (!dentsTemp[imageId]) {
+      dentsTemp[imageId] = [];
+    }
+    dentsTemp[imageId].push(newObj);
+  });
+}
+
+if (sendMarksBtn) {
+  sendMarksBtn.addEventListener('click', async () => {
+    if (dents.length === 0 && !specialCase)
+      return showAlert('error', translations[defaultLang]['noDentsMarked']);
+    let model = vehicleModel.value.trim();
+    if (model.length < 5)
+      return showAlert(
+        'error',
+        translations[defaultLang]['modelNameMinLength'],
+      );
+    const year = selectedYear.value;
+    if (!year)
+      return showAlert('error', translations[defaultLang]['chooseModelYear']);
+    model += ` ${year}`;
+    const note = newTaskNote.value.trim();
+    if (note.length > 150)
+      return showAlert('error', translations[defaultLang]['noteMaxLength']);
+    if (specialCase && note.length < 5)
+      return showAlert(
+        'error',
+        translations[defaultLang]['addShortDescription'],
+      );
+    warnBeforeUnload = false;
+    await sendTask(
+      customer,
+      model,
+      dents,
+      uploadedImages,
+      specialCase,
+      note,
+      defaultLang,
+    );
+  });
+}
+
+// GENERAL, on all pages
+
 if (overlay) {
   overlay.addEventListener('click', () => {
     overlay.classList.add('hidden');
@@ -756,6 +639,17 @@ if (modalLinks) {
   });
 }
 
+// LOGIN, SIGNUP, PASSWORD RESET, ACCOUNT UPDATE
+
+if (loginForm) {
+  loginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    login(email, password);
+  });
+}
+
 if (emailInputSignup) {
   emailInputSignup.addEventListener('input', () =>
     checkFieldAvailability('email-signup', 'checkEmail'),
@@ -771,15 +665,6 @@ if (signupForm) {
     const passwordConfirm = document.getElementById('confirm_password').value;
     const name = document.getElementById('company').value;
     signup(name, email, language, password, passwordConfirm);
-  });
-}
-
-if (loginForm) {
-  loginForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    login(email, password);
   });
 }
 
@@ -807,87 +692,6 @@ if (userPasswordForm) {
   });
 }
 
-if (costInputs) {
-  costInputs.forEach((input) => {
-    input.addEventListener('change', () => {
-      const taskId = input.dataset.taskId;
-      const dentId = input.dataset.dentId;
-      let taskStatus = document.querySelector('.task-status-select').value;
-      const cost = parseFloat(input.value);
-      if (isNaN(cost) || cost < 0) {
-        return showAlert('error', 'Cost must be a positive number');
-      } else if (cost > 10000) {
-        return showAlert('error', 'Cost must not exceed 10,000');
-      }
-      if (taskStatus === 'open') {
-        taskStatus = 'in-progress';
-        updateTask(taskId, { taskStatus, dentId, cost });
-      } else {
-        updateTask(taskId, { dentId, cost });
-      }
-    });
-  });
-}
-
-if (totalCostInput) {
-  totalCostInput.addEventListener('change', () => {
-    const taskId = totalCostInput.dataset.taskId;
-    const cost = parseFloat(totalCostInput.value);
-    let taskStatus = document.querySelector('.task-status-select').value;
-
-    if (isNaN(cost) || cost < 0) {
-      return showAlert('error', 'Cost must be a positive number');
-    } else if (cost > 10000) {
-      return showAlert('error', 'Cost must not exceed 10,000');
-    }
-    if (taskStatus === 'open') {
-      taskStatus = 'in-progress';
-      updateTask(taskId, { taskStatus, cost });
-    } else {
-      updateTask(taskId, { cost });
-    }
-  });
-}
-
-if (modelNameInput) {
-  modelNameInput.addEventListener('change', () => {
-    const taskId = modelNameInput.dataset.taskId;
-    const carModel = modelNameInput.value;
-    updateTask(taskId, { carModel });
-  });
-}
-
-if (remarkInput) {
-  remarkInput.addEventListener('change', () => {
-    const taskId = remarkInput.dataset.taskId;
-    const remark = remarkInput.value;
-    updateTask(taskId, { remark });
-  });
-}
-if (taskStatusBtn) {
-  taskStatusBtn.addEventListener('change', () => {
-    const taskId = taskStatusBtn.dataset.taskId;
-    const taskStatus = document.querySelector('.task-status-select').value;
-    updateTask(taskId, { taskStatus });
-  });
-}
-
-if (backToTasks) {
-  backToTasks.addEventListener('click', function () {
-    window.location.href = '/tasks';
-  });
-}
-
-if (deleteTaskBtn) {
-  deleteTaskBtn.addEventListener('click', function () {
-    const confirmed = confirm('Delete this task?');
-    if (confirmed) {
-      const taskId = deleteTaskBtn.dataset.taskId;
-      deleteTask(taskId);
-    }
-  });
-}
-
 if (passwordResetForm) {
   passwordResetForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -899,5 +703,13 @@ if (passwordResetForm) {
     ).value;
 
     resetPassword(password, passwordConfirm, token);
+  });
+}
+
+if (forgotPassBtn) {
+  forgotPassBtn.addEventListener('click', function (e) {
+    e.preventDefault();
+    const email = document.getElementById('email-forgot-pass').value.trim();
+    forgotPassword(email);
   });
 }

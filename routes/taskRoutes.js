@@ -29,7 +29,7 @@ router.use(
 );
 
 router.route('/').get(taskController.getAllTasks);
-router.route('/task-stats').get(taskController.getTaskStats);
+// router.route('/task-stats').get(taskController.getTaskStats);
 router.get(
   '/generate-admin-report',
   authController.restrictTo('admin'),
@@ -38,7 +38,7 @@ router.get(
 router
   .route('/:id')
   .get(taskController.getTask)
-  .patch(authController.restrictTo('admin'), taskController.updateDents)
+  .patch(taskController.updateDents)
   .delete(taskController.deleteTask);
 
 module.exports = router;

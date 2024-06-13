@@ -127,3 +127,25 @@ export const removeAllMarkers = (markers, imageContainer) => {
     }
   }
 };
+
+export const markerRemover = (dentsTemp, dents, img) => {
+  document.querySelectorAll('.marker').forEach((marker) => {
+    marker.addEventListener('click', () => {
+      const confirmed = confirm('Remove this marker?');
+      if (confirmed) {
+        marker.remove();
+        dentsTemp[img] = dents[img].filter(
+          (obj) => obj._id !== marker.dataset.markerId,
+        );
+      }
+    });
+  });
+};
+
+export const removeLastMarker = (markers, dents, imageContainer) => {
+  if (markers.length > 0) {
+    const lastMarker = markers[markers.length - 1];
+    imageContainer.removeChild(lastMarker);
+  }
+  if (dents) dents.pop();
+};

@@ -69,11 +69,7 @@ buttonsSide.forEach((button) => {
     buttonsSide.forEach((btn) => {
       btn.style.border = 'none';
     });
-    if (markers.length > 0) {
-      while (markers.length > 0) {
-        imageContainer.removeChild(markers[0]);
-      }
-    }
+    removeAllMarkers(markers);
 
     button.style.border = '0.3rem solid coral';
     img = button.value;
@@ -128,3 +124,42 @@ buttonsSide.forEach((button) => {
     }
   });
 });
+const butonsSideHandler = () => {
+  buttonsSide.forEach((btn) => {
+    btn.style.border = 'none';
+  });
+  removeAllMarkers(markers);
+
+  button.style.border = '0.3rem solid coral';
+  img = button.value;
+  let vehicleImage = document.getElementById('vehicleImage');
+  vehicleImage.style.width = UPLOADED_IMAGE_WIDTH;
+  vehicleImage.src = `/pics/tasks/${img}`;
+  vehicleImage.setAttribute('data-image-id', img);
+
+  removeMarksContainer.classList.remove('hidden');
+  if (sendMarksBtn) sendMarksBtn.classList.remove('hidden');
+  paintDamagedCheck.checked = false;
+  bigDentCheck.checked = false;
+  dentPaintDamaged = false;
+  bigDent = false;
+
+  if (sendContainer) sendContainer.classList.remove('hidden');
+  markerContainer.classList.remove('hidden');
+  setTimeout(function () {
+    markerContainer.classList.add('visible');
+  }, 50);
+
+  makeMarkerContainerFloating();
+
+  const searchBar = document.querySelector('.search-bar');
+  if (searchBar) searchBar.classList.remove('hidden');
+
+  const sideDents = dentsTemp[img];
+
+  if (sideDents && sideDents.length > 0) {
+    sideDents.forEach((dent) => {
+      placeMarker(dent.bigDent, dent.paintDamaged, dent.coords, imageContainer);
+    });
+  }
+};
