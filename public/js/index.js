@@ -11,7 +11,6 @@ import {
   removeAllMarkers,
   markerRemover,
   removeLastMarker,
-  // populateSidesWithDents,
 } from './placeMarker';
 import { resetPassword } from './resetPassword';
 import {
@@ -20,11 +19,7 @@ import {
   getImagesAndDents,
 } from './photosHandler';
 import { sendTask } from './sendTask';
-import {
-  getUserLanguagePref,
-  translateContent,
-  userAutoSuggest,
-} from './searchUsers';
+import { translateContent, userAutoSuggest } from './searchUsers';
 import { generateTaskPDF, createShortcutContainer } from './makeScreenshot';
 import { UPLOADED_IMAGE_WIDTH } from '../../constants/markerConstants';
 import { translations } from './translations';
@@ -33,9 +28,7 @@ import {
   warnUnsavedChanges,
 } from './elementsHandler';
 
-const mainContainer = document.querySelector('.main-container');
 const passwordResetForm = document.querySelector('.reset-form');
-const uploadPhoto = document.querySelector('.upload_photo');
 const sendContainer = document.querySelector('.send-container');
 const sendMarksBtn = document.querySelector('.send-marks');
 const vehicleModel = document.querySelector('.form__input--model');
@@ -50,7 +43,6 @@ const userDataForm = document.querySelector('.form-user-data');
 const userPasswordForm = document.querySelector('.form-user-password');
 const loginForm = document.querySelector('.login-form');
 const signupForm = document.querySelector('.signup-form');
-const costInputs = document.querySelectorAll('.dent-cost');
 const totalCostInput = document.querySelector('.total-cost');
 const remarkInput = document.querySelector('.task-remark');
 
@@ -66,16 +58,13 @@ const backToTasks = document.querySelector('.back-tasks');
 const deleteTaskBtn = document.querySelector('.delete-task');
 const emailInputSignup = document.getElementById('email-signup');
 const logoImage = document.getElementById('logoImage');
-const logoContainer = document.querySelector('.logo-container');
 const paginationBtns = document.querySelector('.pagination-buttons');
 const filterOptions = document.querySelector('.filter-menu');
 const forgotPassBtn = document.getElementById('forgot-pass');
 let vehicleImage = document.getElementById('vehicleImage');
-// const vehicleImages = document.querySelectorAll('#vehicleImage');
 const sideText = document.querySelector('.choose__side');
 
 const markerContainer = document.querySelector('.marker-container');
-const addDents = document.querySelector('.add-dents');
 
 const paintDamagedCheck = document.getElementById('paint-damaged');
 const specialCaseCheck = document.getElementById('special-case');
@@ -89,13 +78,7 @@ const selectedYear = document.getElementById('year');
 const taskHeader = document.querySelector('.task-header');
 const addNewDentsToTask = document.querySelector('.save-new-dents');
 let buttonsSide = document.querySelectorAll('.button--side');
-const uploadContainer = document.querySelector('.photo-upload_container');
 const fileInput = document.getElementById('photo');
-
-// function getMarkers() {
-//   return document.querySelectorAll('.marker');
-// }
-// let markers = getMarkers();
 
 let url = new URL(window.location.href);
 let defaultLang = 'en';
@@ -235,62 +218,7 @@ if (fileInput) {
 
     buttonsSide.forEach((button) => {
       button.addEventListener('click', () => {
-        buttonsSide.forEach((btn) => {
-          btn.style.border = 'none';
-        });
-        removeAllMarkers(markers, imageContainer);
-
-        button.style.border = '0.3rem solid coral';
-        img = button.value;
-        let vehicleImage = document.getElementById('vehicleImage');
-        vehicleImage.style.width = UPLOADED_IMAGE_WIDTH;
-        vehicleImage.src = `/pics/tasks/${img}`;
-        vehicleImage.setAttribute('data-image-id', img);
-
-        removeMarksContainer.classList.remove('hidden');
-        if (sendMarksBtn) sendMarksBtn.classList.remove('hidden');
-        paintDamagedCheck.checked = false;
-        bigDentCheck.checked = false;
-        dentPaintDamaged = false;
-        bigDent = false;
-
-        if (sendContainer) sendContainer.classList.remove('hidden');
-        markerContainer.classList.remove('hidden');
-        setTimeout(function () {
-          markerContainer.classList.add('visible');
-        }, 50);
-
-        makeMarkerContainerFloating();
-
-        const searchBar = document.querySelector('.search-bar');
-        if (searchBar) searchBar.classList.remove('hidden');
-
-        const sideDents = dentsTemp[img];
-
-        if (sideDents && sideDents.length > 0) {
-          sideDents.forEach((dent) => {
-            placeMarker(
-              dent.bigDent,
-              dent.paintDamaged,
-              dent.coords,
-              imageContainer,
-            );
-          });
-        }
-        if (taskHeader) {
-          document.querySelectorAll('.marker').forEach((marker) => {
-            marker.addEventListener('click', () => {
-              const confirmed = confirm('Remove this marker?');
-              if (confirmed) {
-                marker.remove();
-                console.log('dentsTemp', dentsTemp[img]);
-                dentsTemp[img] = dents[img].filter(
-                  (obj) => obj._id !== marker.dataset.markerId,
-                );
-              }
-            });
-          });
-        }
+        butonsSideHandler(button, markers);
       });
     });
   });
