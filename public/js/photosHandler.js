@@ -19,20 +19,34 @@ export const uploadPhotosTemp = async (images) => {
   }
 };
 
+// export const renderVehicleImageFromUploads = (uploadedImages) => {
+//   const sidesContainer = document.querySelector('.sides-container');
+//   const sideText = document.querySelector('.choose__side');
+
+//   if (sidesContainer) sidesContainer.remove();
+//   let html = '<div class="sides-container">';
+//   uploadedImages.forEach((image) => {
+//     html += `
+//             <button class="button button--side" value="${image}">
+//                 <img src="/pics/tasks/${image}" id="${image}" />
+//             </button>`;
+//   });
+//   html += '</div>';
+//   sideText.insertAdjacentHTML('afterend', html);
+// };
+
 export const renderVehicleImageFromUploads = (uploadedImages) => {
   const sidesContainer = document.querySelector('.sides-container');
   const sideText = document.querySelector('.choose__side');
 
-  if (sidesContainer) sidesContainer.remove();
-  let html = '<div class="sides-container">';
+  html = '';
   uploadedImages.forEach((image) => {
     html += `
             <button class="button button--side" value="${image}">
                 <img src="/pics/tasks/${image}" id="${image}" />
             </button>`;
   });
-  html += '</div>';
-  sideText.insertAdjacentHTML('afterend', html);
+  sidesContainer.innerHTML = html;
 };
 
 export const getImagesAndDents = async (taskId) => {
@@ -53,18 +67,18 @@ export const getImagesAndDents = async (taskId) => {
         return acc;
       }, {});
 
-      renderVehicleImageFromUploads(images);
-      sideSelection = document.querySelector('.sides-container');
+      // renderVehicleImageFromUploads(images);
+      // sideSelection = document.querySelector('.sides-container');
 
-      setTimeout(function () {
-        sideSelection.classList.add('visible');
-      }, 50);
-      // populateSidesWithDents(groupedDents, 'pics_temp');
+      // setTimeout(function () {
+      //   sideSelection.classList.add('visible');
+      // }, 50);
+      // // populateSidesWithDents(groupedDents, 'pics_temp');
       return { images, groupedDents };
     }
   } catch (err) {
     console.log(err);
-    throw err.response.data.message;
+    throw err;
   }
 };
 // export const uploadPhotosTemp = async (e) => {

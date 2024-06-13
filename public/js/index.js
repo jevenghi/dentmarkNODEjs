@@ -79,6 +79,7 @@ const taskHeader = document.querySelector('.task-header');
 const addNewDentsToTask = document.querySelector('.save-new-dents');
 let buttonsSide = document.querySelectorAll('.button--side');
 const fileInput = document.getElementById('photo');
+let sideSelection = document.querySelector('.sides-container');
 
 let url = new URL(window.location.href);
 let defaultLang = 'en';
@@ -102,7 +103,7 @@ window.addEventListener('beforeunload', () => {
   warnUnsavedChanges(uploadedImages, dents, warnBeforeUnload);
 });
 
-const butonsSideHandler = (button, markers) => {
+const buttonsSideHandler = (button, markers) => {
   buttonsSide.forEach((btn) => {
     btn.style.border = 'none';
   });
@@ -155,7 +156,7 @@ const populateSidesWithDents = (dents) => {
   const buttonsSide = document.querySelectorAll('.button--side');
   buttonsSide.forEach((button) => {
     button.addEventListener('click', () => {
-      butonsSideHandler(button, markers);
+      buttonsSideHandler(button, markers);
       markerRemover(dentsTemp, dents, img);
     });
   });
@@ -164,7 +165,6 @@ const populateSidesWithDents = (dents) => {
 async function loadDataAndPopulate(taskId) {
   try {
     const { images, groupedDents } = await getImagesAndDents(taskId);
-    populateSidesWithDents(groupedDents);
     uploadedImages = images;
     dentsTemp = groupedDents;
   } catch (error) {
@@ -173,7 +173,45 @@ async function loadDataAndPopulate(taskId) {
   }
 }
 
+function makeButtonsSideVisible() {
+  sideText.classList.remove('hidden');
+  sideSelection = document.querySelector('.sides-container');
+
+  setTimeout(function () {
+    sideSelection.classList.add('visible');
+  }, 50);
+}
+
 // SEND NEW TASK / MAIN PAGE also on TASK page
+if (sideSelection) {
+  let currentButtonListeners = [];
+  const observer = new MutationObserver(() => {
+    buttonsSide = document.querySelectorAll('.button--side');
+    const markers = imageContainer.getElementsByClassName('marker');
+
+    if (currentButtonListeners.length > 0) {
+      buttonsSide.forEach((button, index) => {
+        button.removeEventListener('click', currentButtonListeners[index]);
+      });
+    }
+
+    currentButtonListeners = [];
+
+    buttonsSide.forEach((button) => {
+      const listener = () => {
+        buttonsSideHandler(button, markers);
+        if (taskHeader) markerRemover(dentsTemp, dents, img);
+      };
+      button.addEventListener('click', listener);
+      currentButtonListeners.push(listener);
+    });
+  });
+
+  observer.observe(sideSelection, {
+    subtree: true,
+    childList: true,
+  });
+}
 
 if (fileInput) {
   const spinner = document.getElementById('spinner');
@@ -202,25 +240,12 @@ if (fileInput) {
     } catch (error) {
       showAlert('error', error);
     }
-    renderVehicleImageFromUploads(uploadedImages, 'tasks');
+    renderVehicleImageFromUploads(uploadedImages);
     spinner.style.display = 'none';
 
     fileInput.value = '';
 
-    sideText.classList.remove('hidden');
-    sideSelection = document.querySelector('.sides-container');
-
-    setTimeout(function () {
-      sideSelection.classList.add('visible');
-    }, 50);
-    buttonsSide = document.querySelectorAll('.button--side');
-    const markers = imageContainer.getElementsByClassName('marker');
-
-    buttonsSide.forEach((button) => {
-      button.addEventListener('click', () => {
-        butonsSideHandler(button, markers);
-      });
-    });
+    makeButtonsSideVisible();
   });
 }
 
@@ -251,15 +276,6 @@ if (markerContainer) {
       if (dentsTemp[img]) delete dentsTemp[img];
       if (vehicleImage) vehicleImage.src = '';
       renderVehicleImageFromUploads(uploadedImages);
-
-      populateSidesWithDents(dentsTemp);
-      sideSelection = document.querySelector('.sides-container');
-
-      setTimeout(function () {
-        sideSelection.classList.add('visible');
-      }, 50);
-      if (sendContainer) sendContainer.classList.add('hidden');
-      if (sendMarksBtn) sendMarksBtn.classList.add('hidden');
     }
   });
   paintDamagedCheck.addEventListener('click', () => {
@@ -277,7 +293,14 @@ if (markerContainer) {
 
 if (taskHeader) {
   taskId = taskHeader.dataset.taskId;
-  loadDataAndPopulate(taskId);
+
+  async function loadDataAndRenderImages() {
+    await loadDataAndPopulate(taskId);
+    renderVehicleImageFromUploads(uploadedImages);
+    makeButtonsSideVisible();
+  }
+
+  loadDataAndRenderImages();
 
   modelNameInput.addEventListener('change', () => {
     const taskId = modelNameInput.dataset.taskId;

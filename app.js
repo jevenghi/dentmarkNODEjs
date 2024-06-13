@@ -26,10 +26,10 @@ app.get('/ip', (request, response) => response.send(request.ip));
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
-// app.use((req, res, next) => {
-//   logger.info(`${req.method} ${req.url}`);
-//   next();
-// });
+app.use((req, res, next) => {
+  logger.info(`${req.method} ${req.url}`);
+  next();
+});
 
 app.use(express.static(path.join(__dirname, 'public')));
 

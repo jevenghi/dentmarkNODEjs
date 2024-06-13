@@ -66,60 +66,7 @@ export const addDentsToTask = async (taskId, dents, images) => {
     showAlert('error', err.response.data.message);
   }
 };
-//TODO: move to index.js
-// export const populateSidesWithDents = (dents, folder) => {
-//   const imageContainer = document.querySelector('.image-container');
 
-//   const markers = imageContainer.getElementsByClassName('marker');
-//   const buttonsSide = document.querySelectorAll('.button--side');
-//   buttonsSide.forEach((button) => {
-//     button.addEventListener('click', () => {
-//       buttonsSide.forEach((btn) => {
-//         btn.style.border = 'none';
-//       });
-
-//       if (markers.length > 0) {
-//         while (markers.length > 0) {
-//           imageContainer.removeChild(markers[0]);
-//         }
-//       }
-
-//       button.style.border = '0.3rem solid coral';
-//       img = button.value;
-//       let vehicleImage = document.getElementById('vehicleImage');
-//       vehicleImage.style.width = '1000px';
-//       vehicleImage.src = `/pics/${folder}/${img}`;
-//       vehicleImage.setAttribute('data-image-id', img);
-
-//       // removeMarksContainer.classList.remove('hidden');
-//       // sendMarksBtn.classList.remove('hidden');
-//       paintDamagedCheck.checked = false;
-//       bigDentCheck.checked = false;
-//       dentPaintDamaged = false;
-//       bigDent = false;
-
-//       // sendContainer.classList.remove('hidden');
-//       // markerContainer.classList.remove('hidden');
-//       // setTimeout(function () {
-//       //   markerContainer.classList.add('visible');
-//       // }, 50);
-//       // const searchBar = document.querySelector('.search-bar');
-//       // if (searchBar) searchBar.classList.remove('hidden');
-
-//       const sideDents = dents[img];
-//       if (sideDents && sideDents.length > 0) {
-//         sideDents.forEach((dent) => {
-//           placeMarker(
-//             dent.bigDent,
-//             dent.paintDamaged,
-//             dent.coords,
-//             imageContainer,
-//           );
-//         });
-//       }
-//     });
-//   });
-// };
 export const removeAllMarkers = (markers, imageContainer) => {
   if (markers.length > 0) {
     while (markers.length > 0) {
@@ -134,7 +81,7 @@ export const markerRemover = (dentsTemp, dents, img) => {
       const confirmed = confirm('Remove this marker?');
       if (confirmed) {
         marker.remove();
-        dentsTemp[img] = dents[img].filter(
+        dentsTemp[img] = dentsTemp[img].filter(
           (obj) => obj._id !== marker.dataset.markerId,
         );
       }

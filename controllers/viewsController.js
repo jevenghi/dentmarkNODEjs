@@ -1,6 +1,6 @@
 const EventEmitter = require('events');
 
-EventEmitter.defaultMaxListeners = 11;
+EventEmitter.defaultMaxListeners = 15;
 
 let Client = require('ssh2-sftp-client');
 const path = require('path');
