@@ -2,18 +2,13 @@ import { showAlert } from './alerts.js';
 import axios from 'axios';
 import * as markerConstants from '../../constants/markerConstants';
 
-export const placeMarker = (
-  bigDent,
-  paintDamaged,
-  coords,
-  image,
-  id = null,
-) => {
+export const placeMarker = (bigDent, paintDamaged, coords, image, id) => {
   const marker = document.createElement('div');
   marker.className = 'marker';
-  if (id !== null) {
-    marker.dataset.markerId = id;
-  }
+  // if (id !== null) {
+  //   marker.dataset.markerId = id;
+  // }
+  marker.dataset.markerId = id;
 
   let currentWidth = parseInt(markerConstants.UPLOADED_IMAGE_WIDTH) * 1;
   let currentHeight = image.clientHeight;
@@ -75,19 +70,35 @@ export const removeAllMarkers = (markers, imageContainer) => {
   }
 };
 
-export const markerRemover = (dentsTemp, dents, img) => {
+export const markerRemover = (dentsTemp, img) => {
   document.querySelectorAll('.marker').forEach((marker) => {
     marker.addEventListener('click', () => {
       const confirmed = confirm('Remove this marker?');
       if (confirmed) {
         marker.remove();
+        const markerId = marker.dataset.markerId;
         dentsTemp[img] = dentsTemp[img].filter(
-          (obj) => obj._id !== marker.dataset.markerId,
+          (obj) => obj.markerId !== markerId,
         );
       }
     });
   });
 };
+
+// export const markerRemover = (dentsTemp, img) => {
+//   const parentElement = document.querySelector('.image-container');
+
+//   parentElement.addEventListener('click', (event) => {
+//     if (event.target.classList.contains('marker')) {
+//       const marker = event.target;
+
+//       marker.remove();
+//       dentsTemp[img] = dentsTemp[img].filter(
+//         (obj) => obj._id !== marker.dataset.markerId,
+//       );
+//     }
+//   });
+// };
 
 export const removeLastMarker = (markers, dents, imageContainer) => {
   if (markers.length > 0) {

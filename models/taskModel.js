@@ -11,6 +11,7 @@ const dentSchema = new mongoose.Schema({
     max: [10000, 'Value can not exceed 10,000'],
   },
   status: String,
+  markerId: String,
 });
 
 const taskSchema = new mongoose.Schema(

@@ -39,7 +39,7 @@ export const renderVehicleImageFromUploads = (uploadedImages) => {
   const sidesContainer = document.querySelector('.sides-container');
   const sideText = document.querySelector('.choose__side');
 
-  html = '';
+  let html = '';
   uploadedImages.forEach((image) => {
     html += `
             <button class="button button--side" value="${image}">
