@@ -626,6 +626,11 @@ input[type='file'] {
   border-color: #ccc; /* Set the border color */
   border-radius: 4px; /* Optionally set border radius */
 }
+
+.model-input {
+  width: 20rem;
+}
+
 .task-remark {
   width: 28rem;
   height: 4rem;
