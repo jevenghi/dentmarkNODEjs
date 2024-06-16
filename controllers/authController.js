@@ -25,6 +25,7 @@ const createAndSendToken = (user, statusCode, res) => {
     ),
     httpOnly: true,
     secure: true,
+    sameSite: 'strict',
     // secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
   };
 
