@@ -141,7 +141,9 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
     console.error('SFTP Error:', err);
     return res.status(500).json({ error: 'Error transferring files' });
   }
-
+  const completed = task.completedAt
+    ? task.completedAt.toLocaleDateString('en-GB')
+    : '';
   res.status(200).render('task', {
     title: 'Task',
     taskId: req.params.id,
@@ -153,6 +155,7 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
     totalCost: task.totalCost,
     uploadedImages: images,
     remark: task.remark,
+    completed,
   });
 });
 

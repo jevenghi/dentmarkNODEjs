@@ -287,6 +287,10 @@ exports.updateDents = catchAsyncErr(async (req, res, next) => {
       await Task.findByIdAndUpdate(taskId, { totalCost: cost });
     }
     if (taskStatus) {
+      if (taskStatus === 'pending') {
+        const completeDate = Date.now();
+        await Task.findByIdAndUpdate(taskId, { completedAt: completeDate });
+      }
       await Task.findByIdAndUpdate(taskId, { taskStatus });
     }
     if (remark) {

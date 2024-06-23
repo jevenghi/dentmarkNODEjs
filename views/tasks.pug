@@ -24,7 +24,8 @@ block content
             th Vehicle Model
             th Task Status
             th Cost
-            th Date
+            th Created
+            th Completed
         tbody
           //- if tasks.length === 0
           //-   tr
@@ -35,6 +36,7 @@ block content
               td= task.taskStatus
               td= `€ ${task.totalCost}`
               td= new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
+              td= new Date(task.completeAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
     - if (role === 'admin') 
       //- .search-bar
       //-   input(type='text', placeholder='Search customer...', id='search-input')
@@ -46,7 +48,8 @@ block content
             th Vehicle Model
             th Task Status
             th Cost
-            th Date
+            th Created
+            th Completed
         tbody
           if tasks.length === 0
             tr
@@ -58,7 +61,10 @@ block content
               td: a(href=`/tasks/${task._id}` class='table-link')= task.carModel
               td= task.taskStatus
               td= task.totalCost
-              td= new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) 
+              td= new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
+              td
+                if task.completedAt
+                  = new Date(task.completedAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
     div.pagination-buttons
       if page > 1
         button.previous-button() Prev

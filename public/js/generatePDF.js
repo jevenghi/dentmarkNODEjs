@@ -78,6 +78,13 @@ const getFilteredResults = async () => {
           day: '2-digit',
           year: 'numeric',
         }),
+        task.completedAt
+          ? new Date(task.completedAt).toLocaleDateString('en-US', {
+              month: 'short',
+              day: '2-digit',
+              year: 'numeric',
+            })
+          : '',
       ]);
       return result;
     } else {
@@ -94,9 +101,9 @@ export const generatePDF = async () => {
   const totalAmountTasks = filteredResults.length;
   const from =
     filteredResults[filteredResults.length - 1][
-      filteredResults[filteredResults.length - 1].length - 1
+      filteredResults[filteredResults.length - 1].length - 2
     ];
-  const to = filteredResults[0][filteredResults[0].length - 1];
+  const to = filteredResults[0][filteredResults[0].length - 2];
 
   const docDefinition = {
     content: [
@@ -108,16 +115,24 @@ export const generatePDF = async () => {
         style: 'table',
         table: {
           headerRows: 1,
-          widths: ['*', 'auto', 'auto', 50, 75],
+          widths: ['*', 'auto', 'auto', 'auto', 'auto', 'auto'],
 
           body: [
-            ['Customer', 'Vehicle Model', 'Status', 'Cost', 'Date'],
+            [
+              'Customer',
+              'Vehicle Model',
+              'Status',
+              'Cost',
+              'Created',
+              'Completed',
+            ],
             ...filteredResults,
             [
               { text: 'TOTAL', bold: true },
               '',
               '',
               { text: totalSum, bold: true },
+              '',
               '',
             ],
           ],
