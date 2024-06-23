@@ -666,10 +666,10 @@ input[type='file'] {
 
 .task-table th,
 .task-table td {
-  border: 0.05px solid #4b4b4b;
+  border: 0.03px solid #4b4b4b;
   font-size: larger;
   text-align: left;
-  padding: 8px;
+  padding: 5px;
 }
 
 .task-table th {
