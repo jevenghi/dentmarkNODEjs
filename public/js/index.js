@@ -274,7 +274,7 @@ if (fileInput) {
     const chooseSideEl = document.querySelector('.choose__side');
     setTimeout(() => {
       chooseSideEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
+    }, 200);
   });
 }
 
