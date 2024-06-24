@@ -180,9 +180,12 @@ function makeButtonsSideVisible() {
 // SEND NEW TASK / MAIN PAGE also on TASK page
 if (sideSelection) {
   let currentButtonListeners = [];
+
   const observer = new MutationObserver(() => {
     buttonsSide = document.querySelectorAll('.button--side');
+    // const lastButton = buttonsSide[buttonsSide.length - 1];
     const markers = imageContainer.getElementsByClassName('marker');
+    // buttonsSideHandler(lastButton, markers);
 
     if (currentButtonListeners.length > 0) {
       buttonsSide.forEach((button, index) => {
@@ -205,6 +208,10 @@ if (sideSelection) {
   observer.observe(sideSelection, {
     subtree: true,
     childList: true,
+  });
+
+  window.addEventListener('beforeunload', () => {
+    observer.disconnect();
   });
 }
 
@@ -235,8 +242,12 @@ if (fileInput) {
     e.preventDefault();
     spinner.style.display = 'block';
 
-    vehicleImage = imageContainer.querySelector('#vehicleImage');
-    if (vehicleImage) vehicleImage.src = '';
+    // imageContainer.innerHTML = `
+    // <img id="vehicleImage" src="">
+    // <div id="marker"></div>
+    // `;
+    // vehicleImage = imageContainer.querySelector('#vehicleImage');
+    // if (vehicleImage) vehicleImage.src = '';
     const form = new FormData();
     const images = document.getElementById('photo').files;
 
@@ -261,6 +272,11 @@ if (fileInput) {
     fileInput.value = '';
 
     makeButtonsSideVisible();
+
+    buttonsSide = document.querySelectorAll('.button--side');
+    const lastButton = buttonsSide[buttonsSide.length - 1];
+    const markers = imageContainer.getElementsByClassName('marker');
+    buttonsSideHandler(lastButton, markers);
   });
 }
 
