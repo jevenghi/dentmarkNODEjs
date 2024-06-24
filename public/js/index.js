@@ -242,12 +242,6 @@ if (fileInput) {
     e.preventDefault();
     spinner.style.display = 'block';
 
-    // imageContainer.innerHTML = `
-    // <img id="vehicleImage" src="">
-    // <div id="marker"></div>
-    // `;
-    // vehicleImage = imageContainer.querySelector('#vehicleImage');
-    // if (vehicleImage) vehicleImage.src = '';
     const form = new FormData();
     const images = document.getElementById('photo').files;
 
@@ -277,10 +271,10 @@ if (fileInput) {
     const lastButton = buttonsSide[buttonsSide.length - 1];
     const markers = imageContainer.getElementsByClassName('marker');
     buttonsSideHandler(lastButton, markers);
-    const chooseSideEl = document.querySelector('.button--side');
-    if (buttonsSide.length > 0) {
+    const chooseSideEl = document.querySelector('.choose__side');
+    setTimeout(() => {
       chooseSideEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    }, 100);
   });
 }
 
