@@ -277,6 +277,10 @@ if (fileInput) {
     const lastButton = buttonsSide[buttonsSide.length - 1];
     const markers = imageContainer.getElementsByClassName('marker');
     buttonsSideHandler(lastButton, markers);
+    const chooseSideEl = document.querySelector('.button--side');
+    if (buttonsSide.length > 0) {
+      chooseSideEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   });
 }
 
