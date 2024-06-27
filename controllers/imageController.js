@@ -68,6 +68,7 @@ exports.resizeTaskPhotos = catchAsyncErr(async (req, res, next) => {
 
 exports.transferFiles = catchAsyncErr(async (req, res, next) => {
   const remoteDirectory = '/home/tasks';
+  const remoteDirBackup = '/home/tasks_backup';
 
   const config = {
     host: process.env.VPS_HOST,
@@ -85,8 +86,10 @@ exports.transferFiles = catchAsyncErr(async (req, res, next) => {
         const localFilePath = `public/pics/tasks/${file}`;
 
         const remote = path.posix.join(remoteDirectory, file);
+        const remoteBackup = path.posix.join(remoteDirBackup, file);
 
         await client.put(localFilePath, remote);
+        await client.put(localFilePath, remoteBackup);
       }),
     );
 
@@ -95,7 +98,8 @@ exports.transferFiles = catchAsyncErr(async (req, res, next) => {
   } catch (err) {
     //TODO: handle returned errors
     console.error('SFTP Error:', err);
-    return res.status(500).json({ error: 'Error transferring files' });
+    // return res.status(500).json({ error: 'Error transferring files' });
+    return new AppError('Error transferring files', 503);
   }
   next();
 });

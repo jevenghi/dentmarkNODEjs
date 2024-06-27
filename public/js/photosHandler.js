@@ -15,7 +15,8 @@ export const uploadPhotosTemp = async (images) => {
   } catch (err) {
     throw err.response.data.message === 'Unexpected field'
       ? 'You can upload up to 10 images'
-      : 'Error uploading photos';
+      : // : 'Error uploading photos';
+        err.response.data.message;
   }
 };
 

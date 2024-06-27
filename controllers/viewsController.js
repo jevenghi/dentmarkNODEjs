@@ -1,4 +1,5 @@
 const EventEmitter = require('events');
+const AppError = require('../utils/appError');
 
 EventEmitter.defaultMaxListeners = 15;
 
@@ -139,7 +140,8 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
     // res.status(201).json({ status: 'success' });
   } catch (err) {
     console.error('SFTP Error:', err);
-    return res.status(500).json({ error: 'Error transferring files' });
+    // return res.status(500).json({ error: 'Error transferring files' });
+    return new AppError('Error transferring files', 503);
   }
   const completed = task.completedAt
     ? task.completedAt.toLocaleDateString('en-GB')

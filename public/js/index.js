@@ -245,11 +245,6 @@ if (fileInput) {
     const form = new FormData();
     const images = document.getElementById('photo').files;
 
-    if (logoImage) {
-      logoImage.src = '';
-      logoImage.style.width = 0;
-    }
-
     Array.from(images).forEach((file) => {
       form.append('images', file);
     });
@@ -258,8 +253,16 @@ if (fileInput) {
       const imagesProcessed = await uploadPhotosTemp(form);
       uploadedImages.push(...imagesProcessed);
     } catch (error) {
-      showAlert('error', error);
+      spinner.style.display = 'none';
+      fileInput.value = '';
+
+      return showAlert('error', error);
     }
+    if (logoImage) {
+      logoImage.src = '';
+      logoImage.style.width = 0;
+    }
+
     renderVehicleImageFromUploads(uploadedImages);
     spinner.style.display = 'none';
 
