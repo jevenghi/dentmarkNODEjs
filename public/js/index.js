@@ -111,6 +111,9 @@ window.addEventListener('beforeunload', () => {
   warnUnsavedChanges(uploadedImages, dents, warnBeforeUnload);
 });
 
+const unhideSaveChangesBtn = () => {
+  if (addNewDentsToTask) addNewDentsToTask.classList.remove('hidden');
+};
 const buttonsSideHandler = (button, markers) => {
   buttonsSide.forEach((btn) => {
     btn.style.border = 'none';
@@ -318,6 +321,7 @@ if (markerContainer) {
   });
   specialCaseCheck.addEventListener('click', () => {
     specialCase = specialCase ? false : true;
+    unhideSaveChangesBtn();
   });
 }
 
@@ -530,6 +534,7 @@ if (searchInput) {
 if (vehicleImage) {
   vehicleImage.addEventListener('click', (event) => {
     event.preventDefault();
+    unhideSaveChangesBtn();
     const imageId = vehicleImage.dataset.imageId;
     const imageRect = vehicleImage.getBoundingClientRect();
 

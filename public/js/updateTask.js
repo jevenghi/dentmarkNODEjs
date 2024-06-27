@@ -10,8 +10,8 @@ export const updateTask = async (taskId, data) => {
     });
 
     if (res.data.status === 'success') {
-      // showAlert('success', `Saved successfully!`);
-      location.reload();
+      showAlert('success', `Saved successfully!`);
+      // location.reload();
     }
   } catch (err) {
     // if (err.response.status === 429) {
