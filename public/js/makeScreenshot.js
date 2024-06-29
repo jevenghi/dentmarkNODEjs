@@ -106,114 +106,256 @@ import { showAlert } from './alerts';
 // };
 
 //LAST IN USE
-const convertImagesToBase64 = async () => {
+
+// const convertImagesToBase64 = async () => {
+//   try {
+//     const base64Images = [];
+
+//     const imageContainers = Array.from(
+//       document.querySelectorAll('.screenshot-container'),
+//     );
+//     const taskHeaderContainer = document.querySelector('.task-header');
+//     if (taskHeaderContainer) {
+//       const canvas = await html2canvas(taskHeaderContainer);
+//       const blob = await new Promise((resolve) =>
+//         canvas.toBlob(resolve, 'image/png'),
+//       );
+
+//       const compressedBlob = await compress(blob, {
+//         quality: 1,
+//         width: 500,
+//       });
+
+//       const base64Data = await new Promise((resolve, reject) => {
+//         const reader = new FileReader();
+//         reader.readAsDataURL(compressedBlob);
+//         reader.onloadend = function () {
+//           resolve(reader.result.split(',')[1]);
+//         };
+//         reader.onerror = reject;
+//       });
+
+//       base64Images.push(base64Data);
+//     }
+
+//     await Promise.all(
+//       imageContainers.map(async (container) => {
+//         const canvas = await html2canvas(container);
+//         const blob = await new Promise((resolve) =>
+//           canvas.toBlob(resolve, 'image/png'),
+//         );
+
+//         const compressedBlob = await compress(blob, {
+//           quality: 1,
+//           width: 500,
+//         });
+
+//         const base64Data = await new Promise((resolve, reject) => {
+//           const reader = new FileReader();
+//           reader.readAsDataURL(compressedBlob);
+//           reader.onloadend = function () {
+//             resolve(reader.result.split(',')[1]);
+//           };
+//           reader.onerror = reject;
+//         });
+
+//         base64Images.push(base64Data);
+//       }),
+//     );
+
+//     return base64Images;
+//   } catch (error) {
+//     console.error('Error converting screenshots to Base64:', error);
+//     return [];
+//   }
+// };
+
+// export const generateTaskPDF = async () => {
+//   const downloadTaskBtn = document.querySelector('.download-task-report');
+
+//   downloadTaskBtn.textContent = 'Downloading...';
+//   try {
+//     const images = await convertImagesToBase64();
+
+//     // const taskSummary = await convertImagesToBase64('.task-header');
+//     const docDefinition = {
+//       content: [],
+//     };
+//     docDefinition.content.push({
+//       image: `data:image/png;base64,${images[0]}`,
+//       width: 300,
+//       alignment: 'center',
+//       margin: [0, 10],
+//     });
+
+//     images.slice(1).forEach((dataURI, index) => {
+//       if (index < images.length - 1) {
+//         docDefinition.content.push({ text: '\n\n', fontSize: 1 });
+//       }
+//       docDefinition.content.push({
+//         image: `data:image/png;base64,${dataURI}`,
+//         width: 500,
+//       });
+//     });
+//     pdfMake.createPdf(docDefinition).download();
+//     document.querySelectorAll('.screenshot-container').forEach((container) => {
+//       container.remove();
+//     });
+//     downloadTaskBtn.textContent = 'Download Task';
+//   } catch (error) {
+//     console.error('Error capturing and saving screenshot:', error);
+//     showAlert('error', 'Error generating report');
+//   }
+// };
+
+const compressImage = (imgElement, quality = 1, maxWidth = 500) => {
+  return new Promise((resolve) => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
+    const aspectRatio = imgElement.width / imgElement.height;
+    const newWidth = Math.min(maxWidth, imgElement.width);
+    const newHeight = newWidth / aspectRatio;
+
+    canvas.width = newWidth;
+    canvas.height = newHeight;
+
+    ctx.drawImage(imgElement, 0, 0, newWidth, newHeight);
+    canvas.toBlob((blob) => resolve(blob), 'image/jpeg', quality);
+  });
+};
+
+const blobToDataURL = (blob) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+};
+
+const convertImagesToDataURLs = async () => {
   try {
-    const base64Images = [];
+    const dataURLs = [];
 
-    const imageContainers = Array.from(
-      document.querySelectorAll('.screenshot-container'),
-    );
-    const taskHeaderContainer = document.querySelector('.task-header');
-    if (taskHeaderContainer) {
-      const canvas = await html2canvas(taskHeaderContainer);
-      const blob = await new Promise((resolve) =>
-        canvas.toBlob(resolve, 'image/png'),
-      );
-
-      const compressedBlob = await compress(blob, {
-        quality: 1,
-        width: 500,
-      });
-
-      const base64Data = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(compressedBlob);
-        reader.onloadend = function () {
-          resolve(reader.result.split(',')[1]);
-        };
-        reader.onerror = reject;
-      });
-
-      base64Images.push(base64Data);
-    }
+    const imageContainers = [
+      document.querySelector('.task-header'),
+      ...Array.from(document.querySelectorAll('.screenshot-container')),
+    ].filter(Boolean);
 
     await Promise.all(
-      imageContainers.map(async (container) => {
+      imageContainers.map(async (container, index) => {
         const canvas = await html2canvas(container);
-        const blob = await new Promise((resolve) =>
-          canvas.toBlob(resolve, 'image/png'),
-        );
+        const imgElement = new Image();
+        imgElement.src = canvas.toDataURL();
 
-        const compressedBlob = await compress(blob, {
-          quality: 1,
-          width: 500,
+        await new Promise((resolve) => {
+          imgElement.onload = resolve;
         });
 
-        const base64Data = await new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.readAsDataURL(compressedBlob);
-          reader.onloadend = function () {
-            resolve(reader.result.split(',')[1]);
-          };
-          reader.onerror = reject;
-        });
-
-        base64Images.push(base64Data);
+        const compressedBlob = await compressImage(imgElement);
+        const dataURL = await blobToDataURL(compressedBlob);
+        dataURLs.push(dataURL);
       }),
     );
 
-    return base64Images;
+    return dataURLs;
   } catch (error) {
-    console.error('Error converting screenshots to Base64:', error);
-    return [];
+    console.error('Error converting images to data URLs:', error);
+    throw error;
   }
+};
+
+const generatePDF = async (dataURLs, maxImagesPerPage = 5) => {
+  const docDefinition = {
+    content: [],
+    pageBreakBefore: (currentNode, followingNodesOnPage) => {
+      return (
+        followingNodesOnPage.length === maxImagesPerPage &&
+        currentNode.headlineLevel !== 1
+      );
+    },
+  };
+
+  dataURLs.forEach((dataURL, index) => {
+    docDefinition.content.push({
+      image: dataURL,
+      width: index === 0 ? 300 : 500,
+      alignment: index === 0 ? 'center' : 'left',
+      margin: index === 0 ? [0, 10] : [0, 0],
+    });
+
+    if (index < dataURLs.length - 1) {
+      docDefinition.content.push({ text: '\n\n', fontSize: 1 });
+    }
+  });
+
+  return new Promise((resolve, reject) => {
+    pdfMake.createPdf(docDefinition).getBlob(
+      (pdfBlob) => {
+        resolve(pdfBlob);
+      },
+      (error) => {
+        reject(error);
+      },
+    );
+  });
 };
 
 export const generateTaskPDF = async () => {
   const downloadTaskBtn = document.querySelector('.download-task-report');
+  downloadTaskBtn.textContent = 'Generating PDF...';
+  downloadTaskBtn.disabled = true;
 
-  downloadTaskBtn.textContent = 'Downloading...';
   try {
-    const images = await convertImagesToBase64();
+    const dataURLs = await convertImagesToDataURLs();
+    const pdfBlob = await generatePDF(dataURLs);
 
-    // const taskSummary = await convertImagesToBase64('.task-header');
-    const docDefinition = {
-      content: [],
-    };
-    docDefinition.content.push({
-      image: `data:image/png;base64,${images[0]}`,
-      width: 300,
-      alignment: 'center',
-      margin: [0, 10],
-    });
+    // Create a download link
+    const url = URL.createObjectURL(pdfBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'task_report.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 
-    images.slice(1).forEach((dataURI, index) => {
-      if (index < images.length - 1) {
-        docDefinition.content.push({ text: '\n\n', fontSize: 1 });
-      }
-      docDefinition.content.push({
-        image: `data:image/png;base64,${dataURI}`,
-        width: 500,
-      });
-    });
-    pdfMake.createPdf(docDefinition).download();
+    // Clean up
+    URL.revokeObjectURL(url);
     document.querySelectorAll('.screenshot-container').forEach((container) => {
       container.remove();
     });
+
     downloadTaskBtn.textContent = 'Download Task';
+    downloadTaskBtn.disabled = false;
   } catch (error) {
-    console.error('Error capturing and saving screenshot:', error);
-    showAlert('error', 'Error generating report');
+    console.error('Error generating PDF:', error);
+    showAlert('error', 'Error generating the PDF. Please try again.');
+    downloadTaskBtn.textContent = 'Download Task';
+    downloadTaskBtn.disabled = false;
   }
 };
-export const createShortcutContainer = (images) => {
-  let screenshotsHTML = '';
-  images.forEach((fileName) => {
-    screenshotsHTML += `
-      <div class="screenshot-container" data-filename="${fileName}">
-        <img src="/pics/tasks/${fileName}"/>
-      </div>`;
-  });
 
-  return screenshotsHTML;
+// export const createScreenshotContainer = (images) => {
+//   let screenshotsHTML = '';
+//   images.forEach((fileName) => {
+//     screenshotsHTML += `
+//       <div class="screenshot-container" data-filename="${fileName}">
+//         <img src="/pics/tasks/${fileName}"/>
+//       </div>`;
+//   });
+
+//   return screenshotsHTML;
+// };
+
+export const createScreenshotContainer = (images) => {
+  return images
+    .map(
+      (fileName) => `
+    <div class="screenshot-container" data-filename="${fileName}">
+      <img src="/pics/tasks/${fileName}"/>
+    </div>
+  `,
+    )
+    .join('');
 };

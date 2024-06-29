@@ -20,7 +20,7 @@ import {
 } from './photosHandler';
 import { sendTask } from './sendTask';
 import { translateContent, userAutoSuggest } from './searchUsers';
-import { generateTaskPDF, createShortcutContainer } from './makeScreenshot';
+import { generateTaskPDF, createScreenshotContainer } from './makeScreenshot';
 import { UPLOADED_IMAGE_WIDTH } from '../../constants/markerConstants';
 import { translations } from './translations';
 import {
@@ -395,7 +395,7 @@ if (deleteTaskBtn) {
 if (downloadTaskBtn) {
   downloadTaskBtn.addEventListener('click', async function () {
     downloadTaskBtn.disabled = true;
-    const screenshotContainers = createShortcutContainer(uploadedImages);
+    const screenshotContainers = createScreenshotContainer(uploadedImages);
     backToTasks.insertAdjacentHTML('afterend', screenshotContainers);
     let imagesToCapture = document.querySelectorAll('.screenshot-container');
     imagesToCapture.forEach((image) => {

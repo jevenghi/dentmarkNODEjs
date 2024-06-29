@@ -127,10 +127,7 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
       images.map(async (file) => {
         // const localFilePath = path.resolve(localDirectory, file);
         const localFilePath = `public/pics/tasks/${file}`;
-        // const localFilePath = `public/pics/tasks/${file}`;
-
         const remote = path.posix.join(remoteDirectory, file);
-
         await client.get(remote, localFilePath);
       }),
     );
