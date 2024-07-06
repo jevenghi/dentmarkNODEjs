@@ -10,9 +10,9 @@ block content
         //-     option(value='completedAt') Completed
         .filter-date
           label(for='from-date') From:
-          input(type='date', id='from-date', value=from)
+          input(type='date', id='from-date', value=from, placeholder='Select date')
           label(for='to-date') To:
-          input(type='date', id='to-date', value=to)
+          input(type='date', id='to-date', value=to, placeholder='Select date')
           button.reset-date Reset
         .filter-status Status:  
           select#status-filter
