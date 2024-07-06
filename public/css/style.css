@@ -965,6 +965,12 @@ button[type='submit']:hover {
   padding: 0.5rem;
   font-size: 1.2rem;
 }
+
+.sort-by {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
 .pagination-buttons {
   margin-top: 1rem;
   display: flex;

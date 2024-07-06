@@ -309,8 +309,20 @@ if (markerContainer) {
       uploadedImages = uploadedImages.filter((element) => element !== img);
       dents = dents.filter((element) => element.imageId !== img);
       if (dentsTemp[img]) delete dentsTemp[img];
-      if (vehicleImage) vehicleImage.src = '';
+
+      // const container = document.querySelector('.image-container');
+      // while (container.firstChild) {
+      //   container.removeChild(container.firstChild);
+      // }
+      if (vehicleImage) {
+        vehicleImage.src = '';
+        vehicleImage.style = '';
+      }
+      const markers = document.querySelectorAll('.marker');
+      markers.forEach((marker) => marker.remove());
+
       renderVehicleImageFromUploads(uploadedImages);
+      unhideSaveChangesBtn();
     }
   });
   paintDamagedCheck.addEventListener('click', () => {
@@ -469,6 +481,25 @@ if (filterOptions) {
   const toDateInput = document.getElementById('to-date');
   const statusFilter = document.getElementById('status-filter');
   const resetDateBtn = document.querySelector('.reset-date');
+  //TODO: sorting
+  // const sortBySelect = document.getElementById('sort-by');
+
+  // function saveSelection() {
+  //   localStorage.setItem('sortBy', sortBySelect.value);
+  //   url.searchParams.set('sort', sortBySelect.value);
+  //   window.location.href = url.toString();
+  // }
+
+  // function loadSelection() {
+  //   const savedSort = localStorage.getItem('sortBy');
+  //   if (savedSort) {
+  //     sortBySelect.value = savedSort;
+  //   }
+  // }
+
+  // sortBySelect.addEventListener('change', saveSelection);
+
+  // document.addEventListener('DOMContentLoaded', loadSelection);
 
   statusFilter.addEventListener('change', function () {
     const selectedStatus = statusFilter.value;
