@@ -953,6 +953,12 @@ button[type='submit']:hover {
   padding: 0.3rem;
 }
 
+.reset-date {
+  background-color: rgb(34, 40, 49);
+  color: #fff;
+  border-radius: 0.3rem;
+}
+
 .filter-status {
   padding: 0.5rem;
   font-size: 1.2rem;

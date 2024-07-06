@@ -468,6 +468,7 @@ if (filterOptions) {
   const fromDateInput = document.getElementById('from-date');
   const toDateInput = document.getElementById('to-date');
   const statusFilter = document.getElementById('status-filter');
+  const resetDateBtn = document.querySelector('.reset-date');
 
   statusFilter.addEventListener('change', function () {
     const selectedStatus = statusFilter.value;
@@ -502,6 +503,12 @@ if (filterOptions) {
       url.searchParams.delete('createdAt[lt]');
     }
 
+    window.location.href = url.toString();
+  });
+
+  resetDateBtn.addEventListener('click', function () {
+    url.searchParams.delete('createdAt[lt]');
+    url.searchParams.delete('createdAt[gte]');
     window.location.href = url.toString();
   });
 }
@@ -586,6 +593,7 @@ if (sendMarksBtn) {
         translations[defaultLang]['addShortDescription'],
       );
     warnBeforeUnload = false;
+    sendMarksBtn.textContent = 'Sending task...';
     await sendTask(
       customer,
       model,
@@ -595,6 +603,7 @@ if (sendMarksBtn) {
       note,
       defaultLang,
     );
+    sendMarksBtn.textContent = 'Send task';
   });
 }
 

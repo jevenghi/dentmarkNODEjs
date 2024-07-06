@@ -32,7 +32,7 @@ block content
               option(value="complete", selected=taskStatus === "complete") Paid
 
         .task-cost-wrapper
-          p Total cost:
+          p Total cost (ex. BTW):
           input(type="text", placeholder=`€${totalCost}`, class="total-cost", data-task-id=taskId)
             
         .task-cost-wrapper
@@ -43,7 +43,7 @@ block content
              
       if role === 'user'
         p Task status: #{taskStatus}
-        p Total cost: € #{totalCost}
+        p Total cost (ex. BTW): € #{totalCost}
         p Notes: #{remark}
     if role === 'admin'    
       button(class='download-task-report', data-task-id=taskId) Download Task 
