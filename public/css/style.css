@@ -927,9 +927,6 @@ button[type='submit']:hover {
   cursor: pointer;
 }
 
-.filter-date label {
-  margin-right: 10px;
-}
 .filter-date {
   top: 0;
   right: 0;
@@ -939,7 +936,7 @@ button[type='submit']:hover {
 }
 
 .filter-date label {
-  margin-right: 10px;
+  margin-right: 2px;
   font-size: 1.2rem;
   /* Add some space between label and input */
 }
@@ -951,6 +948,11 @@ button[type='submit']:hover {
   margin-top: 1rem;
   margin-left: 1rem;
   padding: 0.3rem;
+}
+
+#from-date,
+#to-date {
+  width: 10rem;
 }
 
 .reset-date {
