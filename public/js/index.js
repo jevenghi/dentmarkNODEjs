@@ -258,8 +258,7 @@ if (fileInput) {
     } catch (error) {
       spinner.style.display = 'none';
       fileInput.value = '';
-
-      return showAlert('error', error);
+      return showAlert('error', 'Error uploading photo. Please try again.');
     }
     if (logoImage) {
       logoImage.src = '';
