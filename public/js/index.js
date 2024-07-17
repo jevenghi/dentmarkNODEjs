@@ -486,8 +486,8 @@ if (filterOptions) {
 
   // function saveSelection() {
   //   localStorage.setItem('sortBy', sortBySelect.value);
-  //   url.searchParams.set('sort', sortBySelect.value);
-  //   window.location.href = url.toString();
+  //   // url.searchParams.set('sort', sortBySelect.value);
+  //   // window.location.href = url.toString();
   // }
 
   // function loadSelection() {
@@ -515,9 +515,13 @@ if (filterOptions) {
   fromDateInput.addEventListener('change', function () {
     const fromDate = fromDateInput.value;
     if (fromDate) {
-      url.searchParams.set('createdAt[gte]', fromDate);
+      // url.searchParams.set(`${sortBySelect.value}[gte]`, fromDate);
+      // url.searchParams.set('createdAt[gte]', fromDate);
+      url.searchParams.set('completedAt[gte]', fromDate);
     } else {
-      url.searchParams.delete('createdAt[gte]');
+      // url.searchParams.delete(`${sortBySelect.value}[gte]`);
+      // url.searchParams.delete('createdAt[gte]');
+      url.searchParams.delete('completedAt[gte]');
     }
 
     window.location.href = url.toString();
@@ -529,17 +533,25 @@ if (filterOptions) {
       const toDate = new Date(to);
       toDate.setDate(toDate.getDate() + 1);
       const toPlusOneDay = toDate.toISOString().split('T')[0];
-      url.searchParams.set('createdAt[lt]', toPlusOneDay);
+      // url.searchParams.set(`${sortBySelect.value}[lt]`, toPlusOneDay);
+      // url.searchParams.set('createdAt[lt]', toPlusOneDay);
+      url.searchParams.set('completedAt[lt]', toPlusOneDay);
     } else {
-      url.searchParams.delete('createdAt[lt]');
+      // url.searchParams.delete(`${sortBySelect.value}[lt]`);
+      // url.searchParams.delete('createdAt[lt]');
+      url.searchParams.delete('completedAt[lt]');
     }
 
     window.location.href = url.toString();
   });
 
   resetDateBtn.addEventListener('click', function () {
-    url.searchParams.delete('createdAt[lt]');
-    url.searchParams.delete('createdAt[gte]');
+    // url.searchParams.delete(`${sortBySelect.value}[lt]`);
+    // url.searchParams.delete(`${sortBySelect.value}[gte]`);
+    // url.searchParams.delete('createdAt[lt]');
+    // url.searchParams.delete('createdAt[gte]');
+    url.searchParams.delete('completedAt[lt]');
+    url.searchParams.delete('completedAt[gte]');
     window.location.href = url.toString();
   });
 }
