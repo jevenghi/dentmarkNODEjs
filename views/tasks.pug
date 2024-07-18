@@ -21,7 +21,12 @@ block content
             option(value='in-progress' selected=taskStatus === 'in-progress') In Progress
             option(value='pending' selected=taskStatus === "pending") Complete/Not paid
             option(value='complete' selected=taskStatus === "complete") Paid
-          button.download-report Download Summary 
+          //- button.download-report Download Summary
+          .download-options
+            button#download-report.download-report Download Summary 
+            .format-dropdown
+              button.format-option(data-format="pdf") PDF
+              button.format-option(data-format="excel") Excel
     - if (role === 'user')
       table.task-table
         thead

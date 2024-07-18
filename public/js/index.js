@@ -2,7 +2,7 @@ import { updateSettings } from './updateAccount';
 import { login, logoutUser, forgotPassword } from './login';
 import { signup, checkFieldAvailability } from './signup';
 import { updateTask } from './updateTask';
-import { generatePDF } from './generatePDF';
+import { generatePDF, generateExcel } from './generateReport';
 import { showAlert } from './alerts';
 import { deleteTask } from './deleteTask';
 import {
@@ -447,9 +447,40 @@ if (backToTasks) {
 
 // TASKS PAGE /tasks
 
-if (downloadReportBtn) {
-  downloadReportBtn.addEventListener('click', function () {
-    generatePDF();
+const formatDropdown = document.querySelector('.format-dropdown');
+const formatOptions = document.querySelectorAll('.format-option');
+
+// if (downloadReportBtn) {
+//   downloadReportBtn.addEventListener('click', function () {
+//     // generatePDF();
+//     generateExcel();
+//   });
+// }
+if (downloadReportBtn && formatDropdown && formatOptions) {
+  downloadReportBtn.addEventListener('click', function (event) {
+    event.stopPropagation();
+    formatDropdown.classList.toggle('show');
+  });
+
+  formatOptions.forEach((option) => {
+    option.addEventListener('click', function () {
+      const selectedFormat = this.getAttribute('data-format');
+      if (selectedFormat === 'pdf') {
+        generatePDF();
+      } else if (selectedFormat === 'excel') {
+        generateExcel();
+      }
+      formatDropdown.classList.remove('show');
+    });
+  });
+
+  // Close the dropdown if the user clicks outside of it
+  window.addEventListener('click', function (event) {
+    if (!event.target.matches('.download-report')) {
+      if (formatDropdown.classList.contains('show')) {
+        formatDropdown.classList.remove('show');
+      }
+    }
   });
 }
 

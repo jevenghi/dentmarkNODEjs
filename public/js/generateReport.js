@@ -1,6 +1,7 @@
 import { showAlert } from './alerts.js';
 import axios from 'axios';
-import { translations } from './translations';
+import { translations } from './translations.js';
+import ExcelJS from 'exceljs';
 
 const pdfFonts = require('pdfmake/build/vfs_fonts.js');
 const pdfMake = require('pdfmake/build/pdfmake.js');
@@ -205,4 +206,49 @@ export const generateTaskPDF = async (images) => {
     console.log(err);
     showAlert('error', 'Error making the report');
   }
+};
+
+export const generateExcel = async () => {
+  const filteredResults = await getFilteredResults();
+  const from =
+    filteredResults[filteredResults.length - 1][
+      filteredResults[filteredResults.length - 1].length - 2
+    ];
+  const to = filteredResults[0][filteredResults[0].length - 2];
+
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet('Summary');
+
+  worksheet.addRow([
+    'Customer',
+    'Vehicle Model',
+    'Status',
+    'Cost',
+    'Created',
+    'Completed',
+  ]);
+
+  filteredResults.forEach((row) => {
+    worksheet.addRow(row);
+  });
+
+  worksheet.columns = [
+    { width: 20 },
+    { width: 15 },
+    { width: 10 },
+    { width: 10 },
+    { width: 12 },
+    { width: 12 },
+  ];
+
+  const buffer = await workbook.xlsx.writeBuffer();
+  const blob = new Blob([buffer], {
+    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `summary_${from}_${to}.xlsx`;
+  link.click();
+
+  URL.revokeObjectURL(link.href);
 };
