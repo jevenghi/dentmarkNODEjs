@@ -86,6 +86,7 @@ const getFilteredResults = async () => {
               year: 'numeric',
             })
           : '',
+        task.remark,
       ]);
       return result;
     } else {
@@ -97,7 +98,9 @@ const getFilteredResults = async () => {
 };
 
 export const generatePDF = async () => {
-  const filteredResults = await getFilteredResults();
+  let filteredResults = await getFilteredResults();
+  filteredResults = filteredResults.map((row) => row.slice(0, -1));
+
   const totalSum = filteredResults.reduce((acc, curr) => acc + curr[3], 0);
   const totalAmountTasks = filteredResults.length;
   const from =
@@ -211,11 +214,15 @@ export const generateTaskPDF = async (images) => {
 
 export const generateExcel = async () => {
   const filteredResults = await getFilteredResults();
-  const from =
-    filteredResults[filteredResults.length - 1][
-      filteredResults[filteredResults.length - 1].length - 2
-    ];
-  const to = filteredResults[0][filteredResults[0].length - 2];
+  // const from =
+  //   filteredResults[filteredResults.length - 1][
+  //     filteredResults[filteredResults.length - 1].length - 2
+  //   ];
+  // const to = filteredResults[0][filteredResults[0].length - 2];
+  const dateColumnIndex = 4; // Assuming 'Created' is now the 5th column (index 4)
+
+  const from = filteredResults[filteredResults.length - 1][dateColumnIndex];
+  const to = filteredResults[0][dateColumnIndex];
 
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('Summary');
@@ -227,6 +234,7 @@ export const generateExcel = async () => {
     'Cost',
     'Created',
     'Completed',
+    'Notes',
   ]);
 
   filteredResults.forEach((row) => {
@@ -240,6 +248,7 @@ export const generateExcel = async () => {
     { width: 10 },
     { width: 12 },
     { width: 12 },
+    { width: 20 },
   ];
 
   const buffer = await workbook.xlsx.writeBuffer();
