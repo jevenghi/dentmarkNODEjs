@@ -162,7 +162,8 @@ export const generatePDF = async () => {
       },
     },
   };
-  pdfMake.createPdf(docDefinition).download();
+  const fileName = `summary_${from}_to_${to}.pdf`;
+  pdfMake.createPdf(docDefinition).download(fileName);
 };
 
 // export const generateTaskPDF = (images) => {
