@@ -65,7 +65,7 @@ block content
         tbody
           if tasks.length === 0
             tr
-              td(colspan='5') No tasks found
+              td(colspan='6') No tasks found
           each task in tasks
             tr
               //- td: a(href=`/users/${task.user.id}` class='table-link')= task.user.name
