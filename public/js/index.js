@@ -719,6 +719,10 @@ if (loginForm) {
     e.preventDefault();
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
+
+    document.getElementById('loginText').style.display = 'none';
+    document.getElementById('spinner').style.display = 'inline-block';
+
     login(email, password);
   });
 }

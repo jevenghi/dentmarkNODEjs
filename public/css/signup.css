@@ -49,19 +49,7 @@ body {
   box-sizing: border-box;
   font-size: 1rem;
 }
-button[type='submit'] {
-  width: 100%;
-  background-color: rgb(34, 40, 49);
-  color: #fff;
-  padding: 0.625rem;
-  border: none;
-  border-radius: 0.3125rem;
-  cursor: pointer;
-  font-size: 1.3rem;
-}
-button[type='submit']:hover {
-  background-color: #0056b3;
-}
+
 .privacy-policy-link,
 .need-help-link {
   text-align: center;
@@ -177,3 +165,43 @@ button[type='submit']:hover {
 .btn:hover {
   background-color: #0056b3;
 }
+
+.spinner {
+  display: none;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-left-color: #fff;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+  margin-left: 1rem;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+button[type='submit'] {
+  width: 100%;
+  height: 3rem;
+  margin-top: 1rem;
+  background-color: rgb(34, 40, 49);
+  color: #fff;
+  padding: 0.625rem;
+  border: none;
+  border-radius: 0.3125rem;
+  cursor: pointer;
+  font-size: 1.3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* button[type='submit']:hover {
+  background-color: #0056b3;
+} */

@@ -6,7 +6,9 @@ import axios from 'axios';
 
 export const login = async (email, password) => {
   try {
-    document.getElementById('loginButton').textContent = 'Logging in...';
+    // document.getElementById('loginButton').textContent = 'Logging in...';
+    // document.getElementById('loginButton').textContent = '';
+    spinner.style.display = 'block';
 
     const res = await axios({
       method: 'POST',
@@ -32,7 +34,8 @@ export const login = async (email, password) => {
     //   window.location.href = 'limit-exceeded.html';
     // } else {
     showAlert('error', err.response.data.message);
-    document.getElementById('loginButton').textContent = 'Login';
+    document.getElementById('loginText').style.display = 'inline';
+    document.getElementById('spinner').style.display = 'none';
   }
 };
 

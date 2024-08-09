@@ -18,6 +18,8 @@ block content
       .form-group
         label(for="password") Password
         input(type="password", id="password", name="password", required)
-      button(type="submit", id="loginButton") Login
+      button(type="submit", id="loginButton")
+        span#loginText Login
+        .spinner(id="spinner", style="display: none;") 
     .forgot-password
       a(href="/forgot-password") Forgot password?  
