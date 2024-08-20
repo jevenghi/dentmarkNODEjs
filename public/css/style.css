@@ -952,18 +952,20 @@ button[type='submit']:hover {
   padding: 0.3rem;
 } */
 
-.download-options {
+/* .download-options {
   position: relative;
   display: inline-block;
   margin-top: 1rem;
   margin-left: 1rem;
-}
+} */
 
-.download-report {
+.download-report,
+.reset-date {
   background-color: rgb(34, 40, 49);
   color: #fff;
   border-radius: 0.3rem;
   padding: 0.3rem;
+  font-weight: 200;
 }
 
 .format-dropdown {
@@ -1000,15 +1002,19 @@ button[type='submit']:hover {
   width: 10rem;
 }
 
-.reset-date {
+/* .reset-date {
   background-color: rgb(34, 40, 49);
   color: #fff;
   border-radius: 0.3rem;
-}
+} */
 
 .filter-status {
-  padding: 0.5rem;
+  /* padding: 0.5rem; */
   font-size: 1.2rem;
+  display: flex;
+  margin-top: 1rem;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .sort-by {
