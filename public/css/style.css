@@ -675,7 +675,7 @@ input[type='file'] {
 .task-table th {
   background-color: rgb(34, 40, 49);
   color: #fff;
-  font-weight: 100;
+  font-weight: 200;
 }
 
 /* .task-table tr:nth-child(even) {
