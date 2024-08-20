@@ -673,7 +673,9 @@ input[type='file'] {
 }
 
 .task-table th {
-  background-color: #aaa5a5;
+  background-color: rgb(34, 40, 49);
+  color: #fff;
+  font-weight: 100;
 }
 
 /* .task-table tr:nth-child(even) {
@@ -684,7 +686,7 @@ input[type='file'] {
 } */
 .table-link {
   text-decoration: none;
-  /* color: black; */
+  color: rgb(0, 72, 145);
 }
 
 .dent-cost,
