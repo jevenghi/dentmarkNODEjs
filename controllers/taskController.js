@@ -11,6 +11,7 @@ const AppError = require('../utils/appError');
 const multer = require('multer');
 const sendMail = require('../utils/email');
 const Email = require('../utils/email');
+const he = require('he');
 
 // const multerStorage = multer.diskStorage({
 //   destination: (req, file, cb) => {
@@ -156,6 +157,8 @@ exports.sendTask = catchAsyncErr(async (req, res, next) => {
   } else {
     req.body.user = req.user.id;
   }
+  req.body.carModel = he.decode(req.body.carModel);
+
   // const dentsValues = Object.values(req.body.dents);
   // const accValues = accumulateValues(dentsValues);
   // req.body.difficulty = calcTaskDifficulty(accValues);
@@ -281,6 +284,11 @@ exports.deleteTask = async (req, res, next) => {
 
 exports.updateDents = catchAsyncErr(async (req, res, next) => {
   const taskId = req.params.id;
+
+  if (req.body.carModel) {
+    req.body.carModel = he.decode(req.body.carModel);
+  }
+
   const { cost, taskStatus, remark, carModel } = req.body;
   if (req.user.role === 'admin') {
     if (cost) {
