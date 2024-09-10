@@ -376,7 +376,7 @@ exports.sendTaskCreationEmail = async (req, res, next) => {
     const subject = 'New Task submitted';
     const message = `${userName} has submitted new task: ${req.protocol}://${req.get('host')}/tasks/${taskId}`;
 
-    const email = new Email('info@am-place.com');
+    const email = new Email(process.env.EMAIL_ADMIN);
     // const email = new Email('jevenghi@gmail.com');
 
     await email.send(subject, message);
@@ -396,7 +396,7 @@ exports.sendTaskChangeEmail = async (req, res, next) => {
     const subject = 'Changes made to task';
     const message = `${userName} has made changes to task: ${req.protocol}://${req.get('host')}/tasks/${taskId}`;
 
-    const email = new Email('info@am-place.com');
+    const email = new Email(process.env.EMAIL_ADMIN);
     // const email = new Email('jevenghi@gmail.com');
 
     await email.send(subject, message);
