@@ -960,7 +960,9 @@ button[type='submit']:hover {
 } */
 
 .download-report,
-.reset-date {
+.reset-date,
+.search-by-word,
+.reset-search {
   background-color: rgb(34, 40, 49);
   color: #fff;
   border-radius: 0.3rem;
@@ -1008,7 +1010,8 @@ button[type='submit']:hover {
   border-radius: 0.3rem;
 } */
 
-.filter-status {
+.filter-status,
+.filter-word {
   /* padding: 0.5rem; */
   font-size: 1.2rem;
   display: flex;

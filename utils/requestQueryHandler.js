@@ -8,14 +8,36 @@ class RequestQueryHandler {
 
   filter() {
     const queryObj = { ...this.queryString };
-    const excludedFields = ['page', 'sort', 'limit', 'fields'];
+    const excludedFields = ['page', 'sort', 'limit', 'fields', 'search'];
     excludedFields.forEach((el) => delete queryObj[el]);
 
+    // Handle date and comparison operators first
     let queryStr = JSON.stringify(queryObj);
-    if (queryStr.includes('completedAt')) this.query.sort(`-completedAt`);
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+    const parsedQuery = JSON.parse(queryStr);
 
-    this.query = this.query.find(JSON.parse(queryStr));
+    // Create final query object
+    let finalQuery = { ...parsedQuery };
+
+    // Add search condition if it exists
+    if (this.queryString.search) {
+      const searchRegex = new RegExp(
+        this.escapeRegex(this.queryString.search),
+        'i',
+      );
+      finalQuery = {
+        ...finalQuery,
+        carModel: { $regex: searchRegex },
+      };
+    }
+
+    // Handle completedAt sorting if needed
+    if (queryStr.includes('completedAt')) {
+      this.query.sort(`-completedAt`);
+    }
+
+    // Apply the combined query
+    this.query = this.query.find(finalQuery);
 
     return this;
   }
@@ -50,6 +72,10 @@ class RequestQueryHandler {
     this.query = this.query.skip(skip).limit(limit);
 
     return this;
+  }
+
+  escapeRegex(string) {
+    return string.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
   }
 }
 module.exports = RequestQueryHandler;

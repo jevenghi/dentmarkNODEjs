@@ -27,6 +27,12 @@ block content
             .format-dropdown
               button.format-option(data-format="pdf") PDF
               button.format-option(data-format="excel") Excel
+        .filter-word
+          input(type='text', id='search-word', placeholder='Search in Vehicle Model')
+          button.search-by-word Search
+          button.reset-search Reset
+
+
     - if (role === 'user')
       table.task-table
         thead

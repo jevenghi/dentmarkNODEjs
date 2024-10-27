@@ -114,16 +114,20 @@ exports.getAllTasks = catchAsyncErr(async (req, res, next) => {
       .sort()
       .limitFields()
       .paginate();
+
     totalDocCount = await Task.countDocuments({ user: req.user.id });
   }
+
   if (req.user.role === 'admin') {
     requestQueries = new RequestQueryHandler(Task.find(), req.query)
       .filter()
       .sort()
       .limitFields()
       .paginate();
+
     totalDocCount = await Task.countDocuments();
   }
+
   const tasks = await requestQueries.query;
 
   res.status(200).json({

@@ -515,6 +515,9 @@ if (filterOptions) {
   const toDateInput = document.getElementById('to-date');
   const statusFilter = document.getElementById('status-filter');
   const resetDateBtn = document.querySelector('.reset-date');
+  const searchInput = document.getElementById('search-word');
+  const searchInputBtn = document.querySelector('.search-by-word');
+  const resetSearchBtn = document.querySelector('.reset-search');
   //TODO: sorting
   // const sortBySelect = document.getElementById('sort-by');
 
@@ -534,7 +537,15 @@ if (filterOptions) {
   // sortBySelect.addEventListener('change', saveSelection);
 
   // document.addEventListener('DOMContentLoaded', loadSelection);
-
+  searchInputBtn.addEventListener('click', function () {
+    let searchString = searchInput.value;
+    if (searchString) {
+      console.log(searchString);
+      url.searchParams.set('search', searchString);
+      window.location.href = url.toString();
+      searchString = '';
+    }
+  });
   statusFilter.addEventListener('change', function () {
     const selectedStatus = statusFilter.value;
     // url.searchParams.set('taskStatus', selectedStatus);
@@ -586,6 +597,10 @@ if (filterOptions) {
     // url.searchParams.delete('createdAt[gte]');
     url.searchParams.delete('completedAt[lt]');
     url.searchParams.delete('completedAt[gte]');
+    window.location.href = url.toString();
+  });
+  resetSearchBtn.addEventListener('click', function () {
+    url.searchParams.delete('search');
     window.location.href = url.toString();
   });
 }
