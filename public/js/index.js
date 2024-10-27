@@ -249,12 +249,11 @@ if (fileInput) {
     const oversizedFiles = images.filter((file) => file.size > maxFileSize);
 
     if (oversizedFiles.length > 0) {
-      showAlert(
+      fileInput.value = '';
+      return showAlert(
         'error',
         `Each file must be smaller than ${maxFileSize / (1024 * 1024)} MB.`,
       );
-      fileInput.value = '';
-      return;
     }
 
     spinner.style.display = 'block';

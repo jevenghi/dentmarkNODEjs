@@ -35,28 +35,47 @@ const upload = multer({
 exports.uploadTaskPhotos = upload.fields([{ name: 'images', maxCount: 10 }]);
 
 exports.resizeTaskPhotos = catchAsyncErr(async (req, res, next) => {
-  const imageNames = [];
-  await Promise.all(
+  // const imageNames = [];
+  // await Promise.all(
+  //   req.files.images.map(async (file, i) => {
+  //     const userName = slugify(req.user.name, { lower: true, strict: true });
+  //     const filename = `${userName}-${Date.now()}-${i + 1}.png`;
+
+  //     //FOR ROTATING VERTICAL IMAGES
+  //     const metadata = await sharp(file.buffer).metadata();
+
+  //     let image = sharp(file.buffer);
+
+  //     if (metadata.orientation && metadata.orientation !== 1) {
+  //       image = image.rotate();
+  //     }
+
+  //     await image
+  //       .resize({ width: 1000, fit: 'inside' }) // Resize while preserving aspect ratio
+  //       .toFormat('png')
+  //       .png({ quality: 70 })
+  //       .toFile(`public/pics/tasks/${filename}`);
+
+  //     imageNames.push(filename);
+  //   }),
+  // );
+  const imageNames = await Promise.all(
     req.files.images.map(async (file, i) => {
       const userName = slugify(req.user.name, { lower: true, strict: true });
       const filename = `${userName}-${Date.now()}-${i + 1}.png`;
 
-      //FOR ROTATING VERTICAL IMAGES
-      const metadata = await sharp(file.buffer).metadata();
-
       let image = sharp(file.buffer);
+      const metadata = await image.metadata();
 
       if (metadata.orientation && metadata.orientation !== 1) {
         image = image.rotate();
       }
 
       await image
-        .resize({ width: 1000, fit: 'inside' }) // Resize while preserving aspect ratio
-        .toFormat('png')
+        .resize({ width: 1000, fit: 'inside' })
         .png({ quality: 70 })
         .toFile(`public/pics/tasks/${filename}`);
-
-      imageNames.push(filename);
+      return filename;
     }),
   );
   //   req.imageNames = imageNames;
