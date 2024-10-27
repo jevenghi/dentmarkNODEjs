@@ -243,14 +243,24 @@ if (fileInput) {
 
   fileInput.addEventListener('change', async (e) => {
     e.preventDefault();
+    //TODO: maxfilesize move to constants
+    const maxFileSize = 10 * 1024 * 1024;
+    const images = Array.from(fileInput.files);
+    const oversizedFiles = images.filter((file) => file.size > maxFileSize);
+
+    if (oversizedFiles.length > 0) {
+      showAlert(
+        'error',
+        `Each file must be smaller than ${maxFileSize / (1024 * 1024)} MB.`,
+      );
+      fileInput.value = '';
+      return;
+    }
+
     spinner.style.display = 'block';
 
     const form = new FormData();
-    const images = document.getElementById('photo').files;
-
-    Array.from(images).forEach((file) => {
-      form.append('images', file);
-    });
+    images.forEach((file) => form.append('images', file));
 
     try {
       const imagesProcessed = await uploadPhotosTemp(form);
@@ -258,8 +268,7 @@ if (fileInput) {
     } catch (error) {
       spinner.style.display = 'none';
       fileInput.value = '';
-      console.error(error);
-      return showAlert('error', 'Error uploading photo. Please try again.');
+      return showAlert('error', error);
     }
     if (logoImage) {
       logoImage.src = '';
