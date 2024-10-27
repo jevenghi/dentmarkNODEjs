@@ -367,7 +367,7 @@ if (taskHeader) {
       } else if (cost > 10000) {
         return showAlert('error', 'Value can not exceed 10,000');
       } else if (cost < -10000) {
-        return showAlert('error', 'Value can not be less than 10,000');
+        return showAlert('error', 'Value can not be less than -10,000');
       }
 
       if (taskStatus === 'open') {
