@@ -362,11 +362,14 @@ if (taskHeader) {
       const cost = parseFloat(totalCostInput.value);
       let taskStatus = document.querySelector('.task-status-select').value;
 
-      if (isNaN(cost) || cost < 0) {
-        return showAlert('error', 'Cost must be a positive number');
+      if (isNaN(cost)) {
+        return showAlert('error', 'Value must be a number');
       } else if (cost > 10000) {
-        return showAlert('error', 'Cost must not exceed 10,000');
+        return showAlert('error', 'Value can not exceed 10,000');
+      } else if (cost < -10000) {
+        return showAlert('error', 'Value can not be less than 10,000');
       }
+
       if (taskStatus === 'open') {
         taskStatus = 'in-progress';
         updateTask(taskId, { taskStatus, cost });
