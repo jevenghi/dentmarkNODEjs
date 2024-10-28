@@ -610,10 +610,12 @@ if (filterOptions) {
     url.searchParams.delete('completedAt[gte]');
     window.location.href = url.toString();
   });
-  resetSearchBtn.addEventListener('click', function () {
-    url.searchParams.delete('search');
-    window.location.href = url.toString();
-  });
+  if (resetSearchBtn) {
+    resetSearchBtn.addEventListener('click', function () {
+      url.searchParams.delete('search');
+      window.location.href = url.toString();
+    });
+  }
 }
 
 // INPUT FOR USER AUTO-SUGGESTION (Option for admin to register task to specific customer)
