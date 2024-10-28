@@ -36,37 +36,41 @@ exports.uploadTaskPhotos = upload.fields([{ name: 'images', maxCount: 10 }]);
 
 exports.resizeTaskPhotos = catchAsyncErr(async (req, res, next) => {
   const imageNames = [];
-  await Promise.all(
-    req.files.images.map(async (file, i) => {
-      const userName = slugify(req.user.name, { lower: true, strict: true });
-      const filename = `${userName}-${Date.now()}-${i + 1}.png`;
+  try {
+    await Promise.all(
+      req.files.images.map(async (file, i) => {
+        const userName = slugify(req.user.name, { lower: true, strict: true });
+        const filename = `${userName}-${Date.now()}-${i + 1}.png`;
 
-      //FOR ROTATING VERTICAL IMAGES
-      const metadata = await sharp(file.buffer).metadata();
+        //FOR ROTATING VERTICAL IMAGES
+        const metadata = await sharp(file.buffer).metadata();
 
-      let image = sharp(file.buffer);
+        let image = sharp(file.buffer);
 
-      if (metadata.orientation && metadata.orientation !== 1) {
-        image = image.rotate();
-      }
+        if (metadata.orientation && metadata.orientation !== 1) {
+          image = image.rotate();
+        }
 
-      await image
-        .resize({ width: 1000, fit: 'inside' }) // Resize while preserving aspect ratio
-        .toFormat('png')
-        .png({ quality: 70 })
-        .toFile(`public/pics/tasks/${filename}`);
+        await image
+          .resize({ width: 1000, fit: 'inside' }) // Resize while preserving aspect ratio
+          .toFormat('png')
+          .png({ quality: 70 })
+          .toFile(`public/pics/tasks/${filename}`);
 
-      delete file.buffer;
-      imageNames.push(filename);
-    }),
-  );
-  //   req.imageNames = imageNames;
-  res.status(201).json({
-    status: 'success',
-    imageNames,
-  });
+        delete file.buffer;
+        imageNames.push(filename);
+      }),
+    );
+    //   req.imageNames = imageNames;
+    res.status(201).json({
+      status: 'success',
+      imageNames,
+    });
+  } catch (err) {
+    console.error(err);
+    return new AppError('Error processing images', 500);
+  }
 });
-
 exports.transferFiles = catchAsyncErr(async (req, res, next) => {
   const remoteDirectory = '/home/tasks';
   const remoteDirBackup = '/home/tasks_backup';
