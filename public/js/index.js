@@ -524,7 +524,7 @@ if (filterOptions) {
   const toDateInput = document.getElementById('to-date');
   const statusFilter = document.getElementById('status-filter');
   const resetDateBtn = document.querySelector('.reset-date');
-  const searchInput = document.getElementById('search-word');
+  const searchByWord = document.getElementById('search-word');
   const searchInputBtn = document.querySelector('.search-by-word');
   const resetSearchBtn = document.querySelector('.reset-search');
   //TODO: sorting
@@ -546,9 +546,9 @@ if (filterOptions) {
   // sortBySelect.addEventListener('change', saveSelection);
 
   // document.addEventListener('DOMContentLoaded', loadSelection);
-  if (searchInput) {
+  if (searchByWord) {
     searchInputBtn.addEventListener('click', function () {
-      let searchString = searchInput.value;
+      let searchString = searchByWord.value;
       if (searchString) {
         url.searchParams.set('search', searchString);
         window.location.href = url.toString();
