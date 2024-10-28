@@ -259,10 +259,10 @@ if (fileInput) {
 
     spinner.style.display = 'block';
 
-    const form = new FormData();
-    images.forEach((file) => form.append('images', file));
-
     try {
+      const form = new FormData();
+      images.forEach((file) => form.append('images', file));
+
       const imagesProcessed = await uploadPhotosTemp(form);
       uploadedImages.push(...imagesProcessed);
     } catch (error) {
