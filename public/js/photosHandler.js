@@ -40,14 +40,14 @@ export const renderVehicleImageFromUploads = (uploadedImages) => {
   const sidesContainer = document.querySelector('.sides-container');
   const sideText = document.querySelector('.choose__side');
 
-  sidesContainer.innerHTML = uploadedImages
-    .map(
-      (image) => `
-    <button class="button button--side" value="${image}">
-      <img src="/pics/tasks/${image}" id="${image}" />
-    </button>`,
-    )
-    .join('');
+  let html = '';
+  uploadedImages.forEach((image) => {
+    html += `
+            <button class="button button--side" value="${image}">
+                <img src="/pics/tasks/${image}" id="${image}" />
+            </button>`;
+  });
+  sidesContainer.innerHTML = html;
 };
 
 export const getImagesAndDents = async (taskId) => {
