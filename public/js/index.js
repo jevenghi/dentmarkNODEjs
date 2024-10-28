@@ -546,15 +546,17 @@ if (filterOptions) {
   // sortBySelect.addEventListener('change', saveSelection);
 
   // document.addEventListener('DOMContentLoaded', loadSelection);
-  searchInputBtn.addEventListener('click', function () {
-    let searchString = searchInput.value;
-    if (searchString) {
-      console.log(searchString);
-      url.searchParams.set('search', searchString);
-      window.location.href = url.toString();
-      searchString = '';
-    }
-  });
+  if (searchInput) {
+    searchInputBtn.addEventListener('click', function () {
+      let searchString = searchInput.value;
+      if (searchString) {
+        url.searchParams.set('search', searchString);
+        window.location.href = url.toString();
+        searchString = '';
+      }
+    });
+  }
+
   statusFilter.addEventListener('change', function () {
     const selectedStatus = statusFilter.value;
     // url.searchParams.set('taskStatus', selectedStatus);
