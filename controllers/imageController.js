@@ -56,6 +56,7 @@ exports.resizeTaskPhotos = catchAsyncErr(async (req, res, next) => {
         .png({ quality: 70 })
         .toFile(`public/pics/tasks/${filename}`);
 
+      delete file.buffer;
       imageNames.push(filename);
     }),
   );
