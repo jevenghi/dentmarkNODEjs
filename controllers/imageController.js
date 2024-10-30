@@ -8,16 +8,6 @@ const slugify = require('slugify');
 const catchAsyncErr = require('../utils/catchAsyncError');
 const AppError = require('../utils/appError');
 
-// const AWS = require('aws-sdk');
-
-// AWS.config.update({
-//   accessKeyId: process.env.AWS_ACCESS_KEY,
-//   secretAccessKey: process.env.AWS_SECRET_KEY,
-//   region: process.env.AWS_BUCKET_REGION,
-// });
-
-// const s3 = new AWS.S3();
-
 const multerStorage = multer.memoryStorage();
 // const multerStorage = multer.diskStorage();
 
@@ -68,7 +58,7 @@ exports.resizeTaskPhotos = catchAsyncErr(async (req, res, next) => {
     });
   } catch (err) {
     console.error(err);
-    return new AppError('Error processing images', 500);
+    return next(new AppError('Error processing images', 500));
   }
 });
 exports.transferFiles = catchAsyncErr(async (req, res, next) => {
@@ -98,13 +88,14 @@ exports.transferFiles = catchAsyncErr(async (req, res, next) => {
       }),
     );
 
-    client.end();
     // res.status(201).json({ status: 'success' });
   } catch (err) {
     //TODO: handle returned errors
     console.error('SFTP Error:', err);
     // return res.status(500).json({ error: 'Error transferring files' });
-    return new AppError('Error transferring files', 503);
+    return next(new AppError('Error transferring files', 503));
+  } finally {
+    client.end();
   }
   next();
 });
