@@ -8,9 +8,17 @@ const slugify = require('slugify');
 const catchAsyncErr = require('../utils/catchAsyncError');
 const AppError = require('../utils/appError');
 
-const multerStorage = multer.memoryStorage();
-// const multerStorage = multer.diskStorage();
-
+// const multerStorage = multer.memoryStorage();
+const multerStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'public/temp/uploads');
+  },
+  filename: (req, file, cb) => {
+    const userName = slugify(req.user.name, { lower: true, strict: true });
+    const ext = file.mimetype.split('/')[1];
+    cb(null, `${userName}-${Date.now()}.${ext}`);
+  },
+});
 const multerFilter = (req, file, cb) => {
   if (file.mimetype.startsWith('image')) {
     cb(null, true);
@@ -24,6 +32,43 @@ const upload = multer({
 });
 exports.uploadTaskPhotos = upload.fields([{ name: 'images', maxCount: 10 }]);
 
+// exports.resizeTaskPhotos = catchAsyncErr(async (req, res, next) => {
+//   const imageNames = [];
+//   try {
+//     await Promise.all(
+//       req.files.images.map(async (file, i) => {
+//         const userName = slugify(req.user.name, { lower: true, strict: true });
+//         const filename = `${userName}-${Date.now()}-${i + 1}.png`;
+
+//         //FOR ROTATING VERTICAL IMAGES
+//         const metadata = await sharp(file.buffer).metadata();
+
+//         let image = sharp(file.buffer);
+
+//         if (metadata.orientation && metadata.orientation !== 1) {
+//           image = image.rotate();
+//         }
+
+//         await image
+//           .resize({ width: 1000, fit: 'inside' }) // Resize while preserving aspect ratio
+//           .toFormat('png')
+//           .png({ quality: 70 })
+//           .toFile(`public/pics/tasks/${filename}`);
+
+//         delete file.buffer;
+//         imageNames.push(filename);
+//       }),
+//     );
+//     //   req.imageNames = imageNames;
+//     res.status(201).json({
+//       status: 'success',
+//       imageNames,
+//     });
+//   } catch (err) {
+//     console.error(err);
+//     return next(new AppError('Error processing images', 500));
+//   }
+// });
 exports.resizeTaskPhotos = catchAsyncErr(async (req, res, next) => {
   const imageNames = [];
   try {
@@ -32,10 +77,10 @@ exports.resizeTaskPhotos = catchAsyncErr(async (req, res, next) => {
         const userName = slugify(req.user.name, { lower: true, strict: true });
         const filename = `${userName}-${Date.now()}-${i + 1}.png`;
 
-        //FOR ROTATING VERTICAL IMAGES
-        const metadata = await sharp(file.buffer).metadata();
+        // Load the file from the disk and process with Sharp
+        let image = sharp(file.path);
 
-        let image = sharp(file.buffer);
+        const metadata = await image.metadata();
 
         if (metadata.orientation && metadata.orientation !== 1) {
           image = image.rotate();
@@ -47,11 +92,12 @@ exports.resizeTaskPhotos = catchAsyncErr(async (req, res, next) => {
           .png({ quality: 70 })
           .toFile(`public/pics/tasks/${filename}`);
 
-        delete file.buffer;
         imageNames.push(filename);
+
+        // Optionally: delete the temp file after processing
+        fs.unlinkSync(file.path);
       }),
     );
-    //   req.imageNames = imageNames;
     res.status(201).json({
       status: 'success',
       imageNames,
@@ -61,6 +107,7 @@ exports.resizeTaskPhotos = catchAsyncErr(async (req, res, next) => {
     return next(new AppError('Error processing images', 500));
   }
 });
+
 exports.transferFiles = catchAsyncErr(async (req, res, next) => {
   const remoteDirectory = '/home/tasks';
   const remoteDirBackup = '/home/tasks_backup';
