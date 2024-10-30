@@ -100,19 +100,39 @@ exports.transferFiles = catchAsyncErr(async (req, res, next) => {
   next();
 });
 
-exports.getImageDataURI = catchAsyncErr(async (req, res, next) => {
-  const imagesBase64 = [];
-  await Promise.all(
-    // eslint-disable-next-line array-callback-return
-    req.body.images.map((image) => {
-      const imagePath = `public/pics/tasks/${image}`;
-      const imageContent = fs.readFileSync(imagePath, 'base64');
-      imagesBase64.push(imageContent);
-    }),
-  );
+// exports.getImageDataURI = catchAsyncErr(async (req, res, next) => {
+//   const imagesBase64 = [];
+//   await Promise.all(
+//     // eslint-disable-next-line array-callback-return
+//     req.body.images.map(async (image) => {
+//       const imagePath = `public/pics/tasks/${image}`;
+//       // eslint-disable-next-line node/no-unsupported-features/node-builtins
+//       const imageContent = await fs.promises.readFile(imagePath, 'base64');
+//       imagesBase64.push(imageContent);
+//     }),
+//   );
 
-  res.status(200).json({
-    status: 'success',
-    imagesBase64,
-  });
+//   res.status(200).json({
+//     status: 'success',
+//     imagesBase64,
+//   });
+// });
+exports.getImageDataURI = catchAsyncErr(async (req, res, next) => {
+  try {
+    const imagesBase64 = await Promise.all(
+      req.body.images.map(async (image) => {
+        const imagePath = `public/pics/tasks/${image}`;
+        // eslint-disable-next-line node/no-unsupported-features/node-builtins
+        const imageContent = await fs.promises.readFile(imagePath, 'base64');
+        return imageContent;
+      }),
+    );
+    res.status(200).json({
+      status: 'success',
+      imagesBase64,
+    });
+  } catch (err) {
+    console.error('File Read Error:', err);
+    return next(new AppError('Error reading image data', 500));
+  }
 });
