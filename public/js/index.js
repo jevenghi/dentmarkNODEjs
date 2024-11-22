@@ -549,7 +549,9 @@ if (filterOptions) {
   if (searchByWord) {
     searchInputBtn.addEventListener('click', function () {
       let searchString = searchByWord.value;
+
       if (searchString) {
+        searchString = encodeURIComponent(searchByWord.value);
         url.searchParams.set('search', searchString);
         window.location.href = url.toString();
         searchString = '';
