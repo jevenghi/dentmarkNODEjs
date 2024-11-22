@@ -12,6 +12,7 @@ const multer = require('multer');
 const sendMail = require('../utils/email');
 const Email = require('../utils/email');
 const he = require('he');
+const mongoose = require('mongoose');
 
 // const multerStorage = multer.diskStorage({
 //   destination: (req, file, cb) => {
@@ -404,6 +405,31 @@ exports.sendTaskChangeEmail = async (req, res, next) => {
     // const email = new Email('jevenghi@gmail.com');
 
     await email.send(subject, message);
+  } catch (error) {
+    console.error('Error sending task change email:', error);
+    // You might choose to respond with an error here
+    // res.status(500).json({ error: 'Failed to send task creation email' });
+  }
+};
+
+exports.updateStatusBulk = async (req, res, next) => {
+  try {
+    const { selectedTasks, updatedStatus } = req.body;
+
+    if (req.user.role === 'admin') {
+      if (!Array.isArray(selectedTasks) || !updatedStatus) {
+        return res.status(400).json({ message: 'Invalid input' });
+      }
+
+      const result = await Task.updateMany(
+        { _id: { $in: selectedTasks } },
+        { $set: { taskStatus: updatedStatus } },
+      );
+      res.status(201).json({
+        status: 'success',
+        message: 'Status updated successfully',
+      });
+    }
   } catch (error) {
     console.error('Error sending task change email:', error);
     // You might choose to respond with an error here

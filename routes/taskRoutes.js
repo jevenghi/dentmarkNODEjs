@@ -22,6 +22,12 @@ router.post(
   taskController.sendTaskChangeEmail,
 );
 
+router.patch(
+  '/update-status-bulk',
+  authController.protect,
+  taskController.updateStatusBulk,
+);
+
 // Restrict all routes after this middleware to admin & super admin
 router.use(
   authController.protect,

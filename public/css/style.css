@@ -962,7 +962,8 @@ button[type='submit']:hover {
 .download-report,
 .reset-date,
 .search-by-word,
-.reset-search {
+.reset-search,
+.change-status-bulk-btn {
   background-color: rgb(34, 40, 49);
   color: #fff;
   border-radius: 0.3rem;
@@ -1011,7 +1012,8 @@ button[type='submit']:hover {
 } */
 
 .filter-status,
-.filter-word {
+.filter-word,
+.change-status-bulk {
   /* padding: 0.5rem; */
   font-size: 1.2rem;
   display: flex;
@@ -1152,4 +1154,12 @@ button[type='submit']:hover {
   100% {
     transform: rotate(360deg);
   }
+}
+
+.selected {
+  background-color: #68656559;
+}
+
+.clickable-status {
+  cursor: pointer;
 }
