@@ -2,7 +2,7 @@ import { updateSettings } from './updateAccount';
 import { login, logoutUser, forgotPassword } from './login';
 import { signup, checkFieldAvailability } from './signup';
 import { updateTask } from './updateTask';
-import { generatePDF, generateExcel } from './generateReport';
+import { generatePDF, generateExcel, generateInvoice } from './generateReport';
 import { showAlert } from './alerts';
 import { deleteTask } from './deleteTask';
 import {
@@ -532,6 +532,7 @@ if (filterOptions) {
   const bulkStatusChangeBtn = document.querySelector('.change-status-bulk-btn');
   const bulkStatusChangeDropdownOption =
     document.getElementById('change-status-bulk');
+  const createInvoiceBtn = document.querySelector('.create-invoice-btn');
 
   let selectedTasks = [];
 
@@ -555,12 +556,17 @@ if (filterOptions) {
     });
   });
 
-  bulkStatusChangeBtn.addEventListener('click', function () {
-    if (selectedTasks.length > 0) {
-      const updatedStatus = bulkStatusChangeDropdownOption.value;
-      updateStatusBulk(updatedStatus, selectedTasks);
-    }
-  });
+  if (bulkStatusChangeBtn) {
+    bulkStatusChangeBtn.addEventListener('click', function () {
+      if (selectedTasks.length > 0) {
+        const updatedStatus = bulkStatusChangeDropdownOption.value;
+        updateStatusBulk(updatedStatus, selectedTasks);
+      }
+    });
+    createInvoiceBtn.addEventListener('click', function () {
+      generateInvoice(selectedTasks);
+    });
+  }
 
   //TODO: sorting
   // const sortBySelect = document.getElementById('sort-by');

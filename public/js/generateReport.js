@@ -2,6 +2,7 @@ import { showAlert } from './alerts.js';
 import axios from 'axios';
 import { translations } from './translations.js';
 import ExcelJS from 'exceljs';
+const path = require('path');
 
 const pdfFonts = require('pdfmake/build/vfs_fonts.js');
 const pdfMake = require('pdfmake/build/pdfmake.js');
@@ -60,6 +61,28 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 //     bolditalics: 'fonts/Roboto-MediumItalic.ttf',
 //   },
 // };
+const fillInvoiceTemplate = async (invoiceData) => {
+  try {
+    const workbook = new ExcelJS.Workbook();
+    try {
+      await workbook.xlsx.readFile('../../invoice-template.xlsx');
+      console.log('template read successully');
+    } catch (err) {
+      console.log(err);
+    }
+
+    const worksheet = workbook.getWorksheet(1);
+    console.log(worksheet.getCell('B19'));
+
+    worksheet.getCell('B19').value = invoiceData.carModel;
+    worksheet.getCell('G19').value = invoiceData.cost;
+
+    await workbook.xlsx.writeFile(`invoice_${invoiceData.customer.name}.xlsx`);
+    console.log('New invoice created successfully!');
+  } catch (error) {
+    console.error('Error creating invoice:', error);
+  }
+};
 
 const getFilteredResults = async () => {
   const query = window.location.search ? window.location.search : '?';
@@ -261,4 +284,22 @@ export const generateExcel = async () => {
   link.click();
 
   URL.revokeObjectURL(link.href);
+};
+
+export const generateInvoice = async (selectedTasks) => {
+  try {
+    const res = await axios({
+      method: 'POST',
+      url: `/api/v1/tasks/get-invoice-data`,
+      data: { selectedTasks },
+    });
+    if (res.data.status === 'success') {
+      res.data.invoiceData.forEach((task) => {
+        fillInvoiceTemplate(task);
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    showAlert('error', 'Error creating invoice');
+  }
 };

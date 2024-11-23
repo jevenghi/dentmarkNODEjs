@@ -437,3 +437,32 @@ exports.updateStatusBulk = async (req, res, next) => {
     // res.status(500).json({ error: 'Failed to send task creation email' });
   }
 };
+
+exports.getInvoiceData = async (req, res, next) => {
+  try {
+    const { selectedTasks } = req.body;
+
+    if (req.user.role === 'admin') {
+      if (!Array.isArray(selectedTasks)) {
+        return res.status(400).json({ message: 'Invalid input' });
+      }
+      const tasks = await Task.find({ _id: { $in: selectedTasks } });
+
+      const invoiceData = tasks.map((task) => ({
+        carModel: task.carModel,
+        cost: task.totalCost,
+        customer: task.user,
+      }));
+
+      res.status(200).json({
+        status: 'success',
+        invoiceData,
+      });
+    }
+  } catch (error) {
+    console.error('Error finding task for invoice:', error);
+    return next(new AppError(`Error finding task for invoice`, 500));
+    // You might choose to respond with an error here
+    // res.status(500).json({ error: 'Failed to send task creation email' });
+  }
+};
