@@ -421,17 +421,18 @@ exports.updateStatusBulk = async (req, res, next) => {
         return res.status(400).json({ message: 'Invalid input' });
       }
 
-      const result = await Task.updateMany(
+      await Task.updateMany(
         { _id: { $in: selectedTasks } },
         { $set: { taskStatus: updatedStatus } },
       );
       res.status(201).json({
         status: 'success',
-        message: 'Status updated successfully',
+        message: 'Status updated',
       });
     }
   } catch (error) {
-    console.error('Error sending task change email:', error);
+    console.error('Error bulk updating status:', error);
+    return next(new AppError(`Error updating status`, 500));
     // You might choose to respond with an error here
     // res.status(500).json({ error: 'Failed to send task creation email' });
   }
