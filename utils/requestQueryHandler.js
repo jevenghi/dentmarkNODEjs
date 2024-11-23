@@ -33,7 +33,11 @@ class RequestQueryHandler {
     }
 
     // Handle completedAt sorting if needed
-    if (queryStr.includes('completedAt')) {
+    if (
+      queryStr.includes('completedAt') ||
+      queryStr.includes('taskStatus') ||
+      queryStr.includes('user')
+    ) {
       this.query.sort(`-completedAt`);
     }
 

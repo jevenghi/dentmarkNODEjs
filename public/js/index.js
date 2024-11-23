@@ -27,6 +27,7 @@ import {
   makeMarkerContainerFloating,
   warnUnsavedChanges,
 } from './elementsHandler';
+import { updateStatusBulk } from './updateStatusBulk';
 
 const passwordResetForm = document.querySelector('.reset-form');
 const sendContainer = document.querySelector('.send-container');
@@ -527,6 +528,40 @@ if (filterOptions) {
   const searchByWord = document.getElementById('search-word');
   const searchInputBtn = document.querySelector('.search-by-word');
   const resetSearchBtn = document.querySelector('.reset-search');
+  const bulkStatusChangeEl = document.querySelector('.change-status-bulk');
+  const bulkStatusChangeBtn = document.querySelector('.change-status-bulk-btn');
+  const bulkStatusChangeDropdownOption =
+    document.getElementById('change-status-bulk');
+
+  let selectedTasks = [];
+
+  document.querySelectorAll('.clickable-status').forEach((cell) => {
+    cell.addEventListener('click', (event) => {
+      const row = event.target.closest('tr');
+      const taskId = event.target.id;
+
+      if (selectedTasks.includes(taskId)) {
+        selectedTasks = selectedTasks.filter((id) => id !== taskId);
+        row.classList.remove('selected');
+      } else {
+        selectedTasks.push(taskId);
+        row.classList.add('selected');
+      }
+      if (selectedTasks.length > 0) {
+        bulkStatusChangeEl.classList.remove('hidden');
+      } else {
+        bulkStatusChangeEl.classList.add('hidden');
+      }
+    });
+  });
+
+  bulkStatusChangeBtn.addEventListener('click', function () {
+    if (selectedTasks.length > 0) {
+      const updatedStatus = bulkStatusChangeDropdownOption.value;
+      updateStatusBulk(updatedStatus, selectedTasks);
+    }
+  });
+
   //TODO: sorting
   // const sortBySelect = document.getElementById('sort-by');
 

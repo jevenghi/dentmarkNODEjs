@@ -31,6 +31,15 @@ block content
           input(type='text', id='search-word', placeholder='Search in Vehicle Model')
           button.search-by-word Search
           button.reset-search Reset
+        - if (role === 'admin')
+          .change-status-bulk.hidden Change status:  
+            select#change-status-bulk
+              option(value='open') Open
+              option(value='in-progress') In Progress
+              option(value='pending') Complete/Not paid
+              option(value='complete') Paid
+            button.change-status-bulk-btn Change
+          
 
 
     - if (role === 'user')
@@ -77,7 +86,7 @@ block content
               //- td: a(href=`/users/${task.user.id}` class='table-link')= task.user.name
               td: a(href=`/tasks?user=${task.user.id}` class='table-link')= task.user.name
               td: a(href=`/tasks/${task._id}` class='table-link')= task.carModel
-              td= task.taskStatus
+              td(class='clickable-status' id=task._id)= task.taskStatus
               td= task.totalCost
               td= new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
               td
