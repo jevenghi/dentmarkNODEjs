@@ -36,7 +36,8 @@ class RequestQueryHandler {
     if (
       queryStr.includes('completedAt') ||
       queryStr.includes('taskStatus') ||
-      queryStr.includes('user')
+      queryStr.includes('user') ||
+      queryStr.includes('search')
     ) {
       this.query.sort(`-completedAt`);
     }
