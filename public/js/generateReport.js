@@ -65,7 +65,7 @@ const fillInvoiceTemplate = async (invoiceData) => {
   try {
     const workbook = new ExcelJS.Workbook();
     try {
-      await workbook.xlsx.readFile('../../invoice-template.xlsx');
+      await workbook.xlsx.readFile('invoice-template.xlsx');
       console.log('template read successully');
     } catch (err) {
       console.log(err);
