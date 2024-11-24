@@ -13,6 +13,11 @@ const sendMail = require('../utils/email');
 const Email = require('../utils/email');
 const he = require('he');
 const mongoose = require('mongoose');
+const ExcelJS = require('exceljs');
+const libre = require('libreoffice-convert');
+const fs = require('fs');
+const path = require('path');
+const { PDFDocument } = require('pdf-lib');
 
 // const multerStorage = multer.diskStorage({
 //   destination: (req, file, cb) => {
@@ -438,11 +443,93 @@ exports.updateStatusBulk = async (req, res, next) => {
   }
 };
 
+function getDateFormatted(daysToAdd) {
+  const date = new Date();
+  date.setDate(date.getDate() + daysToAdd);
+
+  return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1)
+    .toString()
+    .padStart(2, '0')}-${date.getFullYear()}`;
+}
+
+const fillInvoiceTemplate = async (invoiceData) => {
+  try {
+    let startCell = 19;
+    const invoiceDate = getDateFormatted(0);
+    const expireDate = getDateFormatted(30);
+
+    const workbook = new ExcelJS.Workbook();
+    const templatePath = path.resolve(__dirname, '../invoice-template.xlsx');
+
+    await workbook.xlsx.readFile(templatePath);
+
+    const worksheet = workbook.getWorksheet(1);
+    worksheet.getCell('A16').value = invoiceDate;
+    worksheet.getCell('F16').value = expireDate;
+
+    invoiceData.forEach((task) => {
+      worksheet.getCell(`A${startCell}`).value = task.completeDate;
+      worksheet.getCell(`B${startCell}`).value = task.carModel;
+      worksheet.getCell(`G${startCell}`).value = task.cost;
+      startCell++;
+    });
+
+    const customerName = invoiceData[0].customer.name;
+    const excelFileName = `invoice_${customerName}.xlsx`;
+
+    await workbook.xlsx.writeFile(excelFileName);
+
+    return { customerName, excelFileName };
+  } catch (error) {
+    console.error('Error creating invoice:', error);
+  }
+};
+
+const populatePDF = async function (invoiceData) {
+  let itemNumber = 1;
+  const templatePath = path.resolve(__dirname, '../SchalkTemp.pdf');
+  const existingPdfBytes = fs.readFileSync(templatePath);
+
+  const pdfDoc = await PDFDocument.load(existingPdfBytes);
+
+  const form = pdfDoc.getForm();
+
+  const dateField = form.getTextField('invoice-date');
+  const invoiceExpiryField = form.getTextField('invoice-expiry');
+  const totalExclBtwField = form.getTextField('total-excl');
+  const totalBtwField = form.getTextField('total-btw');
+  const totalInclBtwField = form.getTextField('total-incl');
+
+  const invoiceDate = getDateFormatted(0);
+  const invoiceExpireDate = getDateFormatted(30);
+
+  const totalExclBtw = invoiceData.reduce((acc, curr) => acc + curr.cost, 0);
+  const totalBtw = ((totalExclBtw * 21) / 100).toFixed(2);
+  const totalInclBtw = (totalExclBtw + parseFloat(totalBtw)).toFixed(2);
+
+  dateField.setText(invoiceDate);
+  invoiceExpiryField.setText(invoiceExpireDate);
+  totalExclBtwField.setText(String(totalExclBtw));
+  totalBtwField.setText(String(totalBtw));
+  totalInclBtwField.setText(String(totalInclBtw));
+
+  invoiceData.forEach((item) => {
+    form.getTextField(`complete-date-${itemNumber}`).setText(item.completeDate);
+    form.getTextField(`description-${itemNumber}`).setText(item.carModel);
+    form.getTextField(`cost-${itemNumber}`).setText(String(item.cost));
+    itemNumber++;
+  });
+
+  const pdfBytes = await pdfDoc.save();
+  fs.writeFileSync('filled-form.pdf', pdfBytes);
+
+  console.log('PDF has been successfully populated!');
+};
+
 exports.getInvoiceData = async (req, res, next) => {
   try {
-    const { selectedTasks } = req.body;
-
     if (req.user.role === 'admin') {
+      const { selectedTasks } = req.body;
       if (!Array.isArray(selectedTasks)) {
         return res.status(400).json({ message: 'Invalid input' });
       }
@@ -452,12 +539,15 @@ exports.getInvoiceData = async (req, res, next) => {
         carModel: task.carModel,
         cost: task.totalCost,
         customer: task.user,
+        completeDate: task.completedAt
+          ? `${String(task.completedAt.getDate()).padStart(2, '0')}-${String(task.completedAt.getMonth() + 1).padStart(2, '0')}-${task.completedAt.getFullYear()}`
+          : null,
       }));
 
-      res.status(200).json({
-        status: 'success',
-        invoiceData,
-      });
+      populatePDF(invoiceData);
+
+      console.log('Invoice PDF sent to client successfully!');
+      res.status(200).json({ status: 'success' });
     }
   } catch (error) {
     console.error('Error finding task for invoice:', error);
