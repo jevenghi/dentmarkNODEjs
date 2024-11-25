@@ -5,6 +5,7 @@ const User = require('../models/userModel');
 const Task = require('../models/taskModel');
 const Dent = require('../models/dentModel');
 const RequestQueryHandler = require('../utils/requestQueryHandler');
+const InvoiceCounter = require('../models/invoiceCounter');
 const catchAsyncErr = require('../utils/catchAsyncError');
 const factory = require('./handlerFactory');
 const AppError = require('../utils/appError');
@@ -485,6 +486,19 @@ function getDateFormatted(daysToAdd) {
 //     console.error('Error creating invoice:', error);
 //   }
 // };
+async function generateInvoiceNumber() {
+  const currentYear = new Date().getFullYear();
+  const yearPrefix = currentYear.toString().slice(-2);
+
+  const invoiceCounter = await InvoiceCounter.findOneAndUpdate(
+    { year: currentYear },
+    { $inc: { counter: 1 } },
+    { new: true, upsert: true, setDefaultsOnInsert: true },
+  );
+
+  const invoiceNumber = `${yearPrefix}${String(invoiceCounter.counter).padStart(3, '0')}`;
+  return invoiceNumber;
+}
 
 exports.generatePDF = async (req, res, next) => {
   try {
@@ -495,6 +509,7 @@ exports.generatePDF = async (req, res, next) => {
     }
 
     let itemNumber = 1;
+    const invoiceNumber = await generateInvoiceNumber();
 
     const templatePath = path.resolve(__dirname, '../invoice-template.pdf');
     const existingPdfBytes = fs.readFileSync(templatePath);
@@ -512,6 +527,7 @@ exports.generatePDF = async (req, res, next) => {
     const customerStreetHouseField = form.getTextField('street-house');
     const customerPostcodeCityField = form.getTextField('postcode-city');
     const customerEmailField = form.getTextField('email');
+    const invoiceNumberField = form.getTextField('invoice-nr');
 
     const invoiceDate = getDateFormatted(0);
     const invoiceExpireDate = getDateFormatted(30);
@@ -523,6 +539,7 @@ exports.generatePDF = async (req, res, next) => {
       .toFixed(2)
       .replace('.', ',');
 
+    invoiceNumberField.setText(invoiceNumber);
     dateField.setText(invoiceDate);
     invoiceExpiryField.setText(invoiceExpireDate);
     totalExclBtwField.setText(String(totalExclBtw));
