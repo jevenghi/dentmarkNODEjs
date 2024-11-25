@@ -520,6 +520,8 @@ const populatePDF = async function (invoiceData) {
     itemNumber++;
   });
 
+  form.flatten();
+
   const pdfBytes = await pdfDoc.save();
   fs.writeFileSync('filled-form.pdf', pdfBytes);
 
