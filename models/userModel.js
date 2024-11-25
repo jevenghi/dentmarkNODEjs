@@ -12,6 +12,28 @@ const userSchema = new mongoose.Schema(
       maxlength: [50, 'Name must not exceed 50 characters'],
       minlength: [2, 'Name must have more than 1 character'],
     },
+    invoiceAddress: {
+      invoiceCustomerName: {
+        type: String,
+        trim: true,
+        maxlength: [100, 'Name must not exceed 100 characters'],
+      },
+      streetHouse: {
+        type: String,
+        trim: true,
+        maxlength: [100, 'Street and house must not exceed 100 characters'],
+      },
+      postCodeCity: {
+        type: String,
+        trim: true,
+        maxlength: [6, 'Postcode and city must not exceed 6 characters'],
+      },
+      emailAddress: {
+        type: String,
+        lowercase: true,
+        validate: [validator.isEmail, 'Please provide a valid e-mail address'],
+      },
+    },
     email: {
       type: String,
       required: [true, 'Please provide a valid e-mail address'],

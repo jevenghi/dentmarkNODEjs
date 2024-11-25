@@ -963,12 +963,14 @@ button[type='submit']:hover {
 .reset-date,
 .search-by-word,
 .reset-search,
-.change-status-bulk-btn {
+.change-status-bulk-btn,
+.create-invoice-btn {
   background-color: rgb(34, 40, 49);
   color: #fff;
   border-radius: 0.3rem;
   padding: 0.3rem;
   font-weight: 200;
+  cursor: pointer;
 }
 
 .format-dropdown {

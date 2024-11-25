@@ -7,6 +7,13 @@ const imageController = require('../controllers/imageController');
 const router = express.Router();
 
 router.post(
+  '/get-invoice-data',
+  authController.protect,
+  taskController.getInvoiceData,
+  taskController.generatePDF,
+);
+
+router.post(
   '/sendTask',
   authController.protect,
   imageController.transferFiles,

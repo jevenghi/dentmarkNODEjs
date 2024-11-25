@@ -166,7 +166,7 @@ export const generatePDF = async () => {
     },
   };
   const fileName = `summary_${from}_to_${to}.pdf`;
-  pdfMake.createPdf(docDefinition).download(fileName);
+  pdfMake.createPdf(docDefinition).open(fileName);
 };
 
 // export const generateTaskPDF = (images) => {
@@ -261,4 +261,33 @@ export const generateExcel = async () => {
   link.click();
 
   URL.revokeObjectURL(link.href);
+};
+
+export const generateInvoice = async (selectedTasks) => {
+  try {
+    const res = await axios({
+      method: 'POST',
+      url: `/api/v1/tasks/get-invoice-data`,
+      data: { selectedTasks },
+      responseType: 'blob',
+    });
+
+    const contentDisposition = res.headers['content-disposition'];
+    let filename = 'invoice.pdf';
+
+    if (contentDisposition && contentDisposition.includes('filename=')) {
+      filename = contentDisposition.split('filename=')[1].replace(/['"]/g, '');
+    }
+
+    const file = new Blob([res.data], { type: 'application/pdf' });
+
+    const downloadLink = document.createElement('a');
+    downloadLink.href = window.URL.createObjectURL(file);
+    downloadLink.download = filename;
+    downloadLink.click();
+    location.reload();
+  } catch (err) {
+    console.log(err);
+    showAlert('error', err.response.data.message);
+  }
 };

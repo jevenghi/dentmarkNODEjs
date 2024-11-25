@@ -5,6 +5,7 @@ const User = require('../models/userModel');
 const Task = require('../models/taskModel');
 const Dent = require('../models/dentModel');
 const RequestQueryHandler = require('../utils/requestQueryHandler');
+const InvoiceCounter = require('../models/invoiceCounter');
 const catchAsyncErr = require('../utils/catchAsyncError');
 const factory = require('./handlerFactory');
 const AppError = require('../utils/appError');
@@ -13,6 +14,12 @@ const sendMail = require('../utils/email');
 const Email = require('../utils/email');
 const he = require('he');
 const mongoose = require('mongoose');
+const ExcelJS = require('exceljs');
+const libre = require('libreoffice-convert');
+const fs = require('fs');
+const path = require('path');
+const { PDFDocument } = require('pdf-lib');
+const slugify = require('slugify');
 
 // const multerStorage = multer.diskStorage({
 //   destination: (req, file, cb) => {
@@ -435,5 +442,171 @@ exports.updateStatusBulk = async (req, res, next) => {
     return next(new AppError(`Error updating status`, 500));
     // You might choose to respond with an error here
     // res.status(500).json({ error: 'Failed to send task creation email' });
+  }
+};
+
+function getDateFormatted(daysToAdd) {
+  const date = new Date();
+  date.setDate(date.getDate() + daysToAdd);
+
+  return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1)
+    .toString()
+    .padStart(2, '0')}-${date.getFullYear()}`;
+}
+
+// const fillInvoiceTemplate = async (invoiceData) => {
+//   try {
+//     let startCell = 19;
+//     const invoiceDate = getDateFormatted(0);
+//     const expireDate = getDateFormatted(30);
+
+//     const workbook = new ExcelJS.Workbook();
+//     const templatePath = path.resolve(__dirname, '../invoice-template.xlsx');
+
+//     await workbook.xlsx.readFile(templatePath);
+
+//     const worksheet = workbook.getWorksheet(1);
+//     worksheet.getCell('A16').value = invoiceDate;
+//     worksheet.getCell('F16').value = expireDate;
+
+//     invoiceData.forEach((task) => {
+//       worksheet.getCell(`A${startCell}`).value = task.completeDate;
+//       worksheet.getCell(`B${startCell}`).value = task.carModel;
+//       worksheet.getCell(`G${startCell}`).value = task.cost;
+//       startCell++;
+//     });
+
+//     const customerName = invoiceData[0].customer.name;
+//     const excelFileName = `invoice_${customerName}.xlsx`;
+
+//     await workbook.xlsx.writeFile(excelFileName);
+
+//     return { customerName, excelFileName };
+//   } catch (error) {
+//     console.error('Error creating invoice:', error);
+//   }
+// };
+async function generateInvoiceNumber() {
+  const currentYear = new Date().getFullYear();
+  const yearPrefix = currentYear.toString().slice(-2);
+
+  const invoiceCounter = await InvoiceCounter.findOneAndUpdate(
+    { year: currentYear },
+    { $inc: { counter: 1 } },
+    { new: true, upsert: true, setDefaultsOnInsert: true },
+  );
+
+  const invoiceNumber = `${yearPrefix}${String(invoiceCounter.counter).padStart(3, '0')}`;
+  return invoiceNumber;
+}
+
+exports.generatePDF = async (req, res, next) => {
+  try {
+    const { invoiceData } = req;
+
+    if (!invoiceData || invoiceData.length === 0) {
+      return next(new AppError('No data to generate invoice', 400));
+    }
+
+    let itemNumber = 1;
+    const invoiceNumber = await generateInvoiceNumber();
+
+    const templatePath = path.resolve(__dirname, '../invoice-template.pdf');
+    const existingPdfBytes = fs.readFileSync(templatePath);
+
+    const pdfDoc = await PDFDocument.load(existingPdfBytes);
+
+    const form = pdfDoc.getForm();
+
+    const dateField = form.getTextField('invoice-date');
+    const invoiceExpiryField = form.getTextField('invoice-expiry');
+    const totalExclBtwField = form.getTextField('total-excl');
+    const totalBtwField = form.getTextField('total-btw');
+    const totalInclBtwField = form.getTextField('total-incl');
+    const customerNameField = form.getTextField('customer-name');
+    const customerStreetHouseField = form.getTextField('street-house');
+    const customerPostcodeCityField = form.getTextField('postcode-city');
+    const customerEmailField = form.getTextField('email');
+    const invoiceNumberField = form.getTextField('invoice-nr');
+
+    const invoiceDate = getDateFormatted(0);
+    const invoiceExpireDate = getDateFormatted(30);
+    const customer = invoiceData[0].invoiceAddress.invoiceCustomerName;
+
+    const totalExclBtw = invoiceData.reduce((acc, curr) => acc + curr.cost, 0);
+    const totalBtw = ((totalExclBtw * 21) / 100).toFixed(2).replace('.', ',');
+    const totalInclBtw = (totalExclBtw + parseFloat(totalBtw.replace(',', '.')))
+      .toFixed(2)
+      .replace('.', ',');
+
+    invoiceNumberField.setText(invoiceNumber);
+    dateField.setText(invoiceDate);
+    invoiceExpiryField.setText(invoiceExpireDate);
+    totalExclBtwField.setText(String(totalExclBtw));
+    totalBtwField.setText(String(totalBtw));
+    totalInclBtwField.setText(String(totalInclBtw));
+    customerNameField.setText(customer);
+    customerStreetHouseField.setText(invoiceData[0].invoiceAddress.streetHouse);
+    customerPostcodeCityField.setText(
+      invoiceData[0].invoiceAddress.postCodeCity,
+    );
+    customerEmailField.setText(invoiceData[0].invoiceAddress.emailAddress);
+
+    invoiceData.forEach((item) => {
+      form
+        .getTextField(`complete-date-${itemNumber}`)
+        .setText(item.completeDate);
+      form.getTextField(`description-${itemNumber}`).setText(item.carModel);
+      form.getTextField(`cost-${itemNumber}`).setText(String(item.cost));
+      itemNumber++;
+    });
+
+    form.flatten();
+
+    // const pdfBytes = await pdfDoc.save();
+    // fs.writeFileSync(`${customer}-${invoiceDate}-invoice.pdf`, pdfBytes);
+
+    // res.status(200).json({ status: 'success' });
+    const pdfBytes = await pdfDoc.save();
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="${slugify(customer, { lower: true, strict: true })}-${invoiceDate}-invoice.pdf"`,
+    );
+
+    res.send(Buffer.from(pdfBytes));
+  } catch (err) {
+    console.error('Error generating invoice:', err);
+    next(new AppError('Error generating invoice', 500));
+  }
+};
+
+exports.getInvoiceData = async (req, res, next) => {
+  try {
+    if (req.user.role === 'admin') {
+      const { selectedTasks } = req.body;
+      if (!Array.isArray(selectedTasks)) {
+        return res.status(400).json({ message: 'Invalid input' });
+      }
+
+      const tasks = await Task.find({ _id: { $in: selectedTasks } });
+
+      req.invoiceData = tasks.map((task) => ({
+        invoiceAddress: task.user.invoiceAddress,
+        carModel: task.carModel,
+        cost: task.totalCost,
+        completeDate: task.completedAt
+          ? `${String(task.completedAt.getDate()).padStart(2, '0')}-${String(task.completedAt.getMonth() + 1).padStart(2, '0')}-${task.completedAt.getFullYear()}`
+          : null,
+      }));
+
+      next();
+    } else {
+      res.status(403).json({ message: 'Access denied' });
+    }
+  } catch (error) {
+    console.error('Error fetching invoice data:', error);
+    next(new AppError('Error fetching invoice data', 500));
   }
 };
