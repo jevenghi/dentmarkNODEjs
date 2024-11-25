@@ -269,25 +269,25 @@ export const generateInvoice = async (selectedTasks) => {
       method: 'POST',
       url: `/api/v1/tasks/get-invoice-data`,
       data: { selectedTasks },
+      responseType: 'blob',
     });
 
-    // if (!res.ok) {
-    //   throw new Error('Network response was not ok');
-    // }
+    const contentDisposition = res.headers['content-disposition'];
+    let filename = 'invoice.pdf';
 
-    // const blob = await res.blob();
+    if (contentDisposition && contentDisposition.includes('filename=')) {
+      filename = contentDisposition.split('filename=')[1].replace(/['"]/g, '');
+    }
 
-    // const url = window.URL.createObjectURL(blob);
-    // const a = document.createElement('a');
-    // a.href = url;
-    // a.download = `invoice_${invoiceData[0].customer.name}.pdf`;
-    // document.body.appendChild(a);
-    // a.click();
+    const file = new Blob([res.data], { type: 'application/pdf' });
 
-    // window.URL.revokeObjectURL(url);
-    // document.body.removeChild(a);
+    const downloadLink = document.createElement('a');
+    downloadLink.href = window.URL.createObjectURL(file);
+    downloadLink.download = filename;
+    downloadLink.click();
+    location.reload();
   } catch (err) {
     console.log(err);
-    showAlert('error', 'Error creating invoice');
+    showAlert('error', err.response.data.message);
   }
 };

@@ -10,6 +10,7 @@ router.post(
   '/get-invoice-data',
   authController.protect,
   taskController.getInvoiceData,
+  taskController.generatePDF,
 );
 
 router.post(

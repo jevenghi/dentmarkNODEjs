@@ -13,6 +13,11 @@ const userSchema = new mongoose.Schema(
       minlength: [2, 'Name must have more than 1 character'],
     },
     invoiceAddress: {
+      invoiceCustomerName: {
+        type: String,
+        trim: true,
+        maxlength: [100, 'Name must not exceed 100 characters'],
+      },
       streetHouse: {
         type: String,
         trim: true,
