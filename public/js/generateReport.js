@@ -296,7 +296,7 @@ export const generateInvoice = async (selectedTasks) => {
 
     // URL.revokeObjectURL(downloadLink.href);
 
-    location.reload();
+    // location.reload();
   } catch (err) {
     console.log(err);
     showAlert('error', err.response.data.message);
