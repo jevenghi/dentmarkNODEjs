@@ -166,13 +166,14 @@ export const generatePDF = async () => {
     },
   };
   const fileName = `summary_${from}_to_${to}.pdf`;
-  const isIOS =
-    /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-  if (isIOS) {
-    pdfMake.createPdf(docDefinition).download(fileName);
-  } else {
-    pdfMake.createPdf(docDefinition).open(fileName);
-  }
+  pdfMake.createPdf(docDefinition).download(fileName);
+  // const isIOS =
+  //   /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  // if (isIOS) {
+  //   pdfMake.createPdf(docDefinition).download(fileName);
+  // } else {
+  //   pdfMake.createPdf(docDefinition).open(fileName);
+  // }
 };
 
 // export const generateTaskPDF = (images) => {
@@ -286,27 +287,20 @@ export const generateInvoice = async (selectedTasks) => {
     }
 
     const file = new Blob([res.data], { type: 'application/pdf' });
-    const fileURL = window.URL.createObjectURL(file);
 
-    const isIOS =
-      /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const downloadLink = document.createElement('a');
+    downloadLink.href = URL.createObjectURL(file);
+    downloadLink.download = filename;
+    // document.body.appendChild(downloadLink);
+    downloadLink.click();
 
-    if (isIOS) {
-      window.open(fileURL, '_blank');
-    } else {
-      const downloadLink = document.createElement('a');
-      downloadLink.href = fileURL;
-      downloadLink.download = filename;
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-      document.body.removeChild(downloadLink);
-    }
+    // URL.revokeObjectURL(downloadLink.href);
 
+    // location.reload();
     setTimeout(() => {
-      window.URL.revokeObjectURL(fileURL);
-    }, 100);
-
-    location.reload();
+      URL.revokeObjectURL(downloadLink.href);
+      location.reload();
+    }, 2000);
   } catch (err) {
     console.log(err);
     showAlert('error', err.response.data.message);

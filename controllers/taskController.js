@@ -511,12 +511,12 @@ exports.generatePDF = async (req, res, next) => {
       });
     }
 
-    if (!invoiceData[0].invoiceAddress.invoiceCustomerName) {
-      return res.status(400).json({
-        status: 'fail',
-        message: 'No address data available to generate invoice',
-      });
-    }
+    // if (!invoiceData[0].invoiceAddress.invoiceCustomerName) {
+    //   return res.status(400).json({
+    //     status: 'fail',
+    //     message: 'No address data available to generate invoice',
+    //   });
+    // }
 
     let itemNumber = 1;
     const invoiceNumber = await generateInvoiceNumber();
