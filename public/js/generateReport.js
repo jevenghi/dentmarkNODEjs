@@ -166,7 +166,13 @@ export const generatePDF = async () => {
     },
   };
   const fileName = `summary_${from}_to_${to}.pdf`;
-  pdfMake.createPdf(docDefinition).open(fileName);
+  const isIOS =
+    /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  if (isIOS) {
+    pdfMake.createPdf(docDefinition).download(fileName);
+  } else {
+    pdfMake.createPdf(docDefinition).open(fileName);
+  }
 };
 
 // export const generateTaskPDF = (images) => {
@@ -280,11 +286,26 @@ export const generateInvoice = async (selectedTasks) => {
     }
 
     const file = new Blob([res.data], { type: 'application/pdf' });
+    const fileURL = window.URL.createObjectURL(file);
 
-    const downloadLink = document.createElement('a');
-    downloadLink.href = window.URL.createObjectURL(file);
-    downloadLink.download = filename;
-    downloadLink.click();
+    const isIOS =
+      /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+    if (isIOS) {
+      window.open(fileURL, '_blank');
+    } else {
+      const downloadLink = document.createElement('a');
+      downloadLink.href = fileURL;
+      downloadLink.download = filename;
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+    }
+
+    setTimeout(() => {
+      window.URL.revokeObjectURL(fileURL);
+    }, 100);
+
     location.reload();
   } catch (err) {
     console.log(err);
