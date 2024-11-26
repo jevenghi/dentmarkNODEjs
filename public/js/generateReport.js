@@ -287,17 +287,14 @@ export const generateInvoice = async (selectedTasks) => {
     }
 
     const file = new Blob([res.data], { type: 'application/pdf' });
-    const fileURL = window.URL.createObjectURL(file);
 
     const downloadLink = document.createElement('a');
-    downloadLink.href = fileURL;
+    downloadLink.href = URL.createObjectURL(file);
     downloadLink.download = filename;
     // document.body.appendChild(downloadLink);
     downloadLink.click();
 
-    setTimeout(() => {
-      window.URL.revokeObjectURL(fileURL);
-    }, 100);
+    URL.revokeObjectURL(downloadLink.href);
 
     location.reload();
   } catch (err) {
