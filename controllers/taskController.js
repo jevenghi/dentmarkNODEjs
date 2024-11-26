@@ -505,7 +505,17 @@ exports.generatePDF = async (req, res, next) => {
     const { invoiceData } = req;
 
     if (!invoiceData || invoiceData.length === 0) {
-      return next(new AppError('No data to generate invoice', 400));
+      return res.status(400).json({
+        status: 'fail',
+        message: 'No data to generate invoice',
+      });
+    }
+
+    if (!invoiceData[0].invoiceAddress.invoiceCustomerName) {
+      return res.status(400).json({
+        status: 'fail',
+        message: 'No address data available to generate invoice',
+      });
     }
 
     let itemNumber = 1;
@@ -572,10 +582,10 @@ exports.generatePDF = async (req, res, next) => {
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader(
       'Content-Disposition',
-      `attachment; filename="${slugify(customer, { lower: true, strict: true })}-${invoiceDate}-invoice.pdf"`,
+      `attachment; filename="${slugify(customer, { lower: true, strict: true })}-${invoiceNumber}-invoice.pdf"`,
     );
 
-    res.send(Buffer.from(pdfBytes));
+    res.status(200).send(Buffer.from(pdfBytes));
   } catch (err) {
     console.error('Error generating invoice:', err);
     next(new AppError('Error generating invoice', 500));
