@@ -166,13 +166,14 @@ export const generatePDF = async () => {
     },
   };
   const fileName = `summary_${from}_to_${to}.pdf`;
-  const isIOS =
-    /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-  if (isIOS) {
-    pdfMake.createPdf(docDefinition).download(fileName);
-  } else {
-    pdfMake.createPdf(docDefinition).open(fileName);
-  }
+  pdfMake.createPdf(docDefinition).download(fileName);
+  // const isIOS =
+  //   /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  // if (isIOS) {
+  //   pdfMake.createPdf(docDefinition).download(fileName);
+  // } else {
+  //   pdfMake.createPdf(docDefinition).open(fileName);
+  // }
 };
 
 // export const generateTaskPDF = (images) => {
