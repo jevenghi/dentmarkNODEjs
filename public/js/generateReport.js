@@ -289,19 +289,11 @@ export const generateInvoice = async (selectedTasks) => {
     const file = new Blob([res.data], { type: 'application/pdf' });
     const fileURL = window.URL.createObjectURL(file);
 
-    const isIOS =
-      /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-
-    if (isIOS) {
-      window.open(fileURL, '_blank');
-    } else {
-      const downloadLink = document.createElement('a');
-      downloadLink.href = fileURL;
-      downloadLink.download = filename;
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-      document.body.removeChild(downloadLink);
-    }
+    const downloadLink = document.createElement('a');
+    downloadLink.href = fileURL;
+    downloadLink.download = filename;
+    // document.body.appendChild(downloadLink);
+    downloadLink.click();
 
     setTimeout(() => {
       window.URL.revokeObjectURL(fileURL);
