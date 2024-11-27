@@ -549,7 +549,7 @@ exports.generatePDF = async (req, res, next) => {
       .toFixed(2)
       .replace('.', ',');
 
-    invoiceNumberField.setText(invoiceNumber);
+    // invoiceNumberField.setText(invoiceNumber);
     dateField.setText(invoiceDate);
     invoiceExpiryField.setText(invoiceExpireDate);
     totalExclBtwField.setText(String(totalExclBtw));
@@ -569,6 +569,14 @@ exports.generatePDF = async (req, res, next) => {
       form.getTextField(`description-${itemNumber}`).setText(item.carModel);
       form.getTextField(`cost-${itemNumber}`).setText(String(item.cost));
       itemNumber++;
+    });
+    const excludedFields = [invoiceNumberField];
+    const fields = form.getFields();
+
+    fields.forEach((field) => {
+      if (!excludedFields.includes(field.getName())) {
+        field.flatten();
+      }
     });
 
     // form.flatten();
