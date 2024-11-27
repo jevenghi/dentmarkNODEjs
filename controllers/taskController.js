@@ -571,7 +571,7 @@ exports.generatePDF = async (req, res, next) => {
       itemNumber++;
     });
 
-    form.flatten();
+    // form.flatten();
 
     // const pdfBytes = await pdfDoc.save();
     // fs.writeFileSync(`${customer}-${invoiceDate}-invoice.pdf`, pdfBytes);
@@ -582,7 +582,7 @@ exports.generatePDF = async (req, res, next) => {
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader(
       'Content-Disposition',
-      `attachment; filename="${slugify(customer, { lower: true, strict: true })}-${invoiceNumber}-invoice.pdf"`,
+      `attachment; filename="${invoiceNumber} ${customer}.pdf"`,
     );
 
     res.status(200).send(Buffer.from(pdfBytes));
