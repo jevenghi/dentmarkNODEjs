@@ -570,14 +570,6 @@ exports.generatePDF = async (req, res, next) => {
       form.getTextField(`cost-${itemNumber}`).setText(String(item.cost));
       itemNumber++;
     });
-    const excludedFields = [invoiceNumberField];
-    const fields = form.getFields();
-
-    fields.forEach((field) => {
-      if (!excludedFields.includes(field.getName())) {
-        field.flatten();
-      }
-    });
 
     // form.flatten();
 
