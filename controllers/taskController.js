@@ -519,7 +519,7 @@ exports.generatePDF = async (req, res, next) => {
     // }
 
     let itemNumber = 1;
-    const invoiceNumber = await generateInvoiceNumber();
+    // const invoiceNumber = await generateInvoiceNumber();
 
     const templatePath = path.resolve(__dirname, '../invoice-template.pdf');
     const existingPdfBytes = fs.readFileSync(templatePath);
@@ -537,7 +537,7 @@ exports.generatePDF = async (req, res, next) => {
     const customerStreetHouseField = form.getTextField('street-house');
     const customerPostcodeCityField = form.getTextField('postcode-city');
     const customerEmailField = form.getTextField('email');
-    const invoiceNumberField = form.getTextField('invoice-nr');
+    // const invoiceNumberField = form.getTextField('invoice-nr');
 
     const invoiceDate = getDateFormatted(0);
     const invoiceExpireDate = getDateFormatted(30);
@@ -582,7 +582,7 @@ exports.generatePDF = async (req, res, next) => {
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader(
       'Content-Disposition',
-      `attachment; filename="${invoiceNumber} ${customer}.pdf"`,
+      `attachment; filename="${customer}.pdf"`,
     );
 
     res.status(200).send(Buffer.from(pdfBytes));
