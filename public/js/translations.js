@@ -48,6 +48,7 @@ export const translations = {
     notes: 'Notes:',
     backToTasks: 'Back to tasks',
     saveChangesTask: 'Save changes',
+    invoices: 'Invoices',
   },
   nl: {
     welcome: 'Welkom bij DentMarker!',
@@ -99,5 +100,6 @@ export const translations = {
     notes: 'Opmerkingen:',
     backToTasks: 'Terug naar taken',
     saveChangesTask: 'Wijzigingen opslaan',
+    invoices: 'Facturen',
   },
 };

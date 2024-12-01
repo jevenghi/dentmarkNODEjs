@@ -223,6 +223,35 @@ exports.getMyTasks = catchAsyncError(async (req, res, next) => {
   });
 });
 
+exports.getInvoices = catchAsyncError(async (req, res, next) => {
+  const customers = await User.find().sort({ name: 1 });
+
+  requestQueries = new RequestQueryHandler(
+    Task.find({
+      user: req.query.user,
+      taskStatus: { $in: ['complete', 'pending'] },
+      // taskStatus: 'pending',
+      totalCost: { $gt: 0 },
+    }),
+    req.query,
+  )
+    .filter()
+    .sort()
+    .limitFields()
+    .paginate();
+  // totalDocCount = await Task.countDocuments({ user: req.user.id });
+
+  const tasks = await requestQueries.query;
+
+  res.status(200).render('invoices', {
+    title: 'Invoices',
+    role: req.user.role,
+    customers,
+    tasks,
+    selectedUser: req.query.user || null,
+  });
+});
+
 exports.getAllUsers = catchAsyncError(async (req, res, next) => {
   const users = await User.find().populate('tasks').sort({ name: 1 });
   // console.log(users[0].tasks.length);

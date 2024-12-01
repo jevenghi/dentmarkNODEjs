@@ -1,0 +1,69 @@
+extends base
+block styles
+  link(rel="stylesheet" href="/css/style.css")
+block content
+  .main-container
+    .customers-invoice-menu
+      .customers-invoice-dropdown
+        select#customers-invoice
+          option(value="" disabled selected) Select customer
+          each customer in customers
+            option(value=customer._id selected=(customer._id.toString() === selectedUser))= customer.name
+      .invoice-buttons-top        
+        button.change-invoice-address-btn Show invoice address
+        button.create-invoice-btn Preview invoice
+    if tasks
+      table.task-table
+          thead
+          tr
+              th Vehicle Model
+              th Task Status
+              th Cost (ex. BTW)
+              th Created
+              th Completed
+              //- th Invoice Sent
+          tbody
+          if tasks.length === 0
+              tr
+              td(colspan='6') No tasks found
+          each task in tasks
+              tr
+              td: a(href=`/tasks/${task._id}` class='table-link')= task.carModel
+              td(class='clickable-status' id=task._id)= task.taskStatus
+              td(class='clickable-status' id=task._id)= task.totalCost
+              td(class='clickable-status' id=task._id)= new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
+              td
+                  if task.completedAt
+                  = new Date(task.completedAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
+    //- div.pagination-buttons
+    //-   if page > 1
+    //-     button.previous-button() Prev
+    //-   //- if page < totalPageCount
+    //-   //-   button.next-button() Next
+    //-   if tasks.length === limit
+    //-     button.next-button() Next
+    div(class='invoice-form' style='display: none')
+      div.spinner-overlay(style='display: none;')
+        div.spinner
+      div.top-right
+        span.company-name
+        span.street
+        span.postcode-city
+        span.email
+        
+      div.row-3-inputs
+        span.invoice-date
+        input(type="text" id='invoice-number')
+        span.invoice-expiry-date
+        
+      div.bottom-right
+        span.total-excl
+        span.btw         
+        span.total-incl
+      div.save-invoice-buttons
+        button.save-invoice-btn Download invoice
+        button.send-invoice-btn Send invoice
+
+  .overlay.hidden            
+        
+        
