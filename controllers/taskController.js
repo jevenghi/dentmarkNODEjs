@@ -697,6 +697,7 @@ exports.generateAndSendPDF = async (req, res, next) => {
     const invoiceNumberField = form.getTextField('invoice-nr');
 
     const customer = invoiceData[0].invoiceAddress.invoiceCustomerName;
+    const customerEmail = invoiceData[0].invoiceAddress.emailAddress;
 
     invoiceNumberField.setText(newInvoiceNumber);
     dateField.setText(invoiceCreateDate);

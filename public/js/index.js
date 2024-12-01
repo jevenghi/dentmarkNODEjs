@@ -576,6 +576,8 @@ if (invoicesMenu) {
 
     const saveInvoiceBtn = document.querySelector('.save-invoice-btn');
     saveInvoiceBtn.addEventListener('click', () => {
+      saveInvoiceBtn.classList.add('loading-btn');
+      saveInvoiceBtn.textContent = 'Downloading';
       downloadInvoice(
         fetchedInvoiceData,
         String(totalExcl),

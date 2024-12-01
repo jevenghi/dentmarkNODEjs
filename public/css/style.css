@@ -1261,3 +1261,29 @@ button[type='submit']:hover {
   display: inline-block;
   /* width: 100%;  */
 }
+
+.loading-btn {
+  position: relative;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.loading-btn::after {
+  content: '...';
+  position: absolute;
+  right: 10px;
+  animation: dots 1.5s infinite;
+}
+
+@keyframes dots {
+  0%,
+  100% {
+    content: '...';
+  }
+  33% {
+    content: '.';
+  }
+  66% {
+    content: '..';
+  }
+}

@@ -31,7 +31,7 @@ block content
               td: a(href=`/tasks/${task._id}` class='table-link')= task.carModel
               td(class='clickable-status' id=task._id)= task.taskStatus
               td(class='clickable-status' id=task._id)= task.totalCost
-              td= new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
+              td(class='clickable-status' id=task._id)= new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
               td
                   if task.completedAt
                   = new Date(task.completedAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
@@ -43,6 +43,8 @@ block content
     //-   if tasks.length === limit
     //-     button.next-button() Next
     div(class='invoice-form' style='display: none')
+      div.spinner-overlay(style='display: none;')
+        div.spinner
       div.top-right
         span.company-name
         span.street
