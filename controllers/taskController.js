@@ -694,11 +694,11 @@ exports.generateAndSendPDF = async (req, res, next) => {
     const customerStreetHouseField = form.getTextField('street-house');
     const customerPostcodeCityField = form.getTextField('postcode-city');
     const customerEmailField = form.getTextField('email');
-    // const invoiceNumberField = form.getTextField('invoice-nr');
+    const invoiceNumberField = form.getTextField('invoice-nr');
 
     const customer = invoiceData[0].invoiceAddress.invoiceCustomerName;
 
-    // invoiceNumberField.setText(invoiceNumber);
+    invoiceNumberField.setText(newInvoiceNumber);
     dateField.setText(invoiceCreateDate);
     invoiceExpiryField.setText(invoiceExpiryDate);
     totalExclBtwField.setText(totalExcl);
