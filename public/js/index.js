@@ -2,7 +2,12 @@ import { updateSettings } from './updateAccount';
 import { login, logoutUser, forgotPassword } from './login';
 import { signup, checkFieldAvailability } from './signup';
 import { updateTask } from './updateTask';
-import { generatePDF, generateExcel, generateInvoice } from './generateReport';
+import {
+  generatePDF,
+  generateExcel,
+  generateInvoice,
+  downloadInvoice,
+} from './generateReport';
 import { showAlert } from './alerts';
 import { deleteTask } from './deleteTask';
 import {
@@ -28,6 +33,7 @@ import {
   warnUnsavedChanges,
 } from './elementsHandler';
 import { updateStatusBulk } from './updateStatusBulk';
+import { getInvoiceData } from './getDataForInvoice';
 
 const passwordResetForm = document.querySelector('.reset-form');
 const sendContainer = document.querySelector('.send-container');
@@ -95,6 +101,15 @@ let specialCase = false;
 let bigDent = false;
 let taskId;
 let warnBeforeUnload = true;
+
+function getDateFormatted(daysToAdd) {
+  const date = new Date();
+  date.setDate(date.getDate() + daysToAdd);
+
+  return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1)
+    .toString()
+    .padStart(2, '0')}-${date.getFullYear()}`;
+}
 
 function generateRandomId() {
   return Array.from({ length: 4 }, () => {
@@ -455,6 +470,142 @@ if (addNewDentsToTask) {
 if (backToTasks) {
   backToTasks.addEventListener('click', function () {
     window.location.href = '/tasks';
+  });
+}
+
+//INVOICES PAGE /invoices
+const invoicesMenu = document.querySelector('.customers-invoice-menu');
+
+if (invoicesMenu) {
+  let tasksToInvoice = [];
+  const invoiceCustomersDropdown = document.getElementById('customers-invoice');
+  const createInvoiceBtn = document.querySelector('.create-invoice-btn');
+  const invoiceForm = document.querySelector('.invoice-form');
+
+  createInvoiceBtn.addEventListener('click', async (e) => {
+    e.preventDefault();
+
+    if (tasksToInvoice.length > 9) {
+      return showAlert('error', 'You can choose up to 9 tasks to invoice');
+    }
+
+    if (tasksToInvoice.length === 0)
+      return showAlert('error', 'No tasks selected');
+    invoiceForm.style.display = 'grid';
+
+    const [fetchedInvoiceData, lastInvoiceNumber] =
+      await getInvoiceData(tasksToInvoice);
+
+    let newInvoiceNumber = Number(lastInvoiceNumber) + 1;
+
+    const invoiceAddress = fetchedInvoiceData[0].invoiceAddress;
+    const rowInputsContainer = document.querySelector('div.row-3-inputs');
+
+    const companyNameSpan = document.querySelector('span.company-name');
+    const streetSpan = document.querySelector('span.street');
+    const postcodeCitySpan = document.querySelector('span.postcode-city');
+    const emailSpan = document.querySelector('span.email');
+
+    const invoiceDate = document.querySelector('.invoice-date');
+    const invoiceExpiryDate = document.querySelector('.invoice-expiry-date');
+    const lastInvoiceNumberField = document.getElementById('invoice-number');
+
+    lastInvoiceNumberField.value = newInvoiceNumber;
+    lastInvoiceNumberField.addEventListener('change', function (e) {
+      newInvoiceNumber = e.target.value;
+    });
+
+    invoiceDate.textContent = getDateFormatted(0);
+    invoiceExpiryDate.textContent = getDateFormatted(30);
+
+    companyNameSpan.textContent = invoiceAddress.invoiceCustomerName;
+    streetSpan.textContent = invoiceAddress.streetHouse;
+    postcodeCitySpan.textContent = invoiceAddress.postCodeCity;
+    emailSpan.textContent = invoiceAddress.emailAddress;
+
+    const existingRowsContainer = document.querySelector(
+      '.invoice-tasks-container',
+    );
+    if (existingRowsContainer) {
+      existingRowsContainer.remove();
+    }
+
+    const rowsContainer = document.createElement('div');
+    rowsContainer.className = 'invoice-tasks-container';
+
+    fetchedInvoiceData.forEach((task) => {
+      const newRow = document.createElement('div');
+      newRow.className = 'invoice-tasks-row';
+
+      const taskCompleteDate = document.createElement('span');
+      taskCompleteDate.textContent = task.completeDate;
+
+      const carModel = document.createElement('span');
+      carModel.textContent = task.carModel;
+
+      const cost = document.createElement('span');
+      cost.className = 'cost';
+
+      cost.textContent = task.cost;
+
+      newRow.appendChild(taskCompleteDate);
+      newRow.appendChild(carModel);
+      newRow.appendChild(cost);
+
+      rowsContainer.appendChild(newRow);
+    });
+
+    rowInputsContainer.insertAdjacentElement('afterend', rowsContainer);
+
+    const totalExclSpan = document.querySelector('span.total-excl');
+    const btwSpan = document.querySelector('span.btw');
+    const totalInclSpan = document.querySelector('span.total-incl');
+
+    const totalExcl = fetchedInvoiceData.reduce(
+      (acc, curr) => acc + curr.cost,
+      0,
+    );
+    const btw = ((totalExcl * 21) / 100).toFixed(2).replace('.', ',');
+    const totalIncl = (totalExcl + parseFloat(btw.replace(',', '.')))
+      .toFixed(2)
+      .replace('.', ',');
+
+    totalExclSpan.textContent = `excl. BTW: ${totalExcl}`;
+    btwSpan.textContent = `BTW: ${btw}`;
+    totalInclSpan.textContent = `incl. BTW: ${totalIncl}`;
+
+    const saveInvoiceBtn = document.querySelector('.save-invoice-btn');
+    saveInvoiceBtn.addEventListener('click', () => {
+      downloadInvoice(
+        fetchedInvoiceData,
+        String(totalExcl),
+        btw,
+        totalIncl,
+        String(newInvoiceNumber),
+        invoiceDate.textContent,
+        invoiceExpiryDate.textContent,
+      );
+    });
+  });
+
+  invoiceCustomersDropdown.addEventListener('change', (e) => {
+    url.searchParams.set('user', e.target.value);
+    window.location.href = url.toString();
+  });
+
+  document.querySelectorAll('.clickable-status').forEach((cell) => {
+    cell.addEventListener('click', (event) => {
+      const row = event.target.closest('tr');
+      const taskId = event.target.id;
+
+      if (tasksToInvoice.includes(taskId)) {
+        tasksToInvoice = tasksToInvoice.filter((id) => id !== taskId);
+        row.classList.remove('selected');
+      } else {
+        tasksToInvoice.push(taskId);
+        row.classList.add('selected');
+      }
+    });
   });
 }
 

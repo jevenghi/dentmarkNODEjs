@@ -34,4 +34,11 @@ router.get(
   viewsController.getAllUsers,
 );
 
+router.get(
+  '/invoices',
+  authController.protect,
+  authController.restrictTo('admin'),
+  viewsController.getInvoices,
+);
+
 module.exports = router;

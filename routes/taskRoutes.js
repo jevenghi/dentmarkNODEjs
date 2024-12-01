@@ -14,6 +14,20 @@ router.post(
 );
 
 router.post(
+  '/get-data-for-invoice',
+  authController.protect,
+  authController.restrictTo('admin'),
+  taskController.getDataForInvoice,
+);
+
+router.post(
+  '/download-invoice',
+  authController.protect,
+  authController.restrictTo('admin'),
+  taskController.generateAndSendPDF,
+);
+
+router.post(
   '/sendTask',
   authController.protect,
   imageController.transferFiles,
