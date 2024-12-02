@@ -2,6 +2,7 @@ import { showAlert } from './alerts.js';
 import axios from 'axios';
 import { translations } from './translations.js';
 import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 const pdfFonts = require('pdfmake/build/vfs_fonts.js');
 const pdfMake = require('pdfmake/build/pdfmake.js');
@@ -338,22 +339,23 @@ export const downloadInvoice = async (
     if (contentDisposition && contentDisposition.includes('filename=')) {
       filename = contentDisposition.split('filename=')[1].replace(/['"]/g, '');
     }
+    saveAs(res.data, filename);
 
-    const file = new Blob([res.data], { type: 'application/pdf' });
+    // const file = new Blob([res.data], { type: 'application/pdf' });
 
-    const downloadLink = document.createElement('a');
-    downloadLink.href = URL.createObjectURL(file);
-    downloadLink.download = filename;
-    // document.body.appendChild(downloadLink);
-    downloadLink.click();
+    // const downloadLink = document.createElement('a');
+    // downloadLink.href = URL.createObjectURL(file);
+    // downloadLink.download = filename;
+    // // document.body.appendChild(downloadLink);
+    // downloadLink.click();
 
-    // URL.revokeObjectURL(downloadLink.href);
+    // // URL.revokeObjectURL(downloadLink.href);
 
-    // location.reload();
-    setTimeout(() => {
-      URL.revokeObjectURL(downloadLink.href);
-      // location.reload();
-    }, 2000);
+    // // location.reload();
+    // setTimeout(() => {
+    //   URL.revokeObjectURL(downloadLink.href);
+    //   // location.reload();
+    // }, 2000);
   } catch (err) {
     console.log(err);
     showAlert('error', err);
