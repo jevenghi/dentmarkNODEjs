@@ -330,16 +330,21 @@ export const downloadInvoice = async (
         invoiceCreateDate,
         invoiceExpiryDate,
       },
-      responseType: 'blob',
+      // responseType: 'blob',
+
+      responseType: 'arraybuffer',
     });
 
     const contentDisposition = res.headers['content-disposition'];
     let filename = 'invoice.pdf';
+    const blob = new Blob([res.data], { type: 'application/pdf' });
 
     if (contentDisposition && contentDisposition.includes('filename=')) {
       filename = contentDisposition.split('filename=')[1].replace(/['"]/g, '');
     }
-    saveAs(res.data, filename);
+
+    // saveAs(res.data, filename);
+    saveAs(blob, filename, { autoBom: true });
 
     // const file = new Blob([res.data], { type: 'application/pdf' });
 

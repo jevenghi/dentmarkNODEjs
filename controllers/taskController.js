@@ -758,7 +758,9 @@ exports.generateAndSaveInvoicePDF = async (req, res, next) => {
       { counter: Number(newInvoiceNumber.slice(-3)) },
     );
 
-    res.setHeader('Content-Type', 'application/pdf');
+    // res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Type', 'octet-stream');
+
     res.setHeader(
       'Content-Disposition',
       `attachment; filename="${newInvoiceNumber} ${customer}.pdf"`,
@@ -766,6 +768,10 @@ exports.generateAndSaveInvoicePDF = async (req, res, next) => {
     // req.invoicePdf = pdfBytes;
     // req.emailAddress = customerEmail;
     // next();
+    // res.setHeader('Content-Length', Buffer.byteLength(pdfBytes));
+    // res.setHeader('Cache-Control', 'no-cache');
+    // res.setHeader('Pragma', 'no-cache');
+    // res.setHeader('Expires', '0');
 
     res.status(200).send(Buffer.from(pdfBytes));
   } catch (err) {
