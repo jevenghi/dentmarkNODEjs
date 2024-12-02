@@ -492,6 +492,10 @@ if (invoicesMenu) {
     if (tasksToInvoice.length === 0)
       return showAlert('error', 'No tasks selected');
     invoiceForm.style.display = 'grid';
+    invoiceForm.scrollIntoView({
+      behavior: 'smooth',
+      block: 'end',
+    });
 
     const [fetchedInvoiceData, lastInvoiceNumber] =
       await getInvoiceData(tasksToInvoice);

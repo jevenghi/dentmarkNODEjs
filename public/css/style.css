@@ -1243,6 +1243,7 @@ button[type='submit']:hover {
   max-width: 600px;
   width: 90%;
   margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
 .top-right {

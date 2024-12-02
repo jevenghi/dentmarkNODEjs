@@ -226,7 +226,7 @@ exports.getMyTasks = catchAsyncError(async (req, res, next) => {
 exports.getInvoices = catchAsyncError(async (req, res, next) => {
   const customers = await User.find().sort({ name: 1 });
 
-  requestQueries = new RequestQueryHandler(
+  const requestQueries = new RequestQueryHandler(
     Task.find({
       user: req.query.user,
       taskStatus: { $in: ['complete', 'pending'] },
@@ -237,8 +237,8 @@ exports.getInvoices = catchAsyncError(async (req, res, next) => {
   )
     .filter()
     .sort()
-    .limitFields()
-    .paginate();
+    .limitFields();
+  // .paginate();
   // totalDocCount = await Task.countDocuments({ user: req.user.id });
 
   const tasks = await requestQueries.query;
