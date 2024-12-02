@@ -1051,7 +1051,8 @@ button[type='submit']:hover {
 .create-invoice-btn,
 .show-invoice-address-btn,
 .save-invoice-btn,
-.send-invoice-btn {
+.send-invoice-btn,
+.save-invoice-changes-btn {
   background-color: rgb(34, 40, 49);
   color: #fff;
   border-radius: 0.3rem;
