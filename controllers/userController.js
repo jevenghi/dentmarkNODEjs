@@ -79,6 +79,40 @@ exports.getUser = factory.getOne(User, 'tasks');
 //     data: { customer },
 //   });
 // });
+exports.getUserInvoiceAddress = catchAsyncErr(async (req, res, next) => {
+  const customerId = req.params.id;
+
+  const user = await User.findById(customerId);
+  const { invoiceAddress } = user;
+
+  res.status(200).json({
+    status: 'success',
+    invoiceAddress,
+  });
+});
+
+exports.updateUserInvoiceAddress = catchAsyncErr(async (req, res, next) => {
+  const customerId = req.params.id;
+  const filteredBody = filterObj(req.body, 'newInvoiceAddress');
+  console.log(filteredBody);
+
+  const updatedUser = await User.findByIdAndUpdate(
+    customerId,
+    {
+      $set: { invoiceAddress: filteredBody.newInvoiceAddress },
+    },
+    {
+      new: true,
+      runValidators: true,
+    },
+  );
+
+  res.status(201).json({
+    status: 'success',
+    data: { user: updatedUser },
+  });
+});
+
 exports.getUserLangPref = catchAsyncErr(async (req, res, next) => {
   let language;
   if (req.user) {

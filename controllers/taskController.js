@@ -584,10 +584,33 @@ exports.generatePDF = async (req, res, next) => {
       `attachment; filename="${customer}.pdf"`,
     );
 
-    res.status(200).send(Buffer.from(pdfBytes));
+    req.invoicePdf = pdfBytes;
+    next();
+
+    // res.status(200).send(Buffer.from(pdfBytes));
   } catch (err) {
     console.error('Error generating invoice:', err);
     next(new AppError('Error generating invoice', 500));
+  }
+};
+
+exports.downloadInvoicePDF = async (req, res, next) => {
+  try {
+    const { invoicePdf } = req;
+    res.status(200).send(Buffer.from(invoicePdf));
+  } catch (err) {
+    console.error('Error downloading invoice:', err);
+    next(new AppError('Error downloading invoice', 500));
+  }
+};
+
+exports.sendInvoicePDF = async (req, res, next) => {
+  try {
+    const { invoicePdf, email } = req;
+    console.log(email);
+  } catch (err) {
+    console.error('Error sending invoice:', err);
+    next(new AppError('Error sending invoice', 500));
   }
 };
 
@@ -656,7 +679,7 @@ exports.getDataForInvoice = async (req, res, next) => {
   }
 };
 
-exports.generateAndSendPDF = async (req, res, next) => {
+exports.generateAndSaveInvoicePDF = async (req, res, next) => {
   try {
     const {
       invoiceData,
@@ -740,6 +763,9 @@ exports.generateAndSendPDF = async (req, res, next) => {
       'Content-Disposition',
       `attachment; filename="${newInvoiceNumber} ${customer}.pdf"`,
     );
+    // req.invoicePdf = pdfBytes;
+    // req.emailAddress = customerEmail;
+    // next();
 
     res.status(200).send(Buffer.from(pdfBytes));
   } catch (err) {

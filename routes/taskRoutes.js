@@ -24,8 +24,17 @@ router.post(
   '/download-invoice',
   authController.protect,
   authController.restrictTo('admin'),
-  taskController.generateAndSendPDF,
+  taskController.generateAndSaveInvoicePDF,
+  // taskController.downloadInvoicePDF,
 );
+
+// router.post(
+//   '/send-invoice',
+//   authController.protect,
+//   authController.restrictTo('admin'),
+//   taskController.generateInvoicePDF,
+//   taskController.sendInvoicePDF,
+// );
 
 router.post(
   '/sendTask',

@@ -833,15 +833,40 @@ button[type='submit']:hover {
   background-color: #0056b3;
 }
 
+.form-user-invoice-address {
+  position: relative;
+  margin-top: 1rem;
+}
+
+.close-invoice-address-btn {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  border: none;
+  background: none;
+  font-size: 30px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #333;
+}
+
+.close-invoice-address-btn:hover {
+  color: #ff0000;
+}
+
 .form-user-data {
+  margin-top: 2rem;
+}
+
+.form-user-data,
+.form-user-invoice-address {
   font-size: 1.5rem;
 
   background-color: rgb(238, 238, 238);
-  padding: 1.25rem;
+  padding: 2.25rem 1.25rem 1.25rem 1.25rem;
   border-radius: 0.5rem;
   box-shadow: 0 0 0.625rem rgba(0, 0, 0, 0.1);
   width: 25rem;
-  margin-top: 2rem;
 }
 .form-user-data h2,
 .form-user-password h2 {
@@ -927,7 +952,7 @@ button[type='submit']:hover {
 .save-invoice-buttons {
   margin-top: 1rem;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
   align-items: center;
 }
 
@@ -1024,7 +1049,7 @@ button[type='submit']:hover {
 .reset-search,
 .change-status-bulk-btn,
 .create-invoice-btn,
-.change-invoice-address-btn,
+.show-invoice-address-btn,
 .save-invoice-btn,
 .send-invoice-btn {
   background-color: rgb(34, 40, 49);
@@ -1150,6 +1175,11 @@ button[type='submit']:hover {
   margin-top: 1rem;
 }
 /*CUSTOMER NAMES SUGGESTIONS*/
+
+.customers-invoice-dropdown {
+  padding: 1rem;
+}
+
 .dropdown-content {
   display: none;
   position: absolute;
@@ -1243,6 +1273,7 @@ button[type='submit']:hover {
   max-width: 600px;
   width: 90%;
   margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
 .top-right {
