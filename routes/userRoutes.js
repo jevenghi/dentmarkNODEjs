@@ -51,6 +51,14 @@ router.get(
 );
 
 router
+  .route('/invoices/:id')
+  .get(authController.restrictTo('admin'), userController.getUserInvoiceAddress)
+  .patch(
+    authController.restrictTo('admin'),
+    userController.updateUserInvoiceAddress,
+  );
+
+router
   .route('/:id')
   .get(authController.restrictTo('admin', 'superAdmin'), userController.getUser)
   .patch(authController.restrictTo('superAdmin'), userController.updateUser);

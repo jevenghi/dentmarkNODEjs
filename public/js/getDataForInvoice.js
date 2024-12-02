@@ -53,3 +53,34 @@ export const embedPDF = async (selectedTasks) => {
     showAlert('error', err.response.data.message);
   }
 };
+
+export const getInvoiceAddress = async (customerId) => {
+  try {
+    const res = await axios({
+      method: 'GET',
+      url: `/api/v1/users/invoices/${customerId}`,
+    });
+    if (res.data.status === 'success') {
+      return res.data.invoiceAddress;
+    }
+  } catch (err) {
+    console.log(err);
+    showAlert('error', err.response.data.message);
+  }
+};
+
+export const updateInvoiceAddress = async (customerId, newInvoiceAddress) => {
+  try {
+    const res = await axios({
+      method: 'PATCH',
+      url: `/api/v1/users/invoices/${customerId}`,
+      data: { newInvoiceAddress },
+    });
+    if (res.data.status === 'success') {
+      showAlert('success', 'Invoice address changed successfully!');
+    }
+  } catch (err) {
+    console.log(err);
+    showAlert('error', err.response.data.message);
+  }
+};

@@ -352,7 +352,7 @@ export const downloadInvoice = async (
     // location.reload();
     setTimeout(() => {
       URL.revokeObjectURL(downloadLink.href);
-      location.reload();
+      // location.reload();
     }, 2000);
   } catch (err) {
     console.log(err);

@@ -33,7 +33,11 @@ import {
   warnUnsavedChanges,
 } from './elementsHandler';
 import { updateStatusBulk } from './updateStatusBulk';
-import { getInvoiceData } from './getDataForInvoice';
+import {
+  getInvoiceAddress,
+  getInvoiceData,
+  updateInvoiceAddress,
+} from './getDataForInvoice';
 
 const passwordResetForm = document.querySelector('.reset-form');
 const sendContainer = document.querySelector('.send-container');
@@ -478,9 +482,60 @@ const invoicesMenu = document.querySelector('.customers-invoice-menu');
 
 if (invoicesMenu) {
   let tasksToInvoice = [];
+  const invoiceAddressForm = document.querySelector(
+    '.form-user-invoice-address',
+  );
   const invoiceCustomersDropdown = document.getElementById('customers-invoice');
   const createInvoiceBtn = document.querySelector('.create-invoice-btn');
+  const showInvoiceAddressBtn = document.querySelector(
+    '.show-invoice-address-btn',
+  );
   const invoiceForm = document.querySelector('.invoice-form');
+
+  showInvoiceAddressBtn.addEventListener('click', async (e) => {
+    e.preventDefault();
+
+    const closeInvoiceAddressForm = document.querySelector(
+      '.close-invoice-address-btn',
+    );
+    invoiceAddressForm.style.display = 'block';
+
+    closeInvoiceAddressForm.addEventListener('click', function () {
+      invoiceAddressForm.style.display = 'none';
+    });
+
+    const customerId = url.searchParams.get('user');
+
+    if (!customerId) return showAlert('error', 'No customer selected');
+
+    const currentInvoiceAddress = await getInvoiceAddress(customerId);
+
+    const name = document.getElementById('name');
+    const email = document.getElementById('email');
+    const street = document.getElementById('street');
+    const city = document.getElementById('city');
+
+    name.value = currentInvoiceAddress.invoiceCustomerName;
+    email.value = currentInvoiceAddress.emailAddress;
+    street.value = currentInvoiceAddress.streetHouse;
+    city.value = currentInvoiceAddress.postCodeCity;
+
+    invoiceAddressForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const city = document.getElementById('city').value;
+      const street = document.getElementById('street').value;
+
+      const newInvoiceAddress = {
+        streetHouse: street,
+        postCodeCity: city,
+        emailAddress: email,
+        invoiceCustomerName: name,
+      };
+      updateInvoiceAddress(customerId, newInvoiceAddress);
+    });
+  });
 
   createInvoiceBtn.addEventListener('click', async (e) => {
     e.preventDefault();
@@ -492,6 +547,7 @@ if (invoicesMenu) {
     if (tasksToInvoice.length === 0)
       return showAlert('error', 'No tasks selected');
     invoiceForm.style.display = 'grid';
+
     invoiceForm.scrollIntoView({
       behavior: 'smooth',
       block: 'end',

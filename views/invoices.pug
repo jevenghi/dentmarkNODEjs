@@ -10,8 +10,25 @@ block content
           each customer in customers
             option(value=customer._id selected=(customer._id.toString() === selectedUser))= customer.name
       .invoice-buttons-top        
-        button.change-invoice-address-btn Show invoice address
+        button.show-invoice-address-btn Show invoice address
         button.create-invoice-btn Preview invoice
+
+    form(class='form-user-invoice-address' style='display: none;')
+      button(type="button" class="close-invoice-address-btn" aria-label="Close") ×
+      div.form-group
+        label(for="name" data-key="companyName")
+        input(type="text" id="name" name="name" value=`` required)
+      div.form-group
+        label(for="street") Street / House number
+        input(type="text" id="street" name="street" value=`` required)
+      div.form-group
+        label(for="city") Postcode / City
+        input(type="text" id="city" name="city" value=`` required)   
+      div.form-group
+        label(for="city") Email address
+        input(type="text" id="email" name="email" value=`` required)
+      
+      button(type="submit" data-key="saveChanges")         
     if tasks
       table.task-table
           thead
@@ -63,6 +80,7 @@ block content
       div.save-invoice-buttons
         button.save-invoice-btn Download invoice
         button.send-invoice-btn Send invoice
+    
 
   .overlay.hidden            
         
