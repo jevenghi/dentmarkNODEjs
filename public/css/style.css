@@ -862,7 +862,7 @@ button[type='submit']:hover {
 .form-user-invoice-address {
   font-size: 1.5rem;
 
-  background-color: rgb(238, 238, 238);
+  background-color: #f9f9f9;
   padding: 2.25rem 1.25rem 1.25rem 1.25rem;
   border-radius: 0.5rem;
   box-shadow: 0 0 0.625rem rgba(0, 0, 0, 0.1);
@@ -1051,7 +1051,8 @@ button[type='submit']:hover {
 .create-invoice-btn,
 .show-invoice-address-btn,
 .save-invoice-btn,
-.send-invoice-btn {
+.send-invoice-btn,
+.save-invoice-changes-btn {
   background-color: rgb(34, 40, 49);
   color: #fff;
   border-radius: 0.3rem;
