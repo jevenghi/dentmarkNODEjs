@@ -498,7 +498,6 @@ if (invoicesMenu) {
     const closeInvoiceAddressForm = document.querySelector(
       '.close-invoice-address-btn',
     );
-    invoiceAddressForm.style.display = 'block';
 
     closeInvoiceAddressForm.addEventListener('click', function () {
       invoiceAddressForm.style.display = 'none';
@@ -507,6 +506,8 @@ if (invoicesMenu) {
     const customerId = url.searchParams.get('user');
 
     if (!customerId) return showAlert('error', 'No customer selected');
+
+    invoiceAddressForm.style.display = 'block';
 
     const currentInvoiceAddress = await getInvoiceAddress(customerId);
 
@@ -647,7 +648,22 @@ if (invoicesMenu) {
         invoiceDate.textContent,
         invoiceExpiryDate.textContent,
       );
+      setTimeout(() => {
+        saveInvoiceBtn.classList.remove('loading-btn');
+        saveInvoiceBtn.textContent = 'Download Invoice';
+      }, 3000);
     });
+
+    // const sendInvoiceBtn = document.querySelector('.send-invoice-btn');
+    // sendInvoiceBtn.addEventListener('click', () => {
+    //   sendInvoiceBtn.classList.add('loading-btn');
+    //   sendInvoiceBtn.textContent = 'Sending';
+
+    //   setTimeout(() => {
+    //     sendInvoiceBtn.classList.remove('loading-btn');
+    //     sendInvoiceBtn.textContent = 'Send Invoice';
+    //   }, 3000);
+    // });
   });
 
   invoiceCustomersDropdown.addEventListener('change', (e) => {

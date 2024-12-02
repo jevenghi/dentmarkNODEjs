@@ -952,7 +952,7 @@ button[type='submit']:hover {
 .save-invoice-buttons {
   margin-top: 1rem;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
   align-items: center;
 }
 
