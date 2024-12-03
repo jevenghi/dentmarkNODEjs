@@ -337,7 +337,8 @@ export const downloadInvoice = async (
 
     const contentDisposition = res.headers['content-disposition'];
     let filename = 'invoice.pdf';
-    const blob = new Blob([res.data], { type: 'application/pdf' });
+    // const blob = new Blob([res.data], { type: 'application/pdf' });
+    const blob = new Blob([res.data]);
 
     if (contentDisposition && contentDisposition.includes('filename=')) {
       filename = contentDisposition.split('filename=')[1].replace(/['"]/g, '');
