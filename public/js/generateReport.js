@@ -347,6 +347,10 @@ export const downloadInvoice = async (
     const downloadLink = document.createElement('a');
     downloadLink.href = URL.createObjectURL(file);
     downloadLink.download = filename;
+
+    downloadLink.target = '_blank'; // Add this line
+    downloadLink.rel = 'noopener noreferrer';
+
     // document.body.appendChild(downloadLink);
     downloadLink.click();
 
