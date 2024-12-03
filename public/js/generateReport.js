@@ -340,27 +340,24 @@ export const downloadInvoice = async (
       filename = contentDisposition.split('filename=')[1].replace(/['"]/g, '');
     }
 
-    // saveAs(res.data, filename);
+    saveAs(res.data, filename);
 
-    const file = new Blob([res.data], { type: 'application/pdf' });
+    // const file = new Blob([res.data], { type: 'application/pdf' });
 
-    const downloadLink = document.createElement('a');
-    downloadLink.href = URL.createObjectURL(file);
-    downloadLink.download = filename;
+    // const downloadLink = document.createElement('a');
+    // downloadLink.href = URL.createObjectURL(file);
+    // downloadLink.download = filename;
 
-    downloadLink.target = '_blank'; // Add this line
-    downloadLink.rel = 'noopener noreferrer';
+    // // document.body.appendChild(downloadLink);
+    // downloadLink.click();
 
-    // document.body.appendChild(downloadLink);
-    downloadLink.click();
+    // // URL.revokeObjectURL(downloadLink.href);
 
-    // URL.revokeObjectURL(downloadLink.href);
-
-    // location.reload();
-    setTimeout(() => {
-      URL.revokeObjectURL(downloadLink.href);
-      // location.reload();
-    }, 2000);
+    // // location.reload();
+    // setTimeout(() => {
+    //   URL.revokeObjectURL(downloadLink.href);
+    //   // location.reload();
+    // }, 2000);
   } catch (err) {
     console.log(err);
     showAlert('error', err);
