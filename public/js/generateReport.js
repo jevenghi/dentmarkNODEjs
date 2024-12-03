@@ -330,38 +330,33 @@ export const downloadInvoice = async (
         invoiceCreateDate,
         invoiceExpiryDate,
       },
-      // responseType: 'blob',
-
-      responseType: 'arraybuffer',
+      responseType: 'blob',
     });
 
     const contentDisposition = res.headers['content-disposition'];
     let filename = 'invoice.pdf';
-    // const blob = new Blob([res.data], { type: 'application/pdf' });
-    const blob = new Blob([res.data]);
 
     if (contentDisposition && contentDisposition.includes('filename=')) {
       filename = contentDisposition.split('filename=')[1].replace(/['"]/g, '');
     }
 
     // saveAs(res.data, filename);
-    saveAs(blob, filename, { autoBom: true });
 
-    // const file = new Blob([res.data], { type: 'application/pdf' });
+    const file = new Blob([res.data], { type: 'application/pdf' });
 
-    // const downloadLink = document.createElement('a');
-    // downloadLink.href = URL.createObjectURL(file);
-    // downloadLink.download = filename;
-    // // document.body.appendChild(downloadLink);
-    // downloadLink.click();
+    const downloadLink = document.createElement('a');
+    downloadLink.href = URL.createObjectURL(file);
+    downloadLink.download = filename;
+    // document.body.appendChild(downloadLink);
+    downloadLink.click();
 
-    // // URL.revokeObjectURL(downloadLink.href);
+    // URL.revokeObjectURL(downloadLink.href);
 
-    // // location.reload();
-    // setTimeout(() => {
-    //   URL.revokeObjectURL(downloadLink.href);
-    //   // location.reload();
-    // }, 2000);
+    // location.reload();
+    setTimeout(() => {
+      URL.revokeObjectURL(downloadLink.href);
+      // location.reload();
+    }, 2000);
   } catch (err) {
     console.log(err);
     showAlert('error', err);

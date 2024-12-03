@@ -758,8 +758,8 @@ exports.generateAndSaveInvoicePDF = async (req, res, next) => {
       { counter: Number(newInvoiceNumber.slice(-3)) },
     );
 
-    // res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Type', 'octet-stream');
+    res.setHeader('Content-Type', 'application/pdf');
+    // res.setHeader('Content-Type', 'octet-stream');
 
     res.setHeader(
       'Content-Disposition',
