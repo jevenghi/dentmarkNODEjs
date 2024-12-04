@@ -339,6 +339,7 @@ export const downloadInvoice = async (
     if (contentDisposition && contentDisposition.includes('filename=')) {
       filename = contentDisposition.split('filename=')[1].replace(/['"]/g, '');
     }
+
     saveAs(res.data, filename);
 
     // const file = new Blob([res.data], { type: 'application/pdf' });
@@ -346,6 +347,7 @@ export const downloadInvoice = async (
     // const downloadLink = document.createElement('a');
     // downloadLink.href = URL.createObjectURL(file);
     // downloadLink.download = filename;
+
     // // document.body.appendChild(downloadLink);
     // downloadLink.click();
 

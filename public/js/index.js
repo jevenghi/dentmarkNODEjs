@@ -761,7 +761,7 @@ if (filterOptions) {
   const bulkStatusChangeBtn = document.querySelector('.change-status-bulk-btn');
   const bulkStatusChangeDropdownOption =
     document.getElementById('change-status-bulk');
-  const createInvoiceBtn = document.querySelector('.create-invoice-btn');
+  // const createInvoiceBtn = document.querySelector('.create-invoice-btn');
 
   let selectedTasks = [];
 
@@ -792,9 +792,9 @@ if (filterOptions) {
         updateStatusBulk(updatedStatus, selectedTasks);
       }
     });
-    createInvoiceBtn.addEventListener('click', function () {
-      generateInvoice(selectedTasks);
-    });
+    // createInvoiceBtn.addEventListener('click', function () {
+    //   generateInvoice(selectedTasks);
+    // });
   }
 
   //TODO: sorting
