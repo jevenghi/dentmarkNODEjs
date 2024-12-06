@@ -114,7 +114,7 @@ const sendScheduledEmail = async () => {
   }
 };
 
-cron.schedule('20 17 * * 5', () => {
+cron.schedule('25 17 * * 5', () => {
   console.log('Cron job executed at 17:20 on Friday!');
   sendScheduledEmail();
 });
