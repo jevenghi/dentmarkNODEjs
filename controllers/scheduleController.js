@@ -36,7 +36,7 @@ const getTasks = async () => {
     });
 
     const dataForExcel = tasks.map((task) => [
-      he.decode(task.user.name),
+      task.user ? he.decode(task.user.name) : 'deleted',
       task.carModel,
       task.taskStatus,
       task.totalCost,
@@ -122,8 +122,7 @@ const sendScheduledEmail = async () => {
   }
 };
 
-cron.schedule('15 19 * * 5', () => {
-  console.log('Cron job executed at 17:20 on Friday!');
+cron.schedule('35 19 * * 5', () => {
   sendScheduledEmail();
 });
 //   });
