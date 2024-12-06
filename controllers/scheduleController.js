@@ -113,8 +113,11 @@ const sendScheduledEmail = async () => {
     console.error('Error sending scheduled email:', error);
   }
 };
-
-cron.schedule('37 18 * * 5', () => {
-  console.log('Cron job executed at 17:20 on Friday!');
-  sendScheduledEmail();
-});
+try {
+  cron.schedule('41 18 * * 5', () => {
+    console.log('Cron job executed at 17:20 on Friday!');
+    sendScheduledEmail();
+  });
+} catch (err) {
+  console.log(err);
+}
