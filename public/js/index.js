@@ -1,4 +1,5 @@
 import { updateSettings } from './updateAccount';
+import he from 'he';
 import { login, logoutUser, forgotPassword } from './login';
 import { signup, checkFieldAvailability } from './signup';
 import { updateTask } from './updateTask';
@@ -516,7 +517,7 @@ if (invoicesMenu) {
     const street = document.getElementById('street');
     const city = document.getElementById('city');
 
-    name.value = currentInvoiceAddress.invoiceCustomerName;
+    name.value = he.decode(currentInvoiceAddress.invoiceCustomerName);
     email.value = currentInvoiceAddress.emailAddress;
     street.value = currentInvoiceAddress.streetHouse;
     city.value = currentInvoiceAddress.postCodeCity;
