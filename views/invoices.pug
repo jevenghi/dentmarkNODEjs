@@ -8,7 +8,7 @@ block content
         select#customers-invoice
           option(value="" disabled selected) Select customer
           each customer in customers
-            option(value=customer._id selected=(customer._id.toString() === selectedUser))= customer.name
+            option(value=customer._id selected=(customer._id.toString() === selectedUser))= he.decode(customer.name)
       .invoice-buttons-top        
         button.show-invoice-address-btn Show invoice address
         button.create-invoice-btn Preview invoice

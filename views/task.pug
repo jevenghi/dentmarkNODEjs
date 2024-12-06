@@ -11,7 +11,7 @@ block content
       button.delete-task(data-task-id=taskId) Delete Task
     .task-header(data-task-id=taskId)
       if role === 'admin'
-        p Customer: #{customer}
+        p Customer: #{he.decode(customer)}
       p Task created: #{date}
       p Task completed: #{completed}
       .task-model-wrapper

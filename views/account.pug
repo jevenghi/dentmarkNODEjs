@@ -14,7 +14,7 @@ block content
         input(type="email" id="email" name="email" value=`${user.email}` required)
       div.form-group
         label(for="name" data-key="companyName")
-        input(type="text" id="name" name="name" value=`${user.name}` required)
+        input(type="text" id="name" name="name" value=`${he.decode(user.name)}` required)
       div.form-group
         label(for="language" data-key="language")
         select#language(name="language")
