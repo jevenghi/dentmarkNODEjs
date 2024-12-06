@@ -739,7 +739,9 @@ exports.generateAndSaveInvoicePDF = async (req, res, next) => {
       form
         .getTextField(`complete-date-${itemNumber}`)
         .setText(item.completeDate);
-      form.getTextField(`description-${itemNumber}`).setText(item.carModel);
+      form
+        .getTextField(`description-${itemNumber}`)
+        .setText(he.decode(item.carModel));
       form.getTextField(`cost-${itemNumber}`).setText(String(item.cost));
       itemNumber++;
     });

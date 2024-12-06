@@ -85,7 +85,7 @@ block content
           each task in tasks
             tr
               //- td: a(href=`/users/${task.user.id}` class='table-link')= task.user.name
-              td: a(href=`/tasks?user=${task.user.id}` class='table-link')= task.user.name
+              td: a(href=`/tasks?user=${task.user.id}` class='table-link')= he.decode(task.user.name)
               td: a(href=`/tasks/${task._id}` class='table-link')= task.carModel
               td(class='clickable-status' id=task._id)= task.taskStatus
               td= task.totalCost

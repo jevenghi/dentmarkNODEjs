@@ -3,6 +3,7 @@ import axios from 'axios';
 import { translations } from './translations.js';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import he from 'he';
 
 const pdfFonts = require('pdfmake/build/vfs_fonts.js');
 const pdfMake = require('pdfmake/build/pdfmake.js');
@@ -71,7 +72,7 @@ const getFilteredResults = async () => {
     });
     if (res.data.status === 'success') {
       const result = res.data.tasks.map((task) => [
-        task.user.name,
+        he.decode(task.user.name),
         task.carModel,
         task.taskStatus,
         task.totalCost,

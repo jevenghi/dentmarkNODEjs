@@ -1,5 +1,6 @@
 const EventEmitter = require('events');
 const AppError = require('../utils/appError');
+const he = require('he');
 
 EventEmitter.defaultMaxListeners = 15;
 
@@ -155,6 +156,7 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
     uploadedImages: images,
     remark: task.remark,
     completed,
+    he,
   });
 });
 
@@ -163,6 +165,7 @@ exports.getMe = catchAsyncError(async (req, res, next) => {
   res.status(200).render('account', {
     title: 'My Profile',
     user,
+    he,
   });
 });
 
@@ -213,6 +216,7 @@ exports.getMyTasks = catchAsyncError(async (req, res, next) => {
   res.status(200).render('tasks', {
     title: 'Tasks',
     role: req.user.role,
+    he,
     tasks,
     page,
     // totalPageCount,
@@ -246,6 +250,7 @@ exports.getInvoices = catchAsyncError(async (req, res, next) => {
   res.status(200).render('invoices', {
     title: 'Invoices',
     role: req.user.role,
+    he,
     customers,
     tasks,
     selectedUser: req.query.user || null,
