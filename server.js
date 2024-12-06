@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const cronJobs = require('./controllers/scheduleController');
 
 // process.on('uncaughtException', (err) => {
 //   console.log('UNCAUGHT EXCEPTION! 💥 Shutting down...');

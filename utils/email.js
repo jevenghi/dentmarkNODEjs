@@ -8,7 +8,7 @@ class Email {
     this.from = 'Dentmarker App <info@am-place.com>';
   }
 
-  async send(subject, message) {
+  async send(subject, message, attachments = []) {
     const transport = nodemailer.createTransport({
       host: process.env.EMAIL_HOST,
       port: process.env.EMAIL_PORT,
@@ -23,6 +23,7 @@ class Email {
       to: this.to,
       subject: subject,
       text: message,
+      attachments: attachments.length > 0 ? attachments : undefined,
       // html: can be added if needed
     };
 
