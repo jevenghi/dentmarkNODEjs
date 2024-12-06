@@ -8,22 +8,30 @@ const Email = require('../utils/email');
 
 const getTasks = async () => {
   try {
-    const now = new Date();
+    // const now = new Date();
 
-    const dayOfWeek = now.getDay();
+    // const dayOfWeek = now.getDay();
 
-    const previousSunday = new Date(now);
-    previousSunday.setDate(now.getDate() - dayOfWeek);
-    previousSunday.setHours(12, 0, 0, 0);
+    // const previousSunday = new Date(now);
+    // previousSunday.setDate(now.getDate() - dayOfWeek);
+    // previousSunday.setHours(12, 0, 0, 0);
 
-    const currentSunday = new Date(now);
-    currentSunday.setDate(now.getDate() + (7 - dayOfWeek));
-    currentSunday.setHours(12, 0, 0, 0);
+    // const currentSunday = new Date(now);
+    // currentSunday.setDate(now.getDate() + (7 - dayOfWeek));
+    // currentSunday.setHours(12, 0, 0, 0);
+
+    // const tasks = await Task.find({
+    //   createdAt: {
+    //     $gte: previousSunday,
+    //     $lt: currentSunday,
+    //   },
+    // });
+    const currentYear = new Date().getFullYear();
+    const startOfYear = new Date(currentYear, 0, 1);
 
     const tasks = await Task.find({
       createdAt: {
-        $gte: previousSunday,
-        $lt: currentSunday,
+        $gte: startOfYear,
       },
     });
 
@@ -118,3 +126,7 @@ cron.schedule('15 19 * * 5', () => {
   console.log('Cron job executed at 17:20 on Friday!');
   sendScheduledEmail();
 });
+//   });
+// } catch (err) {
+//   console.log(err);
+// }
