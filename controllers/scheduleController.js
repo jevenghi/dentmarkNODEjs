@@ -105,11 +105,26 @@ const generateExcel = async () => {
 
 const sendScheduledEmail = async () => {
   try {
+    const currentYear = new Date().getFullYear();
+    const startOfYear = new Date(currentYear, 0, 1).toLocaleDateString(
+      'en-GB',
+      {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      },
+    );
+    const today = new Date().toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
+
     const buffer = await generateExcel();
-    const subject = 'Tasks summary';
-    const message = 'Previous 7 days tasks summary report attached';
+    const subject = `Tasks ${startOfYear} - ${today}`;
+    const message = `Summary of all tasks from ${startOfYear} to ${today}`;
     const attachment = {
-      filename: 'tasks_summary.xlsx',
+      filename: `${currentYear}_all_tasks.xlsx`,
       content: buffer,
       encoding: 'base64',
     };
@@ -122,10 +137,23 @@ const sendScheduledEmail = async () => {
   }
 };
 
-cron.schedule('55 8 * * 6', () => {
+cron.schedule('45 9 * * 6', () => {
   sendScheduledEmail();
 });
 //   });
 // } catch (err) {
 //   console.log(err);
 // }
+// const currentYear = new Date().getFullYear();
+// const startOfYear = new Date(currentYear, 0, 1);
+// const formattedDate = startOfYear.toLocaleDateString('en-GB', {
+//   day: '2-digit',
+//   month: '2-digit',
+//   year: 'numeric',
+// });
+// const today = new Date().toLocaleDateString('en-GB', {
+//   day: '2-digit',
+//   month: '2-digit',
+//   year: 'numeric',
+// });
+// console.log(formattedDate, today);
