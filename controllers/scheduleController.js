@@ -8,27 +8,35 @@ const Email = require('../utils/email');
 
 const getTasks = async () => {
   try {
-    const now = new Date();
+    // const now = new Date();
 
-    const dayOfWeek = now.getDay();
+    // const dayOfWeek = now.getDay();
 
-    const previousSunday = new Date(now);
-    previousSunday.setDate(now.getDate() - dayOfWeek);
-    previousSunday.setHours(12, 0, 0, 0);
+    // const previousSunday = new Date(now);
+    // previousSunday.setDate(now.getDate() - dayOfWeek);
+    // previousSunday.setHours(12, 0, 0, 0);
 
-    const currentSunday = new Date(now);
-    currentSunday.setDate(now.getDate() + (7 - dayOfWeek));
-    currentSunday.setHours(12, 0, 0, 0);
+    // const currentSunday = new Date(now);
+    // currentSunday.setDate(now.getDate() + (7 - dayOfWeek));
+    // currentSunday.setHours(12, 0, 0, 0);
+
+    // const tasks = await Task.find({
+    //   createdAt: {
+    //     $gte: previousSunday,
+    //     $lt: currentSunday,
+    //   },
+    // });
+    const currentYear = new Date().getFullYear();
+    const startOfYear = new Date(currentYear, 0, 1);
 
     const tasks = await Task.find({
       createdAt: {
-        $gte: previousSunday,
-        $lt: currentSunday,
+        $gte: startOfYear,
       },
     });
 
     const dataForExcel = tasks.map((task) => [
-      he.decode(task.user.name),
+      task.user ? he.decode(task.user.name) : 'deleted',
       task.carModel,
       task.taskStatus,
       task.totalCost,
@@ -97,11 +105,26 @@ const generateExcel = async () => {
 
 const sendScheduledEmail = async () => {
   try {
+    const currentYear = new Date().getFullYear();
+    const startOfYear = new Date(currentYear, 0, 1).toLocaleDateString(
+      'en-GB',
+      {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      },
+    );
+    const today = new Date().toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
+
     const buffer = await generateExcel();
-    const subject = 'Tasks summary';
-    const message = 'Previous 7 days tasks summary report attached';
+    const subject = `Tasks ${startOfYear} - ${today}`;
+    const message = `Summary of all tasks from ${startOfYear} to ${today}`;
     const attachment = {
-      filename: 'tasks_summary.xlsx',
+      filename: `${currentYear}_all_tasks.xlsx`,
       content: buffer,
       encoding: 'base64',
     };
@@ -114,7 +137,23 @@ const sendScheduledEmail = async () => {
   }
 };
 
-cron.schedule('25 17 * * 5', () => {
-  console.log('Cron job executed at 17:20 on Friday!');
+cron.schedule('0 10 * * 6', () => {
   sendScheduledEmail();
 });
+//   });
+// } catch (err) {
+//   console.log(err);
+// }
+// const currentYear = new Date().getFullYear();
+// const startOfYear = new Date(currentYear, 0, 1);
+// const formattedDate = startOfYear.toLocaleDateString('en-GB', {
+//   day: '2-digit',
+//   month: '2-digit',
+//   year: 'numeric',
+// });
+// const today = new Date().toLocaleDateString('en-GB', {
+//   day: '2-digit',
+//   month: '2-digit',
+//   year: 'numeric',
+// });
+// console.log(formattedDate, today);
