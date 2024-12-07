@@ -122,7 +122,7 @@ const sendScheduledEmail = async () => {
   }
 };
 
-cron.schedule('35 19 * * 5', () => {
+cron.schedule('55 8 * * 6', () => {
   sendScheduledEmail();
 });
 //   });
