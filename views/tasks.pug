@@ -9,28 +9,28 @@ block content
         //-     option(value='createdAt') Created
         //-     option(value='completedAt') Completed
         .filter-date
-          label(for='from-date') From:
+          label(for='from-date' data-key='from')
           input(type='date', id='from-date', value=from)
-          label(for='to-date') To:
+          label(for='to-date' data-key='to')
           input(type='date', id='to-date', value=to)
-          button.reset-date Reset
+          button(class='reset-date' data-key='reset')
         .filter-status Status:  
           select#status-filter
-            option(value='' selected=taskStatus === '') All
-            option(value='open' selected=taskStatus === "open") Open
-            option(value='in-progress' selected=taskStatus === 'in-progress') In Progress
-            option(value='pending' selected=taskStatus === "pending") Complete/Not paid
-            option(value='complete' selected=taskStatus === "complete") Paid
+            option(value='' selected=taskStatus === '' data-key='all') All
+            option(value='open' selected=taskStatus === "open" data-key='open') Open
+            option(value='in-progress' selected=taskStatus === 'in-progress' data-key='inProgress') In Progress
+            option(value='pending' selected=taskStatus === "pending" data-key='notPaid') Complete/Not paid
+            option(value='complete' selected=taskStatus === "complete" data-key='paid') Paid
           //- button.download-report Download Summary
           .download-options
-            button#download-report.download-report Download Summary 
+            button(class='download-report' id='download-report' data-key='downloadSummary') 
             .format-dropdown
               button.format-option(data-format="pdf") PDF
               button.format-option(data-format="excel") Excel
         .filter-word
           input(type='text', id='search-word', placeholder='Search in Vehicle Model')
-          button.search-by-word Search
-          button.reset-search Reset
+          button(class='search-by-word' data-key='search')
+          button(class='reset-search' data-key='reset')
         - if (role === 'admin')
           .change-status-bulk.hidden Status:  
             select#change-status-bulk
@@ -47,11 +47,11 @@ block content
       table.task-table
         thead
           tr
-            th Vehicle Model
-            th Task Status
-            th Cost (ex. BTW)
-            th Created
-            th Completed
+            th(data-key='vehicleModel')
+            th(data-key='taskStatus')
+            th(data-key='taskCost')
+            th(data-key='taskCreated')
+            th(data-key='taskCompleted')
         tbody
           //- if tasks.length === 0
           //-   tr
@@ -72,12 +72,12 @@ block content
       table.task-table
         thead
           tr
-            th Customer
-            th Vehicle Model
-            th Task Status
-            th Cost (ex. BTW)
-            th Created
-            th Completed
+            th(data-key='customer')
+            th(data-key='vehicleModel')
+            th(data-key='taskStatus')
+            th(data-key='taskCost')
+            th(data-key='taskCreated')
+            th(data-key='taskCompleted')
         tbody
           if tasks.length === 0
             tr
