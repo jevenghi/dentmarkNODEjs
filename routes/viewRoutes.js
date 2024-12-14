@@ -20,12 +20,6 @@ router.get('/me', authController.protect, viewsController.getMe);
 router.get('/tasks', authController.protect, viewsController.getMyTasks);
 
 router.get('/tasks/:id', authController.protect, viewsController.getTask);
-router.get(
-  '/users/:id',
-  authController.protect,
-  authController.restrictTo('admin'),
-  viewsController.getUser,
-);
 
 router.get(
   '/usersList',

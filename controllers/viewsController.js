@@ -68,43 +68,6 @@ exports.getForgotPassForm = catchAsyncError(async (req, res, next) => {
   });
 });
 
-exports.getUser = catchAsyncError(async (req, res, next) => {
-  let to;
-  const user = await User.findById(req.params.id);
-  const page = req.query.page * 1 || 1;
-  const limit = req.query.limit * 1 || RESULTS_LIMIT;
-  req.query.user = req.params.id;
-  const { taskStatus, createdAt } = req.query;
-  const from = createdAt ? createdAt.gte : '';
-  const toDate = createdAt ? createdAt.lt : '';
-
-  if (toDate) {
-    const toPlusOneDay = new Date(toDate);
-    toPlusOneDay.setDate(toPlusOneDay.getDate() - 1);
-    to = toPlusOneDay.toISOString().split('T')[0];
-  }
-  const requestQueries = new RequestQueryHandler(Task.find(), req.query)
-    .filter()
-    .sort()
-    .limitFields()
-    .paginate();
-  // totalDocCount = await Task.countDocuments();
-
-  const tasks = await requestQueries.query;
-
-  res.status(200).render('user', {
-    title: 'User',
-    email: user.email,
-    name: user.name,
-    tasks,
-    taskStatus,
-    from,
-    to,
-    page,
-    limit,
-  });
-});
-
 //TODO: fix error handling
 exports.getTask = catchAsyncError(async (req, res, next) => {
   const task = await Task.findById(req.params.id);
