@@ -137,7 +137,7 @@ const sendScheduledEmail = async () => {
   }
 };
 
-cron.schedule('0 11 * * 7', () => {
+cron.schedule('5 3 * * 1', () => {
   sendScheduledEmail();
 });
 //   });
