@@ -490,10 +490,23 @@ async function generateInvoiceNumber() {
   const currentYear = new Date().getFullYear();
   const yearPrefix = currentYear.toString().slice(-2);
 
-  const invoiceCounter = await InvoiceCounter.findOneAndUpdate(
-    { year: currentYear },
-    { new: true, upsert: true, setDefaultsOnInsert: true },
-  );
+  // const invoiceCounter = await InvoiceCounter.findOneAndUpdate(
+  //   { year: currentYear },
+  //   { new: true, upsert: true, setDefaultsOnInsert: true },
+  // );
+  let invoiceCounter = await InvoiceCounter.findOne({});
+
+  if (!invoiceCounter || invoiceCounter.year !== currentYear) {
+    invoiceCounter = await InvoiceCounter.findOneAndUpdate(
+      {},
+      { year: currentYear, counter: 0 },
+      {
+        new: true,
+        upsert: true,
+        setDefaultsOnInsert: true,
+      },
+    );
+  }
 
   const invoiceNumber = `${yearPrefix}${String(invoiceCounter.counter).padStart(3, '0')}`;
   return invoiceNumber;
