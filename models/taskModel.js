@@ -1,30 +1,5 @@
 const mongoose = require('mongoose');
 
-const TASK_STATUS_RANK = {
-  open: 1,
-  'in-progress': 2,
-  pending: 3,
-  complete: 4,
-};
-
-const getTaskStatusRank = (status = 'open') => TASK_STATUS_RANK[status] || 1;
-
-const applyStatusRankToUpdate = (update) => {
-  if (!update) return;
-
-  const nextStatus = update.taskStatus ?? update.$set?.taskStatus;
-  if (!nextStatus) return;
-
-  const nextRank = getTaskStatusRank(nextStatus);
-
-  if (update.$set) {
-    update.$set.statusRank = nextRank;
-    return;
-  }
-
-  update.statusRank = nextRank;
-};
-
 const dentSchema = new mongoose.Schema({
   imageId: String,
   bigDent: Boolean,
@@ -78,11 +53,6 @@ const taskSchema = new mongoose.Schema(
         values: ['open', 'complete', 'in-progress', 'pending'],
       },
     },
-    statusRank: {
-      type: Number,
-      default: 1,
-      enum: [1, 2, 3, 4],
-    },
     images: [String],
     createdAt: {
       type: Date,
@@ -113,26 +83,6 @@ const taskSchema = new mongoose.Schema(
   },
 );
 //TODO: add completedAt field to task schema
-taskSchema.pre('save', function (next) {
-  this.statusRank = getTaskStatusRank(this.taskStatus);
-  next();
-});
-
-taskSchema.pre('findOneAndUpdate', function (next) {
-  applyStatusRankToUpdate(this.getUpdate());
-  next();
-});
-
-taskSchema.pre('updateOne', function (next) {
-  applyStatusRankToUpdate(this.getUpdate());
-  next();
-});
-
-taskSchema.pre('updateMany', function (next) {
-  applyStatusRankToUpdate(this.getUpdate());
-  next();
-});
-
 taskSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'user',

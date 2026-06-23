@@ -32,6 +32,16 @@ class RequestQueryHandler {
       };
     }
 
+    // Handle completedAt sorting if needed
+    if (
+      queryStr.includes('completedAt') ||
+      queryStr.includes('taskStatus') ||
+      queryStr.includes('user') ||
+      queryStr.includes('search')
+    ) {
+      this.query.sort(`-completedAt`);
+    }
+
     // Apply the combined query
     this.query = this.query.find(finalQuery);
 
@@ -40,16 +50,10 @@ class RequestQueryHandler {
 
   sort() {
     if (this.queryString.sort) {
-      const sortBy = this.queryString.sort
-        .split(',')
-        .map((field) => (field === 'taskStatus' ? 'statusRank' : field))
-        .join(' ');
-      this.query = this.query.sort(sortBy);
+      const sortBy = this.queryString.sort.split(',').join(' ');
+      this.query = this.query.sort(`-${sortBy}`);
     } else {
-      this.query = this.query.sort({
-        statusRank: 1,
-        createdAt: -1,
-      });
+      this.query = this.query.sort('-createdAt');
     }
 
     return this;
