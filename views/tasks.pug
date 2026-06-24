@@ -4,7 +4,7 @@ block styles
 block content
   .main-container
     .filter-menu
-        //- .sort-by Sort by:
+        //- .sort-by Sort by:  
         //-   select#sort-by
         //-     option(value='createdAt') Created
         //-     option(value='completedAt') Completed
@@ -14,7 +14,7 @@ block content
           label(for='to-date' data-key='to')
           input(type='date', id='to-date', value=to)
           button(class='reset-date' data-key='reset')
-        .filter-status Status:
+        .filter-status Status:  
           select#status-filter
             option(value='' selected=taskStatus === '' data-key='all') All
             option(value='open' selected=taskStatus === "open" data-key='open') Open
@@ -23,7 +23,7 @@ block content
             option(value='complete' selected=taskStatus === "complete" data-key='paid') Paid
           //- button.download-report Download Summary
           .download-options
-            button(class='download-report' id='download-report' data-key='downloadSummary')
+            button(class='download-report' id='download-report' data-key='downloadSummary') 
             .format-dropdown
               button.format-option(data-format="pdf") PDF
               button.format-option(data-format="excel") Excel
@@ -32,7 +32,7 @@ block content
           button(class='search-by-word' data-key='search')
           button(class='reset-search' data-key='reset')
         - if (role === 'admin')
-          .change-status-bulk.hidden Status:
+          .change-status-bulk.hidden Status:  
             select#change-status-bulk
               option(value='open') Open
               option(value='in-progress') In Progress
@@ -40,7 +40,7 @@ block content
               option(value='complete') Paid
             button.change-status-bulk-btn Change
             //- button.create-invoice-btn Invoice
-
+          
 
 
     - if (role === 'user')
@@ -58,25 +58,14 @@ block content
           //-     td(colspan='4') No tasks found
           each task in tasks
             tr
+              td: a(href=`/tasks/${task._id}` class='table-link')= task.carModel
+              td= task.taskStatus
+              td= `€ ${task.totalCost}`
+              td= new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
               td
-                span.task-cell-label(data-key='vehicleModel')
-                a(href=`/tasks/${task._id}` class='table-link')= task.carModel
-              td
-                span.task-cell-label(data-key='taskStatus')
-                span.task-cell-value= task.taskStatus
-              td
-                span.task-cell-label(data-key='taskCost')
-                span.task-cell-value &euro; #{task.totalCost}
-              td
-                span.task-cell-label(data-key='taskCreated')
-                span.task-cell-value= new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
-              td
-                span.task-cell-label(data-key='taskCompleted')
                 if task.completedAt
-                  span.task-cell-value= new Date(task.completedAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
-                else
-                  span.task-cell-value
-    - if (role === 'admin')
+                  = new Date(task.completedAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
+    - if (role === 'admin') 
       //- .search-bar
       //-   input(type='text', placeholder='Search customer...', id='search-input')
 
@@ -96,27 +85,14 @@ block content
           each task in tasks
             tr
               //- td: a(href=`/users/${task.user.id}` class='table-link')= task.user.name
+              td: a(href=`/tasks?user=${task.user.id}` class='table-link')= he.decode(task.user.name)
+              td: a(href=`/tasks/${task._id}` class='table-link')= task.carModel
+              td(class='clickable-status' id=task._id)= task.taskStatus
+              td= task.totalCost
+              td= new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
               td
-                span.task-cell-label(data-key='customer')
-                a(href=`/tasks?user=${task.user.id}` class='table-link')= he.decode(task.user.name)
-              td
-                span.task-cell-label(data-key='vehicleModel')
-                a(href=`/tasks/${task._id}` class='table-link')= task.carModel
-              td(class='clickable-status' id=task._id)
-                span.task-cell-label(data-key='taskStatus')
-                span.task-cell-value= task.taskStatus
-              td
-                span.task-cell-label(data-key='taskCost')
-                span.task-cell-value= task.totalCost
-              td
-                span.task-cell-label(data-key='taskCreated')
-                span.task-cell-value= new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
-              td
-                span.task-cell-label(data-key='taskCompleted')
                 if task.completedAt
-                  span.task-cell-value= new Date(task.completedAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
-                else
-                  span.task-cell-value
+                  = new Date(task.completedAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
     div.pagination-buttons
       if page > 1
         button.previous-button() Prev
@@ -126,5 +102,7 @@ block content
         button.next-button() Next
     //- button.download-report Download Report
 
+     
+  .overlay.hidden            
 
-  .overlay.hidden
+
