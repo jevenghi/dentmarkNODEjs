@@ -678,6 +678,87 @@ input[type='file'] {
   font-weight: 200;
 }
 
+.task-cell-label {
+  display: none;
+}
+
+.task-cell-value {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 600px) {
+  .main-container {
+    max-width: 100%;
+    padding: 0 0.8rem;
+    box-sizing: border-box;
+  }
+
+  .task-table {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    background-color: transparent;
+  }
+
+  .task-table thead {
+    display: none;
+  }
+
+  .task-table tbody,
+  .task-table tr,
+  .task-table td {
+    display: block;
+  }
+
+  .task-table tr {
+    margin-bottom: 1rem;
+    overflow: hidden;
+    border: 0.03px solid #4b4b4b;
+    border-radius: 0.3rem;
+    background-color: rgb(238, 238, 238);
+  }
+
+  .task-table th,
+  .task-table td {
+    border: 0;
+    font-size: 1.3rem;
+  }
+
+  .task-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 0.7rem 0.8rem;
+    border-bottom: 0.03px solid #c8c8c8;
+    text-align: right;
+  }
+
+  .task-table td:last-child {
+    border-bottom: 0;
+  }
+
+  .task-cell-label {
+    display: block;
+    flex: 0 0 38%;
+    color: rgb(34, 40, 49);
+    font-weight: 700;
+    text-align: left;
+  }
+
+  .task-cell-value,
+  .task-table td > .table-link {
+    flex: 1;
+    min-width: 0;
+    text-align: right;
+    overflow-wrap: anywhere;
+  }
+
+  .task-table td > .table-link {
+    display: block;
+  }
+}
+
 /* .task-table tr:nth-child(even) {
   background-color: #dddddd;
 } */

@@ -675,7 +675,7 @@ if (invoicesMenu) {
   document.querySelectorAll('.clickable-status').forEach((cell) => {
     cell.addEventListener('click', (event) => {
       const row = event.target.closest('tr');
-      const taskId = event.target.id;
+      const taskId = event.target.closest('.clickable-status').id;
 
       if (tasksToInvoice.includes(taskId)) {
         tasksToInvoice = tasksToInvoice.filter((id) => id !== taskId);
@@ -769,7 +769,7 @@ if (filterOptions) {
   document.querySelectorAll('.clickable-status').forEach((cell) => {
     cell.addEventListener('click', (event) => {
       const row = event.target.closest('tr');
-      const taskId = event.target.id;
+      const taskId = event.target.closest('.clickable-status').id;
 
       if (selectedTasks.includes(taskId)) {
         selectedTasks = selectedTasks.filter((id) => id !== taskId);
