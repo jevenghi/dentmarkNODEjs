@@ -75,7 +75,7 @@ exports.getTask = catchAsyncError(async (req, res, next) => {
 
   // const localDirectory = '/public/pics/tasks';
 
-  const remoteDirectory = '/home/tasks';
+  const remoteDirectory = '/home/tasks_test';
 
   const config = {
     host: process.env.VPS_HOST,
