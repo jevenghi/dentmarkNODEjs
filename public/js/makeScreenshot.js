@@ -234,17 +234,70 @@ const blobToDataURL = (blob) => {
   });
 };
 
+const normalizeText = (value = '') => value.replace(/\s+/g, ' ').trim();
+
+const getControlValue = (control) => {
+  if (!control) return '';
+
+  if (control.tagName === 'SELECT') {
+    return normalizeText(control.options[control.selectedIndex]?.text || '');
+  }
+
+  return normalizeText(control.value || control.placeholder || '');
+};
+
+const extractTaskHeaderContent = () => {
+  const taskHeader = document.querySelector('.task-header');
+
+  if (!taskHeader) {
+    return [];
+  }
+
+  const content = [
+    {
+      text: 'Task Details',
+      style: 'header',
+    },
+  ];
+
+  Array.from(taskHeader.children).forEach((child) => {
+    if (child.tagName === 'P') {
+      const text = normalizeText(child.textContent);
+      if (text) {
+        content.push({ text, margin: [0, 0, 0, 6] });
+      }
+      return;
+    }
+
+    const label = normalizeText(child.querySelector('p')?.textContent || '');
+    const value = getControlValue(child.querySelector('input, select, textarea'));
+
+    if (label && value) {
+      content.push({
+        text: [
+          { text: `${label} `, bold: true },
+          { text: value },
+        ],
+        margin: [0, 0, 0, 6],
+      });
+    }
+  });
+
+  content.push({ text: '', margin: [0, 6, 0, 0] });
+
+  return content;
+};
+
 const convertImagesToDataURLs = async () => {
   try {
     const dataURLs = [];
 
-    const imageContainers = [
-      document.querySelector('.task-header'),
-      ...Array.from(document.querySelectorAll('.screenshot-container')),
-    ].filter(Boolean);
+    const imageContainers = Array.from(
+      document.querySelectorAll('.screenshot-container'),
+    );
 
     await Promise.all(
-      imageContainers.map(async (container, index) => {
+      imageContainers.map(async (container) => {
         const canvas = await html2canvas(container);
         const imgElement = new Image();
         imgElement.src = canvas.toDataURL();
@@ -266,9 +319,16 @@ const convertImagesToDataURLs = async () => {
   }
 };
 
-const generatePDF = async (dataURLs, maxImagesPerPage = 5) => {
+const generatePDF = async (headerContent, dataURLs, maxImagesPerPage = 5) => {
   const docDefinition = {
-    content: [],
+    content: [...headerContent],
+    styles: {
+      header: {
+        fontSize: 18,
+        bold: true,
+        margin: [0, 0, 0, 12],
+      },
+    },
     pageBreakBefore: (currentNode, followingNodesOnPage) => {
       return (
         followingNodesOnPage.length === maxImagesPerPage &&
@@ -280,9 +340,9 @@ const generatePDF = async (dataURLs, maxImagesPerPage = 5) => {
   dataURLs.forEach((dataURL, index) => {
     docDefinition.content.push({
       image: dataURL,
-      width: index === 0 ? 300 : 500,
-      alignment: index === 0 ? 'center' : 'left',
-      margin: index === 0 ? [0, 10] : [0, 0],
+      width: 500,
+      alignment: 'left',
+      margin: [0, 0, 0, 0],
     });
 
     if (index < dataURLs.length - 1) {
@@ -308,8 +368,9 @@ export const generateTaskPDF = async () => {
   downloadTaskBtn.disabled = true;
 
   try {
+    const headerContent = extractTaskHeaderContent();
     const dataURLs = await convertImagesToDataURLs();
-    const pdfBlob = await generatePDF(dataURLs);
+    const pdfBlob = await generatePDF(headerContent, dataURLs);
 
     // Create a download link
     const url = URL.createObjectURL(pdfBlob);
