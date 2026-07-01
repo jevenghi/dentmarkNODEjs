@@ -255,8 +255,8 @@ const extractTaskHeaderContent = () => {
 
   const content = [
     {
-      text: 'Task Details',
-      style: 'header',
+      text: 'Task report',
+      style: 'reportTitle',
     },
   ];
 
@@ -264,7 +264,7 @@ const extractTaskHeaderContent = () => {
     if (child.tagName === 'P') {
       const text = normalizeText(child.textContent);
       if (text) {
-        content.push({ text, margin: [0, 0, 0, 6] });
+        content.push({ text, style: 'taskDetail' });
       }
       return;
     }
@@ -274,16 +274,13 @@ const extractTaskHeaderContent = () => {
 
     if (label && value) {
       content.push({
-        text: [
-          { text: `${label} `, bold: true },
-          { text: value },
-        ],
-        margin: [0, 0, 0, 6],
+        text: `${label} ${value}`,
+        style: 'taskDetail',
       });
     }
   });
 
-  content.push({ text: '', margin: [0, 6, 0, 0] });
+  content.push({ text: '', margin: [0, 6, 0, 16] });
 
   return content;
 };
@@ -322,11 +319,19 @@ const convertImagesToDataURLs = async () => {
 const generatePDF = async (headerContent, dataURLs, maxImagesPerPage = 5) => {
   const docDefinition = {
     content: [...headerContent],
+    defaultStyle: {
+      fontSize: 13,
+      lineHeight: 1.3,
+    },
     styles: {
-      header: {
-        fontSize: 18,
+      reportTitle: {
+        fontSize: 20,
         bold: true,
-        margin: [0, 0, 0, 12],
+        margin: [0, 0, 0, 10],
+      },
+      taskDetail: {
+        fontSize: 13,
+        margin: [0, 0, 0, 5],
       },
     },
     pageBreakBefore: (currentNode, followingNodesOnPage) => {
