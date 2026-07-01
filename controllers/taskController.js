@@ -378,6 +378,80 @@ exports.generateAdminReport = catchAsyncErr(async (req, res, next) => {
     return next(new AppError(`Error generating PDF`, 500));
   }
 });
+
+exports.generateAdminExcel = catchAsyncErr(async (req, res, next) => {
+  try {
+    const requestQueries = new RequestQueryHandler(Task.find(), req.query)
+      .filter()
+      .sort()
+      .limitFields();
+
+    const tasks = await requestQueries.query;
+    const rows = tasks.map((task) => [
+      task.user ? he.decode(task.user.name) : 'deleted',
+      he.decode(task.carModel || ''),
+      task.taskStatus,
+      task.totalCost,
+      new Date(task.createdAt).toLocaleDateString('en-US', {
+        month: 'short',
+        day: '2-digit',
+        year: 'numeric',
+      }),
+      task.completedAt
+        ? new Date(task.completedAt).toLocaleDateString('en-US', {
+            month: 'short',
+            day: '2-digit',
+            year: 'numeric',
+          })
+        : '',
+      task.remark || '',
+    ]);
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Summary');
+
+    worksheet.addRow([
+      'Customer',
+      'Vehicle Model',
+      'Status',
+      'Cost',
+      'Created',
+      'Completed',
+      'Notes',
+    ]);
+
+    rows.forEach((row) => worksheet.addRow(row));
+
+    worksheet.columns = [
+      { width: 20 },
+      { width: 15 },
+      { width: 10 },
+      { width: 10 },
+      { width: 12 },
+      { width: 12 },
+      { width: 20 },
+    ];
+
+    const dateColumnIndex = 4;
+    const fromDate = rows[rows.length - 1]?.[dateColumnIndex] || 'start';
+    const toDate = rows[0]?.[dateColumnIndex] || 'end';
+    const filename = `summary_${fromDate}_to_${toDate}.xlsx`.replace(
+      /[/\\?%*:|"<>]/g,
+      '-',
+    );
+    const buffer = await workbook.xlsx.writeBuffer();
+
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    );
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.status(200).send(Buffer.from(buffer));
+  } catch (err) {
+    console.error('Error generating Excel:', err);
+    next(new AppError('Error generating Excel', 500));
+  }
+});
 exports.sendTaskCreationEmail = async (req, res, next) => {
   try {
     const taskId = req.newTask.id;

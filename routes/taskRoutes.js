@@ -71,6 +71,12 @@ router.get(
   authController.restrictTo('admin'),
   taskController.generateAdminReport,
 );
+
+router.get(
+  '/generate-admin-excel',
+  authController.restrictTo('admin'),
+  taskController.generateAdminExcel,
+);
 router
   .route('/:id')
   .get(taskController.getTask)

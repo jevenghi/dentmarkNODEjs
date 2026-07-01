@@ -1,7 +1,6 @@
 import { showAlert } from './alerts.js';
 import axios from 'axios';
 import { translations } from './translations.js';
-import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import he from 'he';
 
@@ -222,54 +221,25 @@ export const generateTaskPDF = async (images) => {
 };
 
 export const generateExcel = async () => {
-  const filteredResults = await getFilteredResults();
-  // const from =
-  //   filteredResults[filteredResults.length - 1][
-  //     filteredResults[filteredResults.length - 1].length - 2
-  //   ];
-  // const to = filteredResults[0][filteredResults[0].length - 2];
-  const dateColumnIndex = 4; // Assuming 'Created' is now the 5th column (index 4)
+  try {
+    const res = await axios({
+      method: 'GET',
+      url: `/api/v1/tasks/generate-admin-excel${window.location.search}`,
+      responseType: 'blob',
+    });
 
-  const from = filteredResults[filteredResults.length - 1][dateColumnIndex];
-  const to = filteredResults[0][dateColumnIndex];
+    const contentDisposition = res.headers['content-disposition'];
+    let filename = 'summary.xlsx';
 
-  const workbook = new ExcelJS.Workbook();
-  const worksheet = workbook.addWorksheet('Summary');
+    if (contentDisposition && contentDisposition.includes('filename=')) {
+      filename = contentDisposition.split('filename=')[1].replace(/['"]/g, '');
+    }
 
-  worksheet.addRow([
-    'Customer',
-    'Vehicle Model',
-    'Status',
-    'Cost',
-    'Created',
-    'Completed',
-    'Notes',
-  ]);
-
-  filteredResults.forEach((row) => {
-    worksheet.addRow(row);
-  });
-
-  worksheet.columns = [
-    { width: 20 },
-    { width: 15 },
-    { width: 10 },
-    { width: 10 },
-    { width: 12 },
-    { width: 12 },
-    { width: 20 },
-  ];
-
-  const buffer = await workbook.xlsx.writeBuffer();
-  const blob = new Blob([buffer], {
-    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-  });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = `summary_${from}_${to}.xlsx`;
-  link.click();
-
-  URL.revokeObjectURL(link.href);
+    saveAs(res.data, filename);
+  } catch (err) {
+    console.log(err);
+    showAlert('error', err.response?.data?.message || 'Error generating Excel');
+  }
 };
 
 export const generateInvoice = async (selectedTasks) => {
