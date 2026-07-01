@@ -253,18 +253,13 @@ const extractTaskHeaderContent = () => {
     return [];
   }
 
-  const content = [
-    {
-      text: 'Task report',
-      style: 'reportTitle',
-    },
-  ];
+  const lines = ['Task report'];
 
   Array.from(taskHeader.children).forEach((child) => {
     if (child.tagName === 'P') {
       const text = normalizeText(child.textContent);
       if (text) {
-        content.push({ text, style: 'taskDetail' });
+        lines.push(text);
       }
       return;
     }
@@ -273,19 +268,15 @@ const extractTaskHeaderContent = () => {
     const value = getControlValue(child.querySelector('input, select, textarea'));
 
     if (label && value) {
-      content.push({
-        text: `${label} ${value}`,
-        style: 'taskDetail',
-      });
+      lines.push(`${label} ${value}`);
     }
   });
 
-  content.push({ text: '', margin: [0, 6, 0, 16] });
-
   return [
     {
-      stack: content,
-      unbreakable: true,
+      text: lines.join('\n'),
+      style: 'taskHeader',
+      margin: [0, 0, 0, 16],
     },
   ];
 };
@@ -321,7 +312,7 @@ const convertImagesToDataURLs = async () => {
   }
 };
 
-const generatePDF = async (headerContent, dataURLs, maxImagesPerPage = 5) => {
+const generatePDF = async (headerContent, dataURLs) => {
   const docDefinition = {
     content: [...headerContent],
     defaultStyle: {
@@ -329,21 +320,10 @@ const generatePDF = async (headerContent, dataURLs, maxImagesPerPage = 5) => {
       lineHeight: 1.3,
     },
     styles: {
-      reportTitle: {
-        fontSize: 20,
-        bold: true,
-        margin: [0, 0, 0, 10],
-      },
-      taskDetail: {
+      taskHeader: {
         fontSize: 13,
-        margin: [0, 0, 0, 5],
+        lineHeight: 1.35,
       },
-    },
-    pageBreakBefore: (currentNode, followingNodesOnPage) => {
-      return (
-        followingNodesOnPage.length === maxImagesPerPage &&
-        currentNode.headlineLevel !== 1
-      );
     },
   };
 
