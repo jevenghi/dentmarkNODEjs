@@ -282,7 +282,12 @@ const extractTaskHeaderContent = () => {
 
   content.push({ text: '', margin: [0, 6, 0, 16] });
 
-  return content;
+  return [
+    {
+      stack: content,
+      unbreakable: true,
+    },
+  ];
 };
 
 const convertImagesToDataURLs = async () => {
