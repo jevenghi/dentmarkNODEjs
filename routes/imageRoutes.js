@@ -6,7 +6,8 @@ const router = express.Router();
 
 router.post(
   '/uploadPhotos',
-  authController.protect,
+  authController.isLoggedIn,
+  imageController.ensureUploadUser,
   imageController.uploadTaskPhotos,
   imageController.resizeTaskPhotos,
 );

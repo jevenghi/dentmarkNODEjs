@@ -37,6 +37,13 @@ exports.setGuestUploadUser = (req, res, next) => {
   next();
 };
 
+exports.ensureUploadUser = (req, res, next) => {
+  if (!req.user) {
+    req.user = { name: 'guest' };
+  }
+  next();
+};
+
 // exports.resizeTaskPhotos = catchAsyncErr(async (req, res, next) => {
 //   const imageNames = [];
 //   try {
