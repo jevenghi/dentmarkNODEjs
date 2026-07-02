@@ -93,7 +93,7 @@ block content
 
   if (role === 'guest')
     script.
-      document.addEventListener('DOMContentLoaded', function () {
+      (function () {
         var emailInput = document.querySelector('.form__input--guest-email');
         var warning = document.querySelector('.guest-email-warning');
         var sendButton = document.querySelector('.send-marks');
@@ -132,6 +132,6 @@ block content
             showWarning();
             event.preventDefault();
             event.stopImmediatePropagation();
-          });
+          }, true);
         }
-      });
+      })();
