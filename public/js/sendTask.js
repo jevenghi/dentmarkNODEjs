@@ -37,8 +37,8 @@ export const sendTask = async (
     }
   } catch (err) {
     console.error(err);
-    //TODO: change error message back to send failed
-    showAlert('error', translations[defaultLang]['taskSendFailed']);
-    // showAlert('error', err);
+    const message =
+      err.response?.data?.message || translations[defaultLang]['taskSendFailed'];
+    showAlert('error', message);
   }
 };
