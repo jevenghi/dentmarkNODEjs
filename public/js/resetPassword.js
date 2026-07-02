@@ -1,10 +1,5 @@
 import { showAlert } from './alerts.js';
 import axios from 'axios';
-import { translations } from './translations';
-
-const t = (key) =>
-  translations[document.documentElement.lang || 'en']?.[key] ||
-  translations.en[key];
 
 export const resetPassword = async (password, passwordConfirm, token) => {
   try {
@@ -18,7 +13,7 @@ export const resetPassword = async (password, passwordConfirm, token) => {
       },
     });
     if (res.data.status === 'success') {
-      showAlert('success', t('passwordChanged'), () => {
+      showAlert('success', 'Password changed successfully!', () => {
         location.href = '/';
       });
     }

@@ -1,9 +1,4 @@
 import { showAlert } from './alerts';
-import { translations } from './translations';
-
-const t = (key) =>
-  translations[document.documentElement.lang || 'en']?.[key] ||
-  translations.en[key];
 
 // export const makeScreenshot = async () => {
 //   try {
@@ -498,7 +493,7 @@ const generatePDF = async (headerContent, images) => {
 
 export const generateTaskPDF = async () => {
   const downloadTaskBtn = document.querySelector('.download-task-report');
-  downloadTaskBtn.textContent = t('generatingPdf');
+  downloadTaskBtn.textContent = 'Generating PDF...';
   downloadTaskBtn.disabled = true;
 
   try {
@@ -521,12 +516,12 @@ export const generateTaskPDF = async () => {
       container.remove();
     });
 
-    downloadTaskBtn.textContent = t('downloadTask');
+    downloadTaskBtn.textContent = 'Download Task';
     downloadTaskBtn.disabled = false;
   } catch (error) {
     console.error('Error generating PDF:', error);
-    showAlert('error', t('pdfGenerateFailed'));
-    downloadTaskBtn.textContent = t('downloadTask');
+    showAlert('error', 'Error generating the PDF. Please try again.');
+    downloadTaskBtn.textContent = 'Download Task';
     downloadTaskBtn.disabled = false;
   }
 };

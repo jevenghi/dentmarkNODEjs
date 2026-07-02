@@ -120,7 +120,7 @@ exports.getUserLangPref = catchAsyncErr(async (req, res, next) => {
     // eslint-disable-next-line prefer-destructuring
     language = user.language;
   } else {
-    language = req.acceptsLanguages('nl', 'en') || 'en';
+    language = 'en';
   }
   res.status(200).json({
     status: 'success',

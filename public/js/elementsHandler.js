@@ -1,9 +1,3 @@
-import { translations } from './translations';
-
-const t = (key) =>
-  translations[document.documentElement.lang || 'en']?.[key] ||
-  translations.en[key];
-
 export const makeMarkerContainerFloating = () => {
   const sentinel = document.querySelector('.sentinel');
   const markerContainer = document.querySelector('.marker-container');
@@ -47,7 +41,8 @@ export const makeMarkerContainerFloating = () => {
 
 export const warnUnsavedChanges = (uploadedImages, dents, warnBeforeUnload) => {
   if (uploadedImages.length > 0 && dents.length > 0 && warnBeforeUnload) {
-    const confirmationMessage = t('unsavedChanges');
+    const confirmationMessage =
+      'You have unsaved changes. Are you sure you want to leave this page?';
     event.preventDefault();
     event.returnValue = confirmationMessage;
     return confirmationMessage;

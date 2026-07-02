@@ -1,10 +1,5 @@
 import { showAlert } from './alerts.js';
 import axios from 'axios';
-import { translations } from './translations';
-
-const t = (key) =>
-  translations[document.documentElement.lang || 'en']?.[key] ||
-  translations.en[key];
 
 export const updateTask = async (taskId, data) => {
   try {
@@ -15,7 +10,7 @@ export const updateTask = async (taskId, data) => {
     });
 
     if (res.data.status === 'success') {
-      showAlert('success', t('savedSuccessfully'));
+      showAlert('success', `Saved successfully!`);
       // location.reload();
     }
   } catch (err) {

@@ -2,11 +2,6 @@
 
 import { showAlert } from './alerts.js';
 import axios from 'axios';
-import { translations } from './translations';
-
-const t = (key) =>
-  translations[document.documentElement.lang || 'en']?.[key] ||
-  translations.en[key];
 
 export const checkFieldAvailability = async (field, endpoint) => {
   const value = document.getElementById(field).value;
@@ -23,7 +18,7 @@ export const checkFieldAvailability = async (field, endpoint) => {
       // inputElement.classList.remove('field-exists');
       // inputElement.classList.add('field-available');
     } else {
-      availabilityMessage.textContent = t('emailRegistered');
+      availabilityMessage.textContent = 'This email is already registered';
       // inputElement.classList.remove('field-available');
       // inputElement.classList.add('field-exists');
     }

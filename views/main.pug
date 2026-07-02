@@ -67,17 +67,17 @@ block content
     .send-container.hidden
       if (role === 'admin')
         .search-bar.hidden
-          input(type="text" placeholder="Customer name..." id="search-input" class="form__input--customer" data-placeholder-key="customerNamePlaceholder")
+          input(type="text" placeholder="Customer name..." id="search-input" class="form__input--customer")
           div#search-results.dropdown-content
       .vehicle-model
-        input.form__input.form__input--model(type="text" placeholder="Vehicle model..." data-placeholder-key="vehicleModelPlaceholder")
+        input.form__input.form__input--model(type="text" placeholder="Vehicle model...")
         //- label.form__label Year
         select#year(name="year")
           option(value="" data-key="year")
           each year in Array.from({ length: 2025 - 2000 }, (_, index) => 2025 - index)
             option(value=year)= year
           option(value="older" data-key="older")
-      input.form__input.form__input--note(type="text" placeholder="Additional notes..." data-placeholder-key="additionalNotesPlaceholder")
+      input.form__input.form__input--note(type="text" placeholder="Additional notes...")
     
           
     .form__row.form__row--button
@@ -85,4 +85,5 @@ block content
     .need-help-link
       a(href="/help" data-key="needHelp") 
 
-  .overlay.hidden
+  .overlay.hidden            
+    

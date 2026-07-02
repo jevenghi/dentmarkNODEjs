@@ -14,14 +14,13 @@ block content
           label(for='to-date' data-key='to')
           input(type='date', id='to-date', value=to)
           button(class='reset-date' data-key='reset')
-        .filter-status
-          span(data-key='status')
+        .filter-status Status:  
           select#status-filter
-            option(value='', selected=taskStatus === '', data-key='all') All
-            option(value='open', selected=taskStatus === "open", data-key='open') Open
-            option(value='in-progress', selected=taskStatus === 'in-progress', data-key='inProgress') In Progress
-            option(value='pending', selected=taskStatus === "pending", data-key='notPaid') Complete/Not paid
-            option(value='complete', selected=taskStatus === "complete", data-key='paid') Paid
+            option(value='' selected=taskStatus === '' data-key='all') All
+            option(value='open' selected=taskStatus === "open" data-key='open') Open
+            option(value='in-progress' selected=taskStatus === 'in-progress' data-key='inProgress') In Progress
+            option(value='pending' selected=taskStatus === "pending" data-key='notPaid') Complete/Not paid
+            option(value='complete' selected=taskStatus === "complete" data-key='paid') Paid
           //- button.download-report Download Summary
           .download-options
             button(class='download-report' id='download-report' data-key='downloadSummary') 
@@ -29,18 +28,17 @@ block content
               button.format-option(data-format="pdf") PDF
               button.format-option(data-format="excel") Excel
         .filter-word
-          input(type='text', id='search-word', placeholder='Search in Vehicle Model' data-placeholder-key='searchInModel')
+          input(type='text', id='search-word', placeholder='Search in Vehicle Model')
           button(class='search-by-word' data-key='search')
           button(class='reset-search' data-key='reset')
         - if (role === 'admin')
-          .change-status-bulk.hidden
-            span(data-key='status')
+          .change-status-bulk.hidden Status:  
             select#change-status-bulk
-              option(value='open' data-key='open') Open
-              option(value='in-progress' data-key='inProgress') In Progress
-              option(value='pending' data-key='notPaid') Complete/Not paid
-              option(value='complete' data-key='paid') Paid
-            button.change-status-bulk-btn(data-key='change')
+              option(value='open') Open
+              option(value='in-progress') In Progress
+              option(value='pending') Complete/Not paid
+              option(value='complete') Paid
+            button.change-status-bulk-btn Change
             //- button.create-invoice-btn Invoice
           
 
@@ -61,7 +59,7 @@ block content
           each task in tasks
             tr
               td: a(href=`/tasks/${task._id}` class='table-link')= task.carModel
-              td(data-status=task.taskStatus)= task.taskStatus
+              td= task.taskStatus
               td= `€ ${task.totalCost}`
               td= new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
               td
@@ -83,13 +81,13 @@ block content
         tbody
           if tasks.length === 0
             tr
-              td(colspan='6' data-key='noTasksFound')
+              td(colspan='6') No tasks found
           each task in tasks
             tr
               //- td: a(href=`/users/${task.user.id}` class='table-link')= task.user.name
               td: a(href=`/tasks?user=${task.user.id}` class='table-link')= he.decode(task.user.name)
               td: a(href=`/tasks/${task._id}` class='table-link')= task.carModel
-              td(class='clickable-status' id=task._id data-status=task.taskStatus)= task.taskStatus
+              td(class='clickable-status' id=task._id)= task.taskStatus
               td= task.totalCost
               td= new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
               td
@@ -97,11 +95,11 @@ block content
                   = new Date(task.completedAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
     div.pagination-buttons
       if page > 1
-        button.previous-button(data-key='previous')
+        button.previous-button() Prev
       //- if page < totalPageCount
       //-   button.next-button() Next
       if tasks.length === limit
-        button.next-button(data-key='next')
+        button.next-button() Next
     //- button.download-report Download Report
 
      
