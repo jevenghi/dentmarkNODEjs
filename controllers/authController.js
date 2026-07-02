@@ -224,7 +224,9 @@ exports.protect = catchAsyncError(async (req, res, next) => {
   }
 
   if (!token) {
-    // return next(new AppError(`You are not logged in, please log in.`, 401));
+    if (req.originalUrl.startsWith('/api')) {
+      return next(new AppError(`You are not logged in, please log in.`, 401));
+    }
     return res.redirect('/landing');
   }
 
@@ -232,11 +234,22 @@ exports.protect = catchAsyncError(async (req, res, next) => {
   const currentUser = await User.findById(decoded.id);
 
   if (!currentUser) {
+    if (req.originalUrl.startsWith('/api')) {
+      return next(new AppError(`The user does no longer exist.`, 401));
+    }
     return res.redirect('/landing');
     // return next(new AppError(`The user does no longer exist.`, 401));
   }
 
   if (currentUser.changedPasswordAfter(decoded.iat)) {
+    if (req.originalUrl.startsWith('/api')) {
+      return next(
+        new AppError(
+          `Invalid credentials or session expired. Please log in again.`,
+          401,
+        ),
+      );
+    }
     return res.redirect('/landing');
     // return next(
     //   new AppError(

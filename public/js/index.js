@@ -289,6 +289,9 @@ if (fileInput) {
       images.forEach((file) => form.append('images', file));
 
       const imagesProcessed = await uploadPhotosTemp(form, isGuest);
+      if (!Array.isArray(imagesProcessed)) {
+        throw new Error('Error uploading photos');
+      }
       uploadedImages.push(...imagesProcessed);
     } catch (error) {
       spinner.style.display = 'none';

@@ -28,6 +28,9 @@ export class TaskHandler {
 
       try {
         const imagesProcessed = await this.uploadPhotosTemp(form);
+        if (!Array.isArray(imagesProcessed)) {
+          throw new Error('Error uploading photos');
+        }
         uploadedImages.push(...imagesProcessed);
       } catch (error) {
         showAlert('error', error);
@@ -101,11 +104,13 @@ export class TaskHandler {
       if (res.data.status === 'success') {
         return res.data.imageNames;
       }
+      throw new Error(res.data.message || 'Error uploading photos');
     } catch (err) {
+      const responseMessage = err.response?.data?.message || err.message || err;
       const message =
-        err.response.data.message === 'Unexpected field'
+        responseMessage === 'Unexpected field'
           ? 'You can upload up to 10 images'
-          : err.response.data.message;
+          : responseMessage;
       showAlert('error', message);
     }
   }

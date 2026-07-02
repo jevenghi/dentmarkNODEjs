@@ -14,11 +14,13 @@ export const uploadPhotosTemp = async (images, isGuest = false) => {
     if (res.data.status === 'success') {
       return res.data.imageNames;
     }
+    throw res.data.message || 'Error uploading photos';
   } catch (err) {
-    throw err.response.data.message === 'Unexpected field'
+    const message = err.response?.data?.message || err.message || err;
+    throw message === 'Unexpected field'
       ? 'You can upload up to 10 images'
       : // : 'Error uploading photos';
-        err.response.data.message;
+        message;
   }
 };
 

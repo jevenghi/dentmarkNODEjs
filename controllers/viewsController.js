@@ -17,11 +17,14 @@ const factory = require('./handlerFactory');
 // const { showAlert } = require('../public/js/alerts');
 
 exports.getHelp = catchAsyncError(async (req, res, next) => {
-  const { language } = req.user;
+  const language =
+    req.user?.language || req.acceptsLanguages('nl', 'en') || 'en';
 
   res.status(200).render(`help`, {
     title: 'Instruction',
     language,
+    role: req.user?.role,
+    hideHeader: !req.user,
   });
 });
 
