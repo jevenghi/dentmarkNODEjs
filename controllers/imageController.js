@@ -121,8 +121,8 @@ exports.resizeTaskPhotos = catchAsyncErr(async (req, res, next) => {
 });
 
 exports.transferFiles = catchAsyncErr(async (req, res, next) => {
-  const remoteDirectory = '/home/tasks';
-  const remoteDirBackup = '/home/tasks_backup';
+  const remoteDirectory = '/home/tasks_test';
+  const remoteDirBackup = '/home/tasks_backup_test';
 
   const config = {
     host: process.env.VPS_HOST,
