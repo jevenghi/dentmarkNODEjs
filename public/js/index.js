@@ -45,6 +45,7 @@ const sendContainer = document.querySelector('.send-container');
 const sendMarksBtn = document.querySelector('.send-marks');
 const vehicleModel = document.querySelector('.form__input--model');
 const guestEmailInput = document.querySelector('.form__input--guest-email');
+const guestEmailWarning = document.querySelector('.guest-email-warning');
 const newTaskNote = document.querySelector('.form__input--note');
 const removeLastMarkBtn = document.querySelector('.remove__last');
 const removeMarksBtn = document.querySelector('.remove--marks');
@@ -110,6 +111,33 @@ let warnBeforeUnload = true;
 const isGuest = Boolean(guestEmailInput);
 
 const isValidEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+
+const showGuestEmailWarning = () => {
+  if (guestEmailWarning) guestEmailWarning.classList.remove('hidden');
+  if (guestEmailInput) {
+    guestEmailInput.classList.add('form__input--invalid');
+    guestEmailInput.setAttribute('aria-invalid', 'true');
+  }
+};
+
+const hideGuestEmailWarning = () => {
+  if (guestEmailWarning) guestEmailWarning.classList.add('hidden');
+  if (guestEmailInput) {
+    guestEmailInput.classList.remove('form__input--invalid');
+    guestEmailInput.removeAttribute('aria-invalid');
+  }
+};
+
+const validateGuestEmailInput = () => {
+  if (!isGuest) return true;
+  const emailAddress = guestEmailInput.value.trim();
+  if (isValidEmail(emailAddress)) {
+    hideGuestEmailWarning();
+    return true;
+  }
+  showGuestEmailWarning();
+  return false;
+};
 
 function getDateFormatted(daysToAdd) {
   const date = new Date();
@@ -955,12 +983,19 @@ if (vehicleImage) {
   });
 }
 
+if (guestEmailInput) {
+  guestEmailInput.addEventListener('blur', validateGuestEmailInput);
+  guestEmailInput.addEventListener('input', () => {
+    if (isValidEmail(guestEmailInput.value.trim())) hideGuestEmailWarning();
+  });
+}
+
 if (sendMarksBtn) {
   sendMarksBtn.addEventListener('click', async () => {
     if (dents.length === 0 && !specialCase)
       return showAlert('error', translations[defaultLang]['noDentsMarked']);
     const emailAddress = guestEmailInput ? guestEmailInput.value.trim() : '';
-    if (isGuest && !isValidEmail(emailAddress)) {
+    if (isGuest && !validateGuestEmailInput()) {
       return showAlert('error', translations[defaultLang]['enterValidEmail']);
     }
     let model = vehicleModel.value.trim();

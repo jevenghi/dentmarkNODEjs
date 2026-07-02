@@ -480,8 +480,29 @@ input[type='file'] {
   justify-content: center;
 }
 
+.guest-email {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.guest-email-warning {
+  color: rgb(255, 87, 34);
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0.4rem 0 0;
+  text-align: center;
+}
+
+.form__input--invalid {
+  border: 2px solid rgb(255, 87, 34);
+  outline-color: rgb(255, 87, 34);
+}
+
 .form__input--note,
-.form__input--customer {
+.form__input--customer,
+.form__input--guest-email {
   width: 23rem;
 }
 
