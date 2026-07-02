@@ -2,11 +2,13 @@ import { showAlert } from './alerts.js';
 import { placeMarker, populateSidesWithDents } from './placeMarker.js';
 import axios from 'axios';
 
-export const uploadPhotosTemp = async (images) => {
+export const uploadPhotosTemp = async (images, isGuest = false) => {
   try {
     const res = await axios({
       method: 'POST',
-      url: `/api/v1/photos/uploadPhotos`,
+      url: isGuest
+        ? `/api/v1/photos/uploadGuestPhotos`
+        : `/api/v1/photos/uploadPhotos`,
       data: images,
     });
     if (res.data.status === 'success') {

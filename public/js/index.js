@@ -44,6 +44,7 @@ const passwordResetForm = document.querySelector('.reset-form');
 const sendContainer = document.querySelector('.send-container');
 const sendMarksBtn = document.querySelector('.send-marks');
 const vehicleModel = document.querySelector('.form__input--model');
+const guestEmailInput = document.querySelector('.form__input--guest-email');
 const newTaskNote = document.querySelector('.form__input--note');
 const removeLastMarkBtn = document.querySelector('.remove__last');
 const removeMarksBtn = document.querySelector('.remove--marks');
@@ -106,6 +107,9 @@ let specialCase = false;
 let bigDent = false;
 let taskId;
 let warnBeforeUnload = true;
+const isGuest = Boolean(guestEmailInput);
+
+const isValidEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
 function getDateFormatted(daysToAdd) {
   const date = new Date();
@@ -284,7 +288,7 @@ if (fileInput) {
       const form = new FormData();
       images.forEach((file) => form.append('images', file));
 
-      const imagesProcessed = await uploadPhotosTemp(form);
+      const imagesProcessed = await uploadPhotosTemp(form, isGuest);
       uploadedImages.push(...imagesProcessed);
     } catch (error) {
       spinner.style.display = 'none';
@@ -952,6 +956,10 @@ if (sendMarksBtn) {
   sendMarksBtn.addEventListener('click', async () => {
     if (dents.length === 0 && !specialCase)
       return showAlert('error', translations[defaultLang]['noDentsMarked']);
+    const emailAddress = guestEmailInput ? guestEmailInput.value.trim() : '';
+    if (isGuest && !isValidEmail(emailAddress)) {
+      return showAlert('error', translations[defaultLang]['enterValidEmail']);
+    }
     let model = vehicleModel.value.trim();
     if (model.length < 5)
       return showAlert(
@@ -980,6 +988,7 @@ if (sendMarksBtn) {
       specialCase,
       note,
       defaultLang,
+      emailAddress,
     );
     sendMarksBtn.textContent = 'Send task';
   });

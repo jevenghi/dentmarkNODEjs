@@ -44,6 +44,14 @@ router.post(
   // remove next() to sendTask when commenting below
   taskController.sendTaskCreationEmail,
 );
+
+router.post(
+  '/sendGuestTask',
+  taskController.validateGuestTaskEmail,
+  imageController.transferFiles,
+  taskController.sendGuestTask,
+  taskController.sendTaskCreationEmail,
+);
 router.post(
   '/sendTask/:id',
   authController.protect,

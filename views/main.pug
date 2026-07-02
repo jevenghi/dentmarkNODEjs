@@ -69,6 +69,9 @@ block content
         .search-bar.hidden
           input(type="text" placeholder="Customer name..." id="search-input" class="form__input--customer")
           div#search-results.dropdown-content
+      if (role === 'guest')
+        .guest-email
+          input.form__input.form__input--guest-email(type="email" placeholder="Email address..." autocomplete="email")
       .vehicle-model
         input.form__input.form__input--model(type="text" placeholder="Vehicle model...")
         //- label.form__label Year
@@ -82,8 +85,8 @@ block content
           
     .form__row.form__row--button
       button.form__btn.send-marks.hidden(data-key="sendTask")
-    .need-help-link
-      a(href="/help" data-key="needHelp") 
+    if (role !== 'guest')
+      .need-help-link
+        a(href="/help" data-key="needHelp")
 
-  .overlay.hidden            
-    
+  .overlay.hidden

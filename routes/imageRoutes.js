@@ -10,6 +10,13 @@ router.post(
   imageController.uploadTaskPhotos,
   imageController.resizeTaskPhotos,
 );
+
+router.post(
+  '/uploadGuestPhotos',
+  imageController.setGuestUploadUser,
+  imageController.uploadTaskPhotos,
+  imageController.resizeTaskPhotos,
+);
 router.post(
   '/transferPhotos',
   authController.protect,

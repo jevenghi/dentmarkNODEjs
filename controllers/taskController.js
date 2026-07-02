@@ -2,6 +2,7 @@
 const generatePDF = require('../utils/generatePDF');
 const sharp = require('sharp');
 const User = require('../models/userModel');
+const GuestUser = require('../models/guestUserModel');
 const Task = require('../models/taskModel');
 const Dent = require('../models/dentModel');
 const RequestQueryHandler = require('../utils/requestQueryHandler');
@@ -20,6 +21,7 @@ const fs = require('fs');
 const path = require('path');
 const { PDFDocument } = require('pdf-lib');
 const slugify = require('slugify');
+const validator = require('validator');
 
 // const multerStorage = multer.diskStorage({
 //   destination: (req, file, cb) => {
@@ -166,8 +168,10 @@ exports.sendTask = catchAsyncErr(async (req, res, next) => {
   if (req.body.user && req.user.role === 'admin') {
     const customer = await User.findOne({ name: req.body.user });
     req.body.user = customer.id;
+    req.body.userModel = 'User';
   } else {
     req.body.user = req.user.id;
+    req.body.userModel = 'User';
   }
   req.body.carModel = he.decode(req.body.carModel);
 
@@ -186,6 +190,37 @@ exports.sendTask = catchAsyncErr(async (req, res, next) => {
   // };
   // req.body.images = JSON.parse(req.body.images);
   // req.body.dents = JSON.parse(req.body.dents);
+  const newTask = await Task.create(req.body);
+  req.newTask = newTask;
+
+  res.status(201).json({
+    status: 'success',
+  });
+  next();
+});
+
+exports.validateGuestTaskEmail = (req, res, next) => {
+  const emailAddress = req.body.emailAddress?.trim().toLowerCase();
+
+  if (!emailAddress || !validator.isEmail(emailAddress)) {
+    return next(new AppError('Please provide a valid e-mail address', 400));
+  }
+
+  req.body.emailAddress = emailAddress;
+  next();
+};
+
+exports.sendGuestTask = catchAsyncErr(async (req, res, next) => {
+  req.body.carModel = he.decode(req.body.carModel);
+
+  const guestUser = await GuestUser.create({
+    emailAddres: req.body.emailAddress,
+  });
+
+  req.body.user = guestUser.id;
+  req.body.userModel = 'GuestUser';
+  delete req.body.emailAddress;
+
   const newTask = await Task.create(req.body);
   req.newTask = newTask;
 

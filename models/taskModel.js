@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+require('./guestUserModel');
 
 const TASK_STATUS_RANK = {
   open: 1,
@@ -43,8 +44,15 @@ const taskSchema = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.ObjectId,
-      ref: 'User',
+      ref: function () {
+        return this.userModel || 'User';
+      },
       required: [true, 'Task must belong to a user'],
+    },
+    userModel: {
+      type: String,
+      enum: ['User', 'GuestUser'],
+      default: 'User',
     },
     carModel: {
       type: String,
@@ -136,7 +144,7 @@ taskSchema.pre('updateMany', function (next) {
 taskSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'user',
-    select: ['name', 'invoiceAddress'],
+    select: ['name', 'invoiceAddress', 'emailAddres'],
   });
   next();
 });

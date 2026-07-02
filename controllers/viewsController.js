@@ -32,6 +32,17 @@ exports.getMain = catchAsyncError(async (req, res, next) => {
     role,
   });
 });
+
+exports.getGuestMain = catchAsyncError(async (req, res, next) => {
+  const language = req.acceptsLanguages('nl', 'en') || 'en';
+
+  res.status(200).render('main', {
+    title: 'Dentmarker',
+    role: 'guest',
+    hideHeader: true,
+    language,
+  });
+});
 exports.getPassResetForm = catchAsyncError(async (req, res, next) => {
   res.status(200).render('resetPassword', {
     title: 'Reset your password',

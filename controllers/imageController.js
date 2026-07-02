@@ -32,6 +32,11 @@ const upload = multer({
 });
 exports.uploadTaskPhotos = upload.fields([{ name: 'images', maxCount: 10 }]);
 
+exports.setGuestUploadUser = (req, res, next) => {
+  req.user = { name: 'guest' };
+  next();
+};
+
 // exports.resizeTaskPhotos = catchAsyncErr(async (req, res, next) => {
 //   const imageNames = [];
 //   try {

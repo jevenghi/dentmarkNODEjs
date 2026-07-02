@@ -12,8 +12,9 @@ html(lang=typeof language !== 'undefined' ? language : 'en')
   
   body
     // HEADER
-    block header    
-      include _header
+    if !hideHeader
+      block header
+        include _header
         
     // CONTENT
 

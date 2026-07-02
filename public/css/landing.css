@@ -119,6 +119,10 @@ p {
   background-color: rgb(255, 87, 34);
 }
 
+.guest_btn {
+  background-color: rgb(76, 175, 80);
+}
+
 .login-form {
   padding: 1rem;
   border-radius: 0.3rem;

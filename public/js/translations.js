@@ -66,6 +66,8 @@ export const translations = {
     paid: 'Paid',
     searchInModel: 'Search in Vehicle Model',
     downloadSummary: 'Download Summary',
+    emailAddress: 'Email address',
+    enterValidEmail: 'Please enter a valid e-mail address',
   },
   nl: {
     welcome: 'Welkom bij DentMarker!',
@@ -135,5 +137,7 @@ export const translations = {
     paid: 'Betaald',
     searchInModel: 'Zoek op auto',
     downloadSummary: 'Overzicht Opslaan',
+    emailAddress: 'E-mailadres',
+    enterValidEmail: 'Vul een geldig e-mailadres in',
   },
 };

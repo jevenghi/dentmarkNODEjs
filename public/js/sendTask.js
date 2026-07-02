@@ -10,12 +10,22 @@ export const sendTask = async (
   specialCase,
   remark,
   defaultLang,
+  emailAddress = '',
 ) => {
   try {
+    const isGuest = Boolean(emailAddress);
     const res = await axios({
       method: 'POST',
-      url: '/api/v1/tasks/sendTask',
-      data: { user: customer, carModel, dents, images, specialCase, remark },
+      url: isGuest ? '/api/v1/tasks/sendGuestTask' : '/api/v1/tasks/sendTask',
+      data: {
+        user: customer,
+        emailAddress,
+        carModel,
+        dents,
+        images,
+        specialCase,
+        remark,
+      },
     });
     if (res.data.status === 'success') {
       alert(translations[defaultLang]['taskSent']);
