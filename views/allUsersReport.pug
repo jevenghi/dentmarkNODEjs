@@ -32,25 +32,58 @@ html
         border: 1px solid black; /* Add borders to cells */
       }
   body
+    -
+      const reportLanguage =
+        typeof language !== 'undefined' && language === 'nl' ? 'nl' : 'en';
+      const reportText = {
+        en: {
+          date: 'Date',
+          customer: 'Customer',
+          vehicleModel: 'Vehicle Model',
+          taskStatus: 'Status',
+          taskCost: 'Cost',
+          total: 'Total:',
+          statuses: {
+            open: 'Open',
+            'in-progress': 'In Progress',
+            pending: 'Complete/Not paid',
+            complete: 'Paid',
+          },
+        },
+        nl: {
+          date: 'Datum',
+          customer: 'Klant',
+          vehicleModel: 'Voertuig',
+          taskStatus: 'Status',
+          taskCost: 'Kosten',
+          total: 'Totaal:',
+          statuses: {
+            open: 'Open',
+            'in-progress': 'In uitvoering',
+            pending: 'Voltooid/Niet betaald',
+            complete: 'Betaald',
+          },
+        },
+      }[reportLanguage];
     .main-container 
       table.task-table
         thead
           tr
-            th Date
-            th Customer
-            th Vehicle Model
-            th Status
-            th Cost
+            th= reportText.date
+            th= reportText.customer
+            th= reportText.vehicleModel
+            th= reportText.taskStatus
+            th= reportText.taskCost
         tbody
           each task in tasks
             tr
               td= new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
               td= task.user.name
               td= task.carModel
-              td= task.taskStatus
+              td= reportText.statuses[task.taskStatus] || task.taskStatus
               td= task.totalCost
         tfoot
           tr
-            td(colspan="4") Total:
+            td(colspan="4")= reportText.total
             td
               strong= totalCostAggregate[0].totalCost    

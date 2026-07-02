@@ -7,27 +7,27 @@ block content
   block header
   .container
     form.signup-form
-      h2 Signup
+      h2(data-key="signup")
 
       .form-group
-        label(for="email-signup") Email
+        label(for="email-signup" data-key="email")
         input(type="email", id="email-signup", name="email-signup", required)
         .availability-message
       .form-group
-        label(for="company") Company / Name
+        label(for="company" data-key="companyName")
         input(type="text", id="company", name="company")
       .form-group
-        label(for="language") Language
+        label(for="language" data-key="language")
         select#language(name="language")
           option(value="en") English
           option(value="nl") Nederlands
          
       .form-group
-        label(for="password") Password
+        label(for="password" data-key="password")
         input(type="password", id="password", name="password", required)
       .form-group
-        label(for="confirm_password") Confirm Password
+        label(for="confirm_password" data-key="confirmPassword")
         input(type="password", id="confirm_password", name="confirm_password", required)
-      button(type="submit") Signup
+      button(type="submit" data-key="signup")
     .privacy-policy-link
-      a(href="privacyPolicy.html") Privacy Policy
+      a(href="privacyPolicy.html" data-key="privacyPolicy")

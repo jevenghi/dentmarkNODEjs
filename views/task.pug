@@ -8,14 +8,20 @@ block styles
 block content
   .main-container
     if role === 'admin'  
-      button.delete-task(data-task-id=taskId) Delete Task
+      button.delete-task(data-task-id=taskId data-key="deleteTask")
     .task-header(data-task-id=taskId)
       if role === 'admin'
-        p Customer: #{he.decode(customer)}
-      p Task created: #{date}
-      p Task completed: #{completed}
+        p
+          span(data-key="customer")
+          | : #{he.decode(customer)}
+      p
+        span(data-key="taskCreatedLabel")
+        |  #{date}
+      p
+        span(data-key="taskCompletedLabel")
+        |  #{completed}
       .task-model-wrapper
-        p Model:  
+        p(data-key="model")
         input(type="text", value=model, class="model-input", data-task-id=taskId)
       //- p Model: #{model}
       
@@ -24,29 +30,36 @@ block content
               if role === 'admin'
       if role === 'admin'
         .task-status-wrapper
-            p Task status:  
+            p(data-key="taskStatusLabel")
             select.task-status-select(data-task-id=taskId)
-              option(value="open", selected=taskStatus === "open") Open
-              option(value="in-progress", selected=taskStatus === "in-progress") In Progress
-              option(value="pending", selected=taskStatus === "pending") Complete/Not paid
-              option(value="complete", selected=taskStatus === "complete") Paid
+              option(value="open", selected=taskStatus === "open", data-key="open") Open
+              option(value="in-progress", selected=taskStatus === "in-progress", data-key="inProgress") In Progress
+              option(value="pending", selected=taskStatus === "pending", data-key="notPaid") Complete/Not paid
+              option(value="complete", selected=taskStatus === "complete", data-key="paid") Paid
 
         .task-cost-wrapper
-          p Total cost (ex. BTW):
+          p(data-key="totalCostExBtw")
           input(type="text", placeholder=`€${totalCost}`, class="total-cost", data-task-id=taskId)
             
         .task-cost-wrapper
-          p Notes:
+          p(data-key="notes")
           //- input(type="text", value=remark, class="task-remark", data-task-id=taskId)
           textarea.task-remark(data-task-id=taskId)= remark
 
              
       if role === 'user'
-        p Task status: #{taskStatus}
-        p Total cost (ex. BTW): € #{totalCost}
-        p Notes: #{remark}
+        p
+          span(data-key="taskStatusLabel")
+          |
+          span(data-status=taskStatus)= taskStatus
+        p
+          span(data-key="totalCostExBtw")
+          |  € #{totalCost}
+        p
+          span(data-key="notes")
+          |  #{remark}
     if role === 'admin'    
-      button(class='download-task-report', data-task-id=taskId) Download Task 
+      button(class='download-task-report', data-task-id=taskId data-key="downloadTask")
   
     
 
@@ -95,4 +108,3 @@ block content
     button(type="button" class='save-new-dents' data-key="saveChanges" class='hidden')
     button(type="button" class='back-tasks' data-key="backToTasks")           
   .overlay.hidden
-            

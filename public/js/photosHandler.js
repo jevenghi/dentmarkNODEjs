@@ -1,6 +1,11 @@
 import { showAlert } from './alerts.js';
 import { placeMarker, populateSidesWithDents } from './placeMarker.js';
 import axios from 'axios';
+import { translations } from './translations';
+
+const t = (key) =>
+  translations[document.documentElement.lang || 'en']?.[key] ||
+  translations.en[key];
 
 export const uploadPhotosTemp = async (images) => {
   try {
@@ -14,7 +19,7 @@ export const uploadPhotosTemp = async (images) => {
     }
   } catch (err) {
     throw err.response.data.message === 'Unexpected field'
-      ? 'You can upload up to 10 images'
+      ? t('uploadLimit')
       : // : 'Error uploading photos';
         err.response.data.message;
   }

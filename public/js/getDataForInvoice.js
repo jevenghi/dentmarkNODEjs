@@ -1,5 +1,10 @@
 import { showAlert } from './alerts.js';
 import axios from 'axios';
+import { translations } from './translations';
+
+const t = (key) =>
+  translations[document.documentElement.lang || 'en']?.[key] ||
+  translations.en[key];
 
 export const getInvoiceData = async (selectedTasks) => {
   try {
@@ -77,7 +82,7 @@ export const updateInvoiceAddress = async (customerId, newInvoiceAddress) => {
       data: { newInvoiceAddress },
     });
     if (res.data.status === 'success') {
-      showAlert('success', 'Invoice address changed successfully!');
+      showAlert('success', t('invoiceAddressChanged'));
     }
   } catch (err) {
     console.log(err);

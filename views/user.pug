@@ -8,47 +8,52 @@ block content
         img(src="../user.png", alt="AccIcon")
   div.modal.hidden
     div.modal__content
-      a.modal__link(href="/me") My profile
-      a.modal__link(href="/") Send new task
-      a.modal__link(href="/tasks") My tasks
-      a.modal__link.logout(href="#") Log out
+      a.modal__link(href="/me" data-key="myProfile")
+      a.modal__link(href="/" data-key="sendNewTask")
+      a.modal__link(href="/tasks" data-key="myTasks")
+      a.modal__link.logout(href="#" data-key="logOut")
   .main-container
     .task-header  
-      p Customer: #{name}
-      p Email: #{email}
+      p
+        span(data-key="customer")
+        | : #{name}
+      p
+        span(data-key="email")
+        | : #{email}
 
     .filter-menu
       .filter-date
-        label(for='from-date') From:
+        label(for='from-date' data-key='from')
         input(type='date', id='from-date', value=from)
-        label(for='to-date') To:
+        label(for='to-date' data-key='to')
         input(type='date', id='to-date', value=to) 
-      .filter-status Status:  
+      .filter-status
+        span(data-key='status')
         select#status-filter
-          option(value='' selected=taskStatus === '') All
-          option(value='open' selected=taskStatus === "open") Open
-          option(value='complete' selected=taskStatus === "complete") Paid
-          option(value='pending' selected=taskStatus === "pending") Complete/Not paid
-          option(value='in-progress' selected=taskStatus === 'in-progress') In Progress
-        button.download-report Download Report  
+          option(value='', selected=taskStatus === '', data-key='all') All
+          option(value='open', selected=taskStatus === "open", data-key='open') Open
+          option(value='complete', selected=taskStatus === "complete", data-key='paid') Paid
+          option(value='pending', selected=taskStatus === "pending", data-key='notPaid') Complete/Not paid
+          option(value='in-progress', selected=taskStatus === 'in-progress', data-key='inProgress') In Progress
+        button.download-report(data-key="downloadSummary")
     table.task-table
         thead
           tr
-            th Vehicle Model
-            th Task Status
-            th Total Cost
-            th Date
+            th(data-key="vehicleModel")
+            th(data-key="taskStatus")
+            th(data-key="totalCost")
+            th(data-key="date")
         tbody
           each task in tasks
             tr
               td: a(href=`/tasks/${task._id}` class='table-link')= task.carModel
-              td= task.taskStatus
+              td(data-status=task.taskStatus)= task.taskStatus
               td= task.totalCost
               td= new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
     div.pagination-buttons
     if page > 1
-      button.previous-button() Previous
+      button.previous-button(data-key="previous")
       //- if page < totalPageCount
     if tasks.length === limit
-      button.next-button() Next
-  .overlay.hidden            
+      button.next-button(data-key="next")
+  .overlay.hidden

@@ -9,6 +9,18 @@ const pdfMake = require('pdfmake/build/pdfmake.js');
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
+const getLanguage = () => document.documentElement.lang || 'en';
+const t = (key) => translations[getLanguage()]?.[key] || translations.en[key];
+const translateStatus = (status) =>
+  t(
+    {
+      open: 'open',
+      'in-progress': 'inProgress',
+      pending: 'notPaid',
+      complete: 'paid',
+    }[status] || status,
+  );
+
 // export const generatePDF = async () => {
 //   const urlParams = new URLSearchParams(window.location.search);
 //   const status = urlParams.get('taskStatus');
@@ -73,15 +85,15 @@ const getFilteredResults = async () => {
       const result = res.data.tasks.map((task) => [
         he.decode(task.user.name),
         task.carModel,
-        task.taskStatus,
+        translateStatus(task.taskStatus),
         task.totalCost,
-        new Date(task.createdAt).toLocaleDateString('en-US', {
+        new Date(task.createdAt).toLocaleDateString(getLanguage() === 'nl' ? 'nl-NL' : 'en-US', {
           month: 'short',
           day: '2-digit',
           year: 'numeric',
         }),
         task.completedAt
-          ? new Date(task.completedAt).toLocaleDateString('en-US', {
+          ? new Date(task.completedAt).toLocaleDateString(getLanguage() === 'nl' ? 'nl-NL' : 'en-US', {
               month: 'short',
               day: '2-digit',
               year: 'numeric',
@@ -112,8 +124,8 @@ export const generatePDF = async () => {
 
   const docDefinition = {
     content: [
-      { text: `Period: ${from} t/m ${to}`, style: 'subheader' },
-      `Submitted tasks: ${totalAmountTasks}`,
+      { text: `${t('period')}: ${from} t/m ${to}`, style: 'subheader' },
+      `${t('submittedTasks')}: ${totalAmountTasks}`,
 
       {
         layout: 'lightHorizontalLines',
@@ -124,16 +136,16 @@ export const generatePDF = async () => {
 
           body: [
             [
-              'Customer',
-              'Vehicle Model',
-              'Status',
-              'Cost',
-              'Created',
-              'Completed',
+              t('customer'),
+              t('vehicleModel'),
+              t('taskStatus'),
+              t('taskCost'),
+              t('taskCreated'),
+              t('taskCompleted'),
             ],
             ...filteredResults,
             [
-              { text: 'TOTAL', bold: true },
+              { text: t('totalUpper'), bold: true },
               '',
               '',
               { text: totalSum, bold: true },
@@ -216,7 +228,7 @@ export const generateTaskPDF = async (images) => {
     }
   } catch (err) {
     console.log(err);
-    showAlert('error', 'Error making the report');
+    showAlert('error', t('reportFailed'));
   }
 };
 
@@ -238,7 +250,7 @@ export const generateExcel = async () => {
     saveAs(res.data, filename);
   } catch (err) {
     console.log(err);
-    showAlert('error', err.response?.data?.message || 'Error generating Excel');
+    showAlert('error', err.response?.data?.message || t('excelGenerateFailed'));
   }
 };
 

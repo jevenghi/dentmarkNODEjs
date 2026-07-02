@@ -10,7 +10,7 @@ block content
       h2(data-key="changeAccountSettings")
 
       div.form-group
-        label(for="email" ) Email
+        label(for="email" data-key="email")
         input(type="email" id="email" name="email" value=`${user.email}` required)
       div.form-group
         label(for="name" data-key="companyName")
@@ -37,4 +37,3 @@ block content
         input(type="password" id="confirmNewPassword" name="confirmNewPassword" required)
       button(type="submit" data-key="changePasswordButton")
   .overlay.hidden
-    

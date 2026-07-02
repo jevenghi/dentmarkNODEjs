@@ -1,6 +1,11 @@
 /* eslint-disable */
 import axios from 'axios';
 import { showAlert } from './alerts';
+import { translations } from './translations';
+
+const t = (key) =>
+  translations[document.documentElement.lang || 'en']?.[key] ||
+  translations.en[key];
 
 // type is either 'password' or 'data'
 export const updateSettings = async (data, type) => {
@@ -16,9 +21,13 @@ export const updateSettings = async (data, type) => {
       data,
     });
     if (res.data.status === 'success') {
-      showAlert('success', `${type} updated successfully!`, () => {
-        location.reload();
-      });
+      showAlert(
+        'success',
+        type === 'password' ? t('passwordUpdated') : t('accountUpdated'),
+        () => {
+          location.reload();
+        },
+      );
     }
   } catch (err) {
     // if (err.response.status === 429) {

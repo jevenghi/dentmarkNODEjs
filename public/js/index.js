@@ -125,7 +125,7 @@ function generateRandomId() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  translateContent(defaultLang, translations);
+  defaultLang = await translateContent(defaultLang, translations);
 });
 
 window.addEventListener('beforeunload', () => {
@@ -393,11 +393,11 @@ if (taskHeader) {
       let taskStatus = document.querySelector('.task-status-select').value;
 
       if (isNaN(cost)) {
-        return showAlert('error', 'Value must be a number');
+        return showAlert('error', translations[defaultLang].valueMustBeNumber);
       } else if (cost > 10000) {
-        return showAlert('error', 'Value can not exceed 10,000');
+        return showAlert('error', translations[defaultLang].valueMax10000);
       } else if (cost < -10000) {
-        return showAlert('error', 'Value can not be less than -10,000');
+        return showAlert('error', translations[defaultLang].valueMinMinus10000);
       }
 
       if (taskStatus === 'open') {
@@ -428,7 +428,7 @@ if (taskHeader) {
 
 if (deleteTaskBtn) {
   deleteTaskBtn.addEventListener('click', function () {
-    const confirmed = confirm('Delete this task?');
+    const confirmed = confirm(translations[defaultLang].deleteThisTask);
     if (confirmed) {
       dents = [];
       const taskId = deleteTaskBtn.dataset.taskId;
@@ -463,12 +463,12 @@ if (addNewDentsToTask) {
     //   return showAlert('error', `You haven't added any dent`);
     warnBeforeUnload = false;
 
-    addNewDentsToTask.textContent = 'Saving...';
+    addNewDentsToTask.textContent = translations[defaultLang].saving;
 
     const dents = Object.values(dentsTemp).flat();
 
     await addDentsToTask(taskId, dents, uploadedImages);
-    addNewDentsToTask.textContent = 'Save changes';
+    addNewDentsToTask.textContent = translations[defaultLang].saveChanges;
   });
 }
 
@@ -506,7 +506,8 @@ if (invoicesMenu) {
 
     const customerId = url.searchParams.get('user');
 
-    if (!customerId) return showAlert('error', 'No customer selected');
+    if (!customerId)
+      return showAlert('error', translations[defaultLang].noCustomerSelected);
 
     invoiceAddressForm.style.display = 'block';
 
@@ -543,11 +544,11 @@ if (invoicesMenu) {
     e.preventDefault();
 
     if (tasksToInvoice.length > 9) {
-      return showAlert('error', 'You can choose up to 9 tasks to invoice');
+      return showAlert('error', translations[defaultLang].invoiceTaskLimit);
     }
 
     if (tasksToInvoice.length === 0)
-      return showAlert('error', 'No tasks selected');
+      return showAlert('error', translations[defaultLang].noTasksSelected);
     invoiceForm.style.display = 'grid';
 
     invoiceForm.scrollIntoView({
@@ -639,7 +640,7 @@ if (invoicesMenu) {
     const saveInvoiceBtn = document.querySelector('.save-invoice-btn');
     saveInvoiceBtn.addEventListener('click', () => {
       saveInvoiceBtn.classList.add('loading-btn');
-      saveInvoiceBtn.textContent = 'Downloading';
+      saveInvoiceBtn.textContent = translations[defaultLang].downloading;
       downloadInvoice(
         fetchedInvoiceData,
         String(totalExcl),
@@ -651,7 +652,7 @@ if (invoicesMenu) {
       );
       setTimeout(() => {
         saveInvoiceBtn.classList.remove('loading-btn');
-        saveInvoiceBtn.textContent = 'Download Invoice';
+        saveInvoiceBtn.textContent = translations[defaultLang].downloadInvoice;
       }, 3000);
     });
 
@@ -971,7 +972,7 @@ if (sendMarksBtn) {
         translations[defaultLang]['addShortDescription'],
       );
     warnBeforeUnload = false;
-    sendMarksBtn.textContent = 'Sending task...';
+    sendMarksBtn.textContent = translations[defaultLang].sendingTask;
     await sendTask(
       customer,
       model,
@@ -981,7 +982,7 @@ if (sendMarksBtn) {
       note,
       defaultLang,
     );
-    sendMarksBtn.textContent = 'Send task';
+    sendMarksBtn.textContent = translations[defaultLang].sendTaskLower;
   });
 }
 

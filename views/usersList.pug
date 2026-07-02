@@ -8,18 +8,18 @@ block content
         img(src="user.png", alt="AccIcon")
   div.modal.hidden
     div.modal__content
-      a.modal__link(href="/me") My profile
-      a.modal__link(href="/") Send new task
-      a.modal__link(href="/tasks") My tasks
-      a.modal__link.logout(href="#") Log out
+      a.modal__link(href="/me" data-key="myProfile")
+      a.modal__link(href="/" data-key="sendNewTask")
+      a.modal__link(href="/tasks" data-key="myTasks")
+      a.modal__link.logout(href="#" data-key="logOut")
   .main-container
     table.task-table
         thead
           tr
-            th Customer name
-            th Tasks number
-            th Email
-            th Created
+            th(data-key="customerName")
+            th(data-key="tasksNumber")
+            th(data-key="email")
+            th(data-key="taskCreated")
         tbody
           each user in users
             tr

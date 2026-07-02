@@ -6,12 +6,12 @@ block content
     .customers-invoice-menu
       .customers-invoice-dropdown
         select#customers-invoice
-          option(value="" disabled selected) Select customer
+          option(value="" disabled selected data-key="selectCustomer")
           each customer in customers
             option(value=customer._id selected=(customer._id.toString() === selectedUser))= he.decode(customer.name)
       .invoice-buttons-top        
-        button.show-invoice-address-btn Show invoice address
-        button.create-invoice-btn Preview invoice
+        button.show-invoice-address-btn(data-key="showInvoiceAddress")
+        button.create-invoice-btn(data-key="previewInvoice")
 
     form(class='form-user-invoice-address' style='display: none;')
       button(type="button" class="close-invoice-address-btn" aria-label="Close") ×
@@ -19,13 +19,13 @@ block content
         label(for="name" data-key="companyName")
         input(type="text" id="name" name="name" value=`` required)
       div.form-group
-        label(for="street") Street / House number
+        label(for="street" data-key="streetHouseNumber")
         input(type="text" id="street" name="street" value=`` required)
       div.form-group
-        label(for="city") Postcode / City
+        label(for="city" data-key="postcodeCity")
         input(type="text" id="city" name="city" value=`` required)   
       div.form-group
-        label(for="city") Email address
+        label(for="city" data-key="emailAddress")
         input(type="text" id="email" name="email" value=`` required)
       
       button(type="submit" class="save-invoice-changes-btn" data-key="saveChanges")      
@@ -33,20 +33,20 @@ block content
       table.task-table
           thead
           tr
-              th Vehicle Model
-              th Task Status
-              th Cost (ex. BTW)
-              th Created
-              th Completed
+              th(data-key="vehicleModel")
+              th(data-key="taskStatus")
+              th(data-key="taskCost")
+              th(data-key="taskCreated")
+              th(data-key="taskCompleted")
               //- th Invoice Sent
           tbody
           if tasks.length === 0
               tr
-              td(colspan='6') No tasks found
+              td(colspan='6' data-key="noTasksFound")
           each task in tasks
               tr
               td: a(href=`/tasks/${task._id}` class='table-link')= task.carModel
-              td(class='clickable-status' id=task._id)= task.taskStatus
+              td(class='clickable-status' id=task._id data-status=task.taskStatus)= task.taskStatus
               td(class='clickable-status' id=task._id)= task.totalCost
               td(class='clickable-status' id=task._id)= new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
               td
@@ -78,10 +78,9 @@ block content
         span.btw         
         span.total-incl
       div.save-invoice-buttons
-        button.save-invoice-btn Download invoice
+        button.save-invoice-btn(data-key="downloadInvoice")
       //-   button.send-invoice-btn Send invoice
     
 
   .overlay.hidden            
-        
         

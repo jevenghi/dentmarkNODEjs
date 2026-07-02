@@ -1,5 +1,10 @@
 import { showAlert } from './alerts.js';
 import axios from 'axios';
+import { translations } from './translations';
+
+const t = (key) =>
+  translations[document.documentElement.lang || 'en']?.[key] ||
+  translations.en[key];
 
 export class TaskHandler {
   #bigDent = false;
@@ -19,8 +24,9 @@ export class TaskHandler {
       if (vehicleImage) vehicleImage.src = '';
       const form = new FormData();
       const images = document.getElementById('photo').files;
-      if (images.length === 0) return showAlert('error', 'No files chosen');
-      uploadPhoto.textContent = 'Uploading...';
+      if (images.length === 0)
+        return showAlert('error', t('noFilesChosenUpload'));
+      uploadPhoto.textContent = t('uploading');
 
       Array.from(images).forEach((file) => {
         form.append('images', file);
@@ -32,7 +38,7 @@ export class TaskHandler {
       } catch (error) {
         showAlert('error', error);
       }
-      uploadPhoto.textContent = 'Upload';
+      uploadPhoto.textContent = t('upload');
       this.renderVehicleImageFromUploads(uploadedImages, 'tasks');
 
       sideText.classList.remove('hidden');
@@ -104,7 +110,7 @@ export class TaskHandler {
     } catch (err) {
       const message =
         err.response.data.message === 'Unexpected field'
-          ? 'You can upload up to 10 images'
+          ? t('uploadLimit')
           : err.response.data.message;
       showAlert('error', message);
     }

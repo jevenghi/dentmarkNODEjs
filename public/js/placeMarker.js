@@ -1,6 +1,11 @@
 import { showAlert } from './alerts.js';
 import axios from 'axios';
 import * as markerConstants from '../../constants/markerConstants';
+import { translations } from './translations';
+
+const t = (key) =>
+  translations[document.documentElement.lang || 'en']?.[key] ||
+  translations.en[key];
 
 export const placeMarker = (bigDent, paintDamaged, coords, image, id) => {
   const marker = document.createElement('div');
@@ -51,7 +56,7 @@ export const addDentsToTask = async (taskId, dents, images) => {
       data: { dents, images },
     });
     if (res.data.status === 'success') {
-      showAlert('success', 'Changes saved successfully!');
+      showAlert('success', t('changesSaved'));
       // window.setTimeout(() => {
       //   // window.scrollTo(0, 0);
       //   location.reload();
@@ -73,7 +78,7 @@ export const removeAllMarkers = (markers, imageContainer) => {
 export const markerRemover = (dentsTemp, img) => {
   document.querySelectorAll('.marker').forEach((marker) => {
     marker.addEventListener('click', () => {
-      const confirmed = confirm('Remove this marker?');
+      const confirmed = confirm(t('removeThisMarker'));
       if (confirmed) {
         marker.remove();
         const markerId = marker.dataset.markerId;

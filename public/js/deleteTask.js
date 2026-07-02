@@ -1,5 +1,10 @@
 import { showAlert } from './alerts.js';
 import axios from 'axios';
+import { translations } from './translations';
+
+const t = (key) =>
+  translations[document.documentElement.lang || 'en']?.[key] ||
+  translations.en[key];
 
 export const deleteTask = async (taskId) => {
   try {
@@ -9,11 +14,11 @@ export const deleteTask = async (taskId) => {
     });
 
     if (res.data.status === 'success') {
-      showAlert('success', 'Task deleted successfully', () => {
+      showAlert('success', t('taskDeleted'), () => {
         location.href = '/tasks';
       });
     }
   } catch (err) {
-    showAlert('error', 'Error deleting task');
+    showAlert('error', t('taskDeleteFailed'));
   }
 };

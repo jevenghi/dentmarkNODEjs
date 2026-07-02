@@ -3,6 +3,11 @@
 // const showAlert = require('./alerts');
 import { showAlert } from './alerts.js';
 import axios from 'axios';
+import { translations } from './translations';
+
+const t = (key) =>
+  translations[document.documentElement.lang || 'en']?.[key] ||
+  translations.en[key];
 
 export const login = async (email, password) => {
   try {
@@ -25,7 +30,7 @@ export const login = async (email, password) => {
 
       window.setTimeout(() => {
         location.assign('/');
-        document.getElementById('loginButton').textContent = 'Login';
+        document.getElementById('loginButton').textContent = t('login');
       }, 1500);
     }
   } catch (err) {

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { showAlert } from './alerts';
+import { translations } from './translations';
 
 const searchResults = document.getElementById('search-results');
 
@@ -28,15 +29,44 @@ export const getUserLanguagePref = async () => {
 
 export const translateContent = async (defaultLang, translations) => {
   const elementsToTranslate = document.querySelectorAll('[data-key]');
+  const placeholdersToTranslate = document.querySelectorAll(
+    '[data-placeholder-key]',
+  );
+  const statusesToTranslate = document.querySelectorAll('[data-status]');
 
   defaultLang = await getUserLanguagePref();
+  document.documentElement.lang = defaultLang;
 
   setLanguage(defaultLang);
+  return defaultLang;
 
   function setLanguage(language) {
     elementsToTranslate.forEach((element) => {
       const key = element.getAttribute('data-key');
-      element.textContent = translations[language][key];
+      if (translations[language][key]) {
+        element.textContent = translations[language][key];
+      }
+    });
+
+    placeholdersToTranslate.forEach((element) => {
+      const key = element.getAttribute('data-placeholder-key');
+      if (translations[language][key]) {
+        element.setAttribute('placeholder', translations[language][key]);
+      }
+    });
+
+    statusesToTranslate.forEach((element) => {
+      const status = element.getAttribute('data-status');
+      const key =
+        {
+          open: 'open',
+          'in-progress': 'inProgress',
+          pending: 'notPaid',
+          complete: 'paid',
+        }[status] || status;
+      if (translations[language][key]) {
+        element.textContent = translations[language][key];
+      }
     });
   }
 };
@@ -65,7 +95,8 @@ export const userAutoSuggest = async (userInput, searchResults) => {
   const regex = /^[A-Za-z0-9\s]*$/;
 
   if (userInput !== '' && !regex.test(userInput)) {
-    return showAlert('error', 'Only letters and numbers are allowed.');
+    const language = await getUserLanguagePref();
+    return showAlert('error', translations[language].onlyLettersNumbers);
   }
   if (userInput.length > 0) {
     try {
