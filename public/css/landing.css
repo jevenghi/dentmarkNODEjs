@@ -120,7 +120,9 @@ p {
 }
 
 .guest_btn {
-  background-color: rgb(76, 175, 80);
+  background-color: transparent;
+  border: 1px solid rgb(45, 64, 89);
+  color: rgb(45, 64, 89);
 }
 
 .login-form {
