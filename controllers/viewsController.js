@@ -45,8 +45,16 @@ exports.getLoginForm = catchAsyncError(async (req, res, next) => {
 });
 
 exports.getLanding = catchAsyncError(async (req, res, next) => {
+  const requestedLanguage = req.query.lang;
+  const detectedLanguage =
+    requestedLanguage === 'nl' || requestedLanguage === 'en'
+      ? requestedLanguage
+      : req.acceptsLanguages('nl', 'en') || 'en';
+  const language = detectedLanguage === 'nl' ? 'nl' : 'en';
+
   res.status(200).render('landing', {
-    title: 'Landing page',
+    title: language === 'nl' ? 'Welkom bij DentMarker' : 'Welcome to DentMarker',
+    language,
   });
 });
 
