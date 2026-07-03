@@ -52,6 +52,28 @@ body {
   /* height: 100vh; */
 }
 
+.language-switcher {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  width: 100%;
+  margin: 1rem 0 0.5rem;
+}
+
+.language-link {
+  border: 1px solid #ffffff;
+  border-radius: 0.25rem;
+  color: #ffffff;
+  font-size: 1.2rem;
+  padding: 0.35rem 0.6rem;
+  text-decoration: none;
+}
+
+.language-link--active {
+  background-color: #ffffff;
+  color: rgb(45, 64, 89);
+}
+
 @media only screen and (min-width: 480px) and (orientation: landscape) {
   .image-container {
     max-width: 1000px;

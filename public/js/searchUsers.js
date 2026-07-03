@@ -29,14 +29,19 @@ export const getUserLanguagePref = async () => {
 export const translateContent = async (defaultLang, translations) => {
   const elementsToTranslate = document.querySelectorAll('[data-key]');
 
-  defaultLang = await getUserLanguagePref();
+  const isGuestPage = Boolean(
+    document.querySelector('.form__input--guest-email'),
+  );
+  const pageLanguage = document.documentElement.lang === 'nl' ? 'nl' : 'en';
+  const userLanguage = isGuestPage ? null : await getUserLanguagePref();
+  const language = userLanguage || defaultLang || pageLanguage;
 
-  setLanguage(defaultLang);
+  setLanguage(language);
 
   function setLanguage(language) {
     elementsToTranslate.forEach((element) => {
       const key = element.getAttribute('data-key');
-      element.textContent = translations[language][key];
+      element.textContent = translations[language]?.[key] || element.textContent;
     });
   }
 };

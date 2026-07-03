@@ -37,7 +37,12 @@ exports.getMain = catchAsyncError(async (req, res, next) => {
 });
 
 exports.getGuestMain = catchAsyncError(async (req, res, next) => {
-  const language = req.acceptsLanguages('nl', 'en') || 'en';
+  const requestedLanguage = req.query.lang;
+  const detectedLanguage =
+    requestedLanguage === 'nl' || requestedLanguage === 'en'
+      ? requestedLanguage
+      : req.acceptsLanguages('nl', 'en') || 'en';
+  const language = detectedLanguage === 'nl' ? 'nl' : 'en';
 
   res.status(200).render('main', {
     title: 'Dentmarker',

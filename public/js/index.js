@@ -96,7 +96,7 @@ const fileInput = document.getElementById('photo');
 let sideSelection = document.querySelector('.sides-container');
 
 let url = new URL(window.location.href);
-let defaultLang = 'en';
+let defaultLang = document.documentElement.lang === 'nl' ? 'nl' : 'en';
 let img;
 let customer;
 let storedCoordinates;
