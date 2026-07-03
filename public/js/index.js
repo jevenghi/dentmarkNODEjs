@@ -44,6 +44,7 @@ const passwordResetForm = document.querySelector('.reset-form');
 const sendContainer = document.querySelector('.send-container');
 const sendMarksBtn = document.querySelector('.send-marks');
 const vehicleModel = document.querySelector('.form__input--model');
+const kentekenInput = document.querySelector('.form__input--kenteken');
 const guestEmailInput = document.querySelector('.form__input--guest-email');
 const guestEmailWarning = document.querySelector('.guest-email-warning');
 const newTaskNote = document.querySelector('.form__input--note');
@@ -109,8 +110,55 @@ let bigDent = false;
 let taskId;
 let warnBeforeUnload = true;
 const isGuest = Boolean(guestEmailInput);
+const RDW_VEHICLES_ENDPOINT = 'https://opendata.rdw.nl/resource/m9d7-ebf2.json';
 
 const isValidEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+
+const normalizeKenteken = (value) => value.replace(/[^a-z0-9]/gi, '').toUpperCase();
+
+const getYearFromRdwDate = (value) => {
+  if (!value || value.length < 4) return '';
+  return value.slice(0, 4);
+};
+
+const applyVehicleYear = (year) => {
+  if (!selectedYear || !year) return;
+
+  const yearOption = selectedYear.querySelector(`option[value="${year}"]`);
+  selectedYear.value = yearOption ? year : 'older';
+};
+
+const lookupKenteken = async () => {
+  if (!kentekenInput || !vehicleModel || !selectedYear) return;
+
+  const kenteken = normalizeKenteken(kentekenInput.value);
+  if (!kenteken) return;
+
+  try {
+    const response = await axios.get(RDW_VEHICLES_ENDPOINT, {
+      params: {
+        kenteken,
+        $limit: 1,
+      },
+    });
+
+    const vehicle = response.data?.[0];
+    if (!vehicle) {
+      return showAlert('error', translations[defaultLang]['kentekenNotFound']);
+    }
+
+    const make = vehicle.merk || '';
+    const model = vehicle.handelsbenaming || '';
+    const vehicleName = `${make} ${model}`.trim();
+    const year = getYearFromRdwDate(vehicle.datum_eerste_toelating);
+
+    if (vehicleName) vehicleModel.value = vehicleName;
+    applyVehicleYear(year);
+  } catch (err) {
+    console.error(err);
+    showAlert('error', translations[defaultLang]['kentekenLookupFailed']);
+  }
+};
 
 const showGuestEmailWarning = () => {
   if (guestEmailWarning) guestEmailWarning.classList.remove('hidden');
@@ -990,6 +1038,11 @@ if (guestEmailInput) {
   });
 }
 
+if (kentekenInput) {
+  kentekenInput.addEventListener('blur', lookupKenteken);
+  kentekenInput.addEventListener('change', lookupKenteken);
+}
+
 if (sendMarksBtn) {
   sendMarksBtn.addEventListener('click', async () => {
     if (dents.length === 0 && !specialCase)
@@ -1027,6 +1080,7 @@ if (sendMarksBtn) {
       note,
       defaultLang,
       emailAddress,
+      year,
     );
     sendMarksBtn.textContent = 'Send task';
   });

@@ -86,9 +86,11 @@ block content
         //- label.form__label Year
         select#year(name="year")
           option(value="" data-key="year")
-          each year in Array.from({ length: 2025 - 2000 }, (_, index) => 2025 - index)
+          each year in Array.from({ length: new Date().getFullYear() - 2000 }, (_, index) => new Date().getFullYear() - index)
             option(value=year)= year
           option(value="older" data-key="older")
+      .vehicle-lookup-divider(data-key="or")
+      input.form__input.form__input--kenteken(type="text" placeholder=currentLanguage === 'nl' ? 'Kenteken...' : 'License plate...' autocomplete="off" inputmode="text")
       input.form__input.form__input--note(type="text" placeholder="Additional notes...")
     
           
