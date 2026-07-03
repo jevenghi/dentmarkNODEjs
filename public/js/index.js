@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { updateSettings } from './updateAccount';
 import he from 'he';
 import { login, logoutUser, forgotPassword } from './login';
