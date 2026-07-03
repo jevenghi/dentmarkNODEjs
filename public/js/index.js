@@ -114,7 +114,8 @@ const RDW_VEHICLES_ENDPOINT = 'https://opendata.rdw.nl/resource/m9d7-ebf2.json';
 
 const isValidEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
-const normalizeKenteken = (value) => value.replace(/[^a-z0-9]/gi, '').toUpperCase();
+const normalizeKenteken = (value) =>
+  value.replace(/[^a-z0-9]/gi, '').toUpperCase();
 
 const getYearFromRdwDate = (value) => {
   if (!value || value.length < 4) return '';
@@ -129,10 +130,10 @@ const applyVehicleYear = (year) => {
 };
 
 const lookupKenteken = async () => {
-  if (!kentekenInput || !vehicleModel || !selectedYear) return;
+  if (!kentekenInput || !vehicleModel || !selectedYear) return false;
 
   const kenteken = normalizeKenteken(kentekenInput.value);
-  if (!kenteken) return;
+  if (!kenteken) return false;
 
   try {
     const response = await axios.get(RDW_VEHICLES_ENDPOINT, {
@@ -144,7 +145,8 @@ const lookupKenteken = async () => {
 
     const vehicle = response.data?.[0];
     if (!vehicle) {
-      return showAlert('error', translations[defaultLang]['kentekenNotFound']);
+      showAlert('error', translations[defaultLang]['kentekenNotFound']);
+      return false;
     }
 
     const make = vehicle.merk || '';
@@ -154,9 +156,11 @@ const lookupKenteken = async () => {
 
     if (vehicleName) vehicleModel.value = vehicleName;
     applyVehicleYear(year);
+    return Boolean(vehicleName);
   } catch (err) {
     console.error(err);
     showAlert('error', translations[defaultLang]['kentekenLookupFailed']);
+    return false;
   }
 };
 
@@ -1052,6 +1056,13 @@ if (sendMarksBtn) {
       return showAlert('error', translations[defaultLang]['enterValidEmail']);
     }
     let model = vehicleModel.value.trim();
+    const kenteken = kentekenInput ? normalizeKenteken(kentekenInput.value) : '';
+    if (model.length < 5 && kenteken) {
+      const kentekenFound = await lookupKenteken();
+      model = vehicleModel.value.trim();
+
+      if (!kentekenFound || model.length < 5) return;
+    }
     if (model.length < 5)
       return showAlert(
         'error',
