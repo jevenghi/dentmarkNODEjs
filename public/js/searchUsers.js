@@ -57,7 +57,7 @@ export const setLanguage = (language, translations) => {
       button.setAttribute('aria-pressed', String(isActive));
     });
 
-  document.querySelectorAll('a[href^="/help"]').forEach((link) => {
+  document.querySelectorAll('a[data-key="needHelp"]').forEach((link) => {
     link.href = `/help?lang=${language}`;
   });
 };

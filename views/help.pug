@@ -37,8 +37,8 @@ block content
 
   .main-container
     .language-switcher.main-language-switcher(aria-label=text.languageLabel)
-      a.language-link(href="/help?lang=en" class=currentLanguage === 'en' ? 'language-link--active' : '' lang="en" aria-current=currentLanguage === 'en' ? 'true' : false) EN
-      a.language-link(href="/help?lang=nl" class=currentLanguage === 'nl' ? 'language-link--active' : '' lang="nl" aria-current=currentLanguage === 'nl' ? 'true' : false) NL
+      a.language-link.help-language-link(href="/help?lang=en" class=currentLanguage === 'en' ? 'language-link--active' : '' lang="en" aria-current=currentLanguage === 'en' ? 'true' : false) EN
+      a.language-link.help-language-link(href="/help?lang=nl" class=currentLanguage === 'nl' ? 'language-link--active' : '' lang="nl" aria-current=currentLanguage === 'nl' ? 'true' : false) NL
     .help-container
       .contact-container
       | #{text.contact} 
