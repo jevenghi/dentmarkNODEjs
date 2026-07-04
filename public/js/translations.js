@@ -71,6 +71,10 @@ export const translations = {
     downloadSummary: 'Download Summary',
     emailAddress: 'Email address',
     enterValidEmail: 'Please enter a valid e-mail address',
+    vehicleModelPlaceholder: 'Vehicle model...',
+    licensePlatePlaceholder: 'License plate...',
+    additionalNotesPlaceholder: 'Additional notes...',
+    sendingTask: 'Sending task...',
   },
   nl: {
     welcome: 'Welkom bij DentMarker!',
@@ -145,5 +149,9 @@ export const translations = {
     downloadSummary: 'Overzicht Opslaan',
     emailAddress: 'E-mailadres',
     enterValidEmail: 'Vul een geldig e-mailadres in',
+    vehicleModelPlaceholder: 'Voertuigmodel...',
+    licensePlatePlaceholder: 'Kenteken...',
+    additionalNotesPlaceholder: 'Aanvullende opmerkingen...',
+    sendingTask: 'Taak verzenden...',
   },
 };

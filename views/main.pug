@@ -16,8 +16,8 @@ block content
   .main-container
     if (role === 'guest')
       .language-switcher.main-language-switcher(aria-label=languageLabel)
-        a.language-link(href="/guest?lang=en" class=currentLanguage === 'en' ? 'language-link--active' : '' lang="en" aria-current=currentLanguage === 'en' ? 'true' : false) EN
-        a.language-link(href="/guest?lang=nl" class=currentLanguage === 'nl' ? 'language-link--active' : '' lang="nl" aria-current=currentLanguage === 'nl' ? 'true' : false) NL
+        button.language-link(type="button" data-language="en" class=currentLanguage === 'en' ? 'language-link--active' : '' lang="en" aria-pressed=currentLanguage === 'en' ? 'true' : 'false') EN
+        button.language-link(type="button" data-language="nl" class=currentLanguage === 'nl' ? 'language-link--active' : '' lang="nl" aria-pressed=currentLanguage === 'nl' ? 'true' : 'false') NL
     h1(data-key="welcome")
     h2(data-key="choosePhotos")
     .photo-upload_container

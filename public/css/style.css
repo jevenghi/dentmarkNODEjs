@@ -61,9 +61,12 @@ body {
 }
 
 .language-link {
+  background: transparent;
   border: 1px solid #ffffff;
   border-radius: 0.25rem;
   color: #ffffff;
+  cursor: pointer;
+  font-family: inherit;
   font-size: 1.2rem;
   padding: 0.35rem 0.6rem;
   text-decoration: none;

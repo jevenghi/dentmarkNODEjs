@@ -26,9 +26,39 @@ export const getUserLanguagePref = async () => {
   }
 };
 
-export const translateContent = async (defaultLang, translations) => {
+export const setLanguage = (language, translations) => {
   const elementsToTranslate = document.querySelectorAll('[data-key]');
+  const placeholderElements = [
+    ['.form__input--guest-email', 'emailAddress'],
+    ['.form__input--model', 'vehicleModelPlaceholder'],
+    ['.form__input--kenteken', 'licensePlatePlaceholder'],
+    ['.form__input--note', 'additionalNotesPlaceholder'],
+  ];
 
+  document.documentElement.lang = language;
+
+  elementsToTranslate.forEach((element) => {
+    const key = element.getAttribute('data-key');
+    element.textContent = translations[language]?.[key] || element.textContent;
+  });
+
+  placeholderElements.forEach(([selector, key]) => {
+    const element = document.querySelector(selector);
+    if (element && translations[language]?.[key]) {
+      element.placeholder = translations[language][key];
+    }
+  });
+
+  document
+    .querySelectorAll('.main-language-switcher [data-language]')
+    .forEach((button) => {
+      const isActive = button.dataset.language === language;
+      button.classList.toggle('language-link--active', isActive);
+      button.setAttribute('aria-pressed', String(isActive));
+    });
+};
+
+export const translateContent = async (defaultLang, translations) => {
   const isGuestPage = Boolean(
     document.querySelector('.form__input--guest-email'),
   );
@@ -36,14 +66,8 @@ export const translateContent = async (defaultLang, translations) => {
   const userLanguage = isGuestPage ? null : await getUserLanguagePref();
   const language = userLanguage || defaultLang || pageLanguage;
 
-  setLanguage(language);
-
-  function setLanguage(language) {
-    elementsToTranslate.forEach((element) => {
-      const key = element.getAttribute('data-key');
-      element.textContent = translations[language]?.[key] || element.textContent;
-    });
-  }
+  setLanguage(language, translations);
+  return language;
 };
 
 export const displayResults = (results, searchResults) => {

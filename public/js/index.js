@@ -26,7 +26,7 @@ import {
   getImagesAndDents,
 } from './photosHandler';
 import { sendTask } from './sendTask';
-import { translateContent, userAutoSuggest } from './searchUsers';
+import { setLanguage, translateContent, userAutoSuggest } from './searchUsers';
 import { generateTaskPDF, createScreenshotContainer } from './makeScreenshot';
 import { UPLOADED_IMAGE_WIDTH } from '../../constants/markerConstants';
 import { translations } from './translations';
@@ -96,6 +96,9 @@ const addNewDentsToTask = document.querySelector('.save-new-dents');
 let buttonsSide = document.querySelectorAll('.button--side');
 const fileInput = document.getElementById('photo');
 let sideSelection = document.querySelector('.sides-container');
+const guestLanguageButtons = document.querySelectorAll(
+  '.main-language-switcher [data-language]',
+);
 
 let url = new URL(window.location.href);
 let defaultLang = document.documentElement.lang === 'nl' ? 'nl' : 'en';
@@ -210,7 +213,24 @@ function generateRandomId() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  translateContent(defaultLang, translations);
+  defaultLang = await translateContent(defaultLang, translations);
+});
+
+const switchGuestLanguage = (language) => {
+  if (!isGuest || (language !== 'en' && language !== 'nl')) return;
+
+  defaultLang = language;
+  setLanguage(defaultLang, translations);
+
+  const nextUrl = new URL(window.location.href);
+  nextUrl.searchParams.set('lang', defaultLang);
+  window.history.replaceState({}, '', nextUrl);
+};
+
+guestLanguageButtons.forEach((button) => {
+  button.addEventListener('click', () => {
+    switchGuestLanguage(button.dataset.language);
+  });
 });
 
 window.addEventListener('beforeunload', () => {
@@ -1082,7 +1102,7 @@ if (sendMarksBtn) {
         translations[defaultLang]['addShortDescription'],
       );
     warnBeforeUnload = false;
-    sendMarksBtn.textContent = 'Sending task...';
+    sendMarksBtn.textContent = translations[defaultLang]['sendingTask'];
     await sendTask(
       customer,
       model,
@@ -1094,7 +1114,7 @@ if (sendMarksBtn) {
       emailAddress,
       year,
     );
-    sendMarksBtn.textContent = 'Send task';
+    sendMarksBtn.textContent = translations[defaultLang]['sendTask'];
   });
 }
 
