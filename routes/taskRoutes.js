@@ -51,6 +51,7 @@ router.post(
   imageController.transferFiles,
   taskController.sendGuestTask,
   taskController.sendTaskCreationEmail,
+  taskController.sendGuestTaskConfirmationEmail,
 );
 router.post(
   '/sendTask/:id',

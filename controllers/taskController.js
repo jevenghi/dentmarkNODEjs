@@ -207,6 +207,8 @@ exports.validateGuestTaskEmail = (req, res, next) => {
   }
 
   req.body.emailAddress = emailAddress;
+  req.guestEmailAddress = emailAddress;
+  req.guestLanguage = req.body.language === 'en' ? 'en' : 'nl';
   next();
 };
 
@@ -220,6 +222,7 @@ exports.sendGuestTask = catchAsyncErr(async (req, res, next) => {
   req.body.user = guestUser.id;
   req.body.userModel = 'GuestUser';
   delete req.body.emailAddress;
+  delete req.body.language;
 
   const newTask = await Task.create(req.body);
   req.newTask = newTask;
@@ -505,6 +508,50 @@ exports.sendTaskCreationEmail = async (req, res, next) => {
     console.error('Error sending task creation email:', error);
     // You might choose to respond with an error here
     // res.status(500).json({ error: 'Failed to send task creation email' });
+  }
+  if (req.guestEmailAddress) next();
+};
+
+exports.sendGuestTaskConfirmationEmail = async (req, res, next) => {
+  try {
+    if (!req.guestEmailAddress || !req.newTask) return;
+
+    const language = req.guestLanguage === 'en' ? 'en' : 'nl';
+    const carModel = he.decode(req.newTask.carModel || '');
+    const taskReference = req.newTask.id;
+    const emailText = {
+      en: {
+        subject: 'We received your DentMarker request',
+        message: [
+          'Thank you for submitting your dent repair request.',
+          carModel ? `Vehicle: ${carModel}` : null,
+          `Reference: ${taskReference}`,
+          'We will review your request and contact you soon.',
+          '',
+          'Kind regards,',
+          'DentMarker',
+        ],
+      },
+      nl: {
+        subject: 'We hebben je DentMarker-aanvraag ontvangen',
+        message: [
+          'Bedankt voor het verzenden van je aanvraag voor deukherstel.',
+          carModel ? `Voertuig: ${carModel}` : null,
+          `Referentie: ${taskReference}`,
+          'We beoordelen je aanvraag en nemen binnenkort contact met je op.',
+          '',
+          'Met vriendelijke groet,',
+          'DentMarker',
+        ],
+      },
+    };
+
+    const { subject, message } = emailText[language];
+    const email = new Email(req.guestEmailAddress);
+
+    await email.send(subject, message.filter(Boolean).join('\n'));
+  } catch (error) {
+    console.error('Error sending guest task confirmation email:', error);
   }
 };
 exports.sendTaskChangeEmail = async (req, res, next) => {

@@ -18,6 +18,7 @@ export const sendTask = async (
     const payload = {
       user: customer,
       emailAddress,
+      language: defaultLang,
       carModel,
       dents,
       images,
