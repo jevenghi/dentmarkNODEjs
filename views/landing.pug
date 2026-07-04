@@ -29,13 +29,13 @@ block content
       }
     };
     const currentLanguage =
-      typeof language !== 'undefined' && language === 'nl' ? 'nl' : 'en';
+      typeof language !== 'undefined' && language === 'en' ? 'en' : 'nl';
     const text = landingText[currentLanguage];
   .container
     .login-form
       .language-switcher(aria-label=text.languageLabel)
-        a.language-link(href="/landing?lang=en" class=currentLanguage === 'en' ? 'language-link--active' : '' lang="en" aria-current=currentLanguage === 'en' ? 'true' : false) English
-        a.language-link(href="/landing?lang=nl" class=currentLanguage === 'nl' ? 'language-link--active' : '' lang="nl" aria-current=currentLanguage === 'nl' ? 'true' : false) Nederlands
+        a.language-link(href="/landing?lang=en" class=currentLanguage === 'en' ? 'language-link--active' : '' lang="en" aria-current=currentLanguage === 'en' ? 'true' : false) EN
+        a.language-link(href="/landing?lang=nl" class=currentLanguage === 'nl' ? 'language-link--active' : '' lang="nl" aria-current=currentLanguage === 'nl' ? 'true' : false) NL
       h1= text.title
       p= text.intro
       .actions
