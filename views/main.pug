@@ -97,6 +97,6 @@ block content
     .form__row.form__row--button
       button.form__btn.send-marks.hidden(data-key="sendTask")
     .need-help-link
-      a(href="/help" data-key="needHelp")
+      a(href=`/help?lang=${currentLanguage}` data-key="needHelp")
 
   .overlay.hidden

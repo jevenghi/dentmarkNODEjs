@@ -56,6 +56,10 @@ export const setLanguage = (language, translations) => {
       button.classList.toggle('language-link--active', isActive);
       button.setAttribute('aria-pressed', String(isActive));
     });
+
+  document.querySelectorAll('a[href^="/help"]').forEach((link) => {
+    link.href = `/help?lang=${language}`;
+  });
 };
 
 export const translateContent = async (defaultLang, translations) => {
