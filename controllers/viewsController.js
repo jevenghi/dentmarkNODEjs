@@ -41,7 +41,7 @@ exports.getGuestMain = catchAsyncError(async (req, res, next) => {
   const detectedLanguage =
     requestedLanguage === 'nl' || requestedLanguage === 'en'
       ? requestedLanguage
-      : req.acceptsLanguages('nl', 'en') || 'en';
+      : 'nl';
   const language = detectedLanguage === 'nl' ? 'nl' : 'en';
 
   res.status(200).render('main', {
