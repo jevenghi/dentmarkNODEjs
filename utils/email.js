@@ -5,7 +5,7 @@ const htmlToText = require('html-to-text');
 class Email {
   constructor(userEmail) {
     this.to = userEmail;
-    this.from = 'Dentmarker App <info@am-place.com>';
+    this.from = 'Dentmarker App <info@crateofrare.com>';
   }
 
   async send(subject, message, attachments = []) {
