@@ -43,7 +43,7 @@ const sendMail = async (options) => {
   });
 
   const mailOptions = {
-    from: 'Dentmarker App <info@am-place.com>',
+    from: 'Dentmarker App <info@crateofrare.com>',
     to: options.email,
     subject: options.subject,
     text: options.message,
