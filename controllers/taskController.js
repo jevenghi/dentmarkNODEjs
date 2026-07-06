@@ -498,7 +498,10 @@ exports.sendTaskCreationEmail = async (req, res, next) => {
     const userName = task.user.name;
 
     const subject = 'New Task submitted';
-    const message = `${userName} has submitted new task: ${req.protocol}://${req.get('host')}/tasks/${taskId}`;
+    const guestEmailLine = req.guestEmailAddress
+      ? `\nGuest email address: ${req.guestEmailAddress}`
+      : '';
+    const message = `${userName} has submitted new task: ${req.protocol}://${req.get('host')}/tasks/${taskId}${guestEmailLine}`;
 
     const email = new Email(process.env.EMAIL_ADMIN);
     // const email = new Email('jevenghi@gmail.com');
@@ -533,12 +536,12 @@ exports.sendGuestTaskConfirmationEmail = async (req, res, next) => {
         ],
       },
       nl: {
-        subject: 'We hebben je DentMarker-aanvraag ontvangen',
+        subject: 'We hebben uw DentMarker-aanvraag ontvangen',
         message: [
-          'Bedankt voor het verzenden van je aanvraag voor deukherstel.',
+          'Bedankt voor het verzenden van uw aanvraag voor deukherstel.',
           carModel ? `Voertuig: ${carModel}` : null,
           `Referentie: ${taskReference}`,
-          'We beoordelen je aanvraag en nemen binnenkort contact met je op.',
+          'We beoordelen uw aanvraag en nemen binnenkort contact met u op.',
           '',
           'Met vriendelijke groet,',
           'DentMarker',
