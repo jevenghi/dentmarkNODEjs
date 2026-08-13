@@ -6,7 +6,7 @@ class Email {
   constructor(userEmail) {
     this.to = userEmail;
     // this.from = 'Dentmarker App <info@am-place.com>';
-    this.from = 'Dentmarker App <audiuka@gmail.com>';
+    this.from = 'Dentmarker App <jevenghi@gmail.com>';
 
   }
 
@@ -46,7 +46,7 @@ const sendMail = async (options) => {
 
   const mailOptions = {
     // from: 'Dentmarker App <info@am-place.com>',
-    from: 'Dentmarker App <audiuka@gmail.com>',
+    from: 'Dentmarker App <jevenghi@gmail.com>',
     to: options.email,
     subject: options.subject,
     text: options.message,
