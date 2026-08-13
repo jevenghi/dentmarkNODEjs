@@ -28,7 +28,9 @@ block content
               button.format-option(data-format="pdf") PDF
               button.format-option(data-format="excel") Excel
         .filter-word
-          input(type='text', id='search-word', placeholder='Search in Vehicle Model')
+          input(type='text', id='search-word', placeholder='Search in Vehicle Model', value=search || '')
+          - if (role === 'admin')
+            input(type='text', id='search-customer', placeholder='Search by customer name', value=customerSearch || '')
           button(class='search-by-word' data-key='search')
           button(class='reset-search' data-key='reset')
         - if (role === 'admin')

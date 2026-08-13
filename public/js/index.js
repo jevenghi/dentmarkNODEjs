@@ -864,6 +864,7 @@ if (filterOptions) {
   const statusFilter = document.getElementById('status-filter');
   const resetDateBtn = document.querySelector('.reset-date');
   const searchByWord = document.getElementById('search-word');
+  const searchByCustomer = document.getElementById('search-customer');
   const searchInputBtn = document.querySelector('.search-by-word');
   const resetSearchBtn = document.querySelector('.reset-search');
   const bulkStatusChangeEl = document.querySelector('.change-status-bulk');
@@ -927,14 +928,23 @@ if (filterOptions) {
   // document.addEventListener('DOMContentLoaded', loadSelection);
   if (searchByWord) {
     searchInputBtn.addEventListener('click', function () {
-      let searchString = searchByWord.value;
+      const searchString = searchByWord.value.trim();
+      const customerSearchString = searchByCustomer?.value.trim();
 
       if (searchString) {
-        searchString = encodeURIComponent(searchByWord.value);
         url.searchParams.set('search', searchString);
-        window.location.href = url.toString();
-        searchString = '';
+      } else {
+        url.searchParams.delete('search');
       }
+
+      if (customerSearchString) {
+        url.searchParams.set('customerSearch', customerSearchString);
+      } else {
+        url.searchParams.delete('customerSearch');
+      }
+
+      url.searchParams.delete('page');
+      window.location.href = url.toString();
     });
   }
 
@@ -994,6 +1004,7 @@ if (filterOptions) {
   if (resetSearchBtn) {
     resetSearchBtn.addEventListener('click', function () {
       url.searchParams.delete('search');
+      url.searchParams.delete('customerSearch');
       window.location.href = url.toString();
     });
   }

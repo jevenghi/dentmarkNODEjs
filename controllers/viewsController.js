@@ -11,6 +11,7 @@ const { RESULTS_LIMIT } = require('../constants/queryConstants');
 const RequestQueryHandler = require('../utils/requestQueryHandler');
 const Task = require('../models/taskModel');
 const User = require('../models/userModel');
+const GuestUser = require('../models/guestUserModel');
 const catchAsyncError = require('../utils/catchAsyncError');
 const factory = require('./handlerFactory');
 
@@ -170,7 +171,8 @@ exports.getMyTasks = catchAsyncError(async (req, res, next) => {
 
   const page = req.query.page * 1 || 1;
   const limit = req.query.limit * 1 || RESULTS_LIMIT;
-  const { taskStatus, completedAt } = req.query;
+  const { taskStatus, completedAt, search = '', customerSearch = '' } =
+    req.query;
   const from = completedAt ? completedAt.gte : '';
   const toDate = completedAt ? completedAt.lt : '';
   // const { taskStatus, createdAt } = req.query;
@@ -195,7 +197,30 @@ exports.getMyTasks = catchAsyncError(async (req, res, next) => {
   }
 
   if (req.user.role === 'admin') {
-    requestQueries = new RequestQueryHandler(Task.find(), req.query)
+    let taskFilter = {};
+
+    if (customerSearch.trim()) {
+      const escapedCustomerSearch = customerSearch
+        .trim()
+        .replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+      const nameRegex = new RegExp(escapedCustomerSearch, 'i');
+      const [users, guestUsers] = await Promise.all([
+        User.find({ name: nameRegex }).select('_id'),
+        GuestUser.find({ name: nameRegex }).select('_id'),
+      ]);
+
+      taskFilter = {
+        $or: [
+          { userModel: 'User', user: { $in: users.map((user) => user._id) } },
+          {
+            userModel: 'GuestUser',
+            user: { $in: guestUsers.map((user) => user._id) },
+          },
+        ],
+      };
+    }
+
+    requestQueries = new RequestQueryHandler(Task.find(taskFilter), req.query)
       .filter()
       .sort()
       .limitFields()
@@ -218,6 +243,8 @@ exports.getMyTasks = catchAsyncError(async (req, res, next) => {
     limit,
     from,
     to,
+    search,
+    customerSearch,
   });
 });
 
