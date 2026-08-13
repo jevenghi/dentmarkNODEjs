@@ -215,9 +215,15 @@ exports.validateGuestTaskEmail = (req, res, next) => {
 exports.sendGuestTask = catchAsyncErr(async (req, res, next) => {
   req.body.carModel = he.decode(req.body.carModel);
 
-  const guestUser = await GuestUser.create({
+  let guestUser = await GuestUser.findOne({
     emailAddres: req.body.emailAddress,
   });
+
+  if (!guestUser) {
+    guestUser = await GuestUser.create({
+      emailAddres: req.body.emailAddress,
+    });
+  }
 
   req.body.user = guestUser.id;
   req.body.userModel = 'GuestUser';

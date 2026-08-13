@@ -1,6 +1,13 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 
+const getNameFromEmail = (emailAddress = '') => {
+  const [localPart, domain = ''] = emailAddress.trim().toLowerCase().split('@');
+  const domainWithoutExtension = domain.split('.').slice(0, -1).join(' ');
+
+  return [localPart, domainWithoutExtension].filter(Boolean).join(' ');
+};
+
 const guestUserSchema = new mongoose.Schema(
   {
     name: {
@@ -28,7 +35,7 @@ const guestUserSchema = new mongoose.Schema(
 
 guestUserSchema.pre('validate', function (next) {
   if (!this.name) {
-    this.name = `guest-${this._id.toString().slice(-4)}`;
+    this.name = getNameFromEmail(this.emailAddres);
   }
   next();
 });
