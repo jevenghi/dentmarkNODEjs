@@ -23,6 +23,29 @@ const { PDFDocument } = require('pdf-lib');
 const slugify = require('slugify');
 const validator = require('validator');
 
+const getCustomerTaskFilter = async (customerSearch) => {
+  if (!customerSearch?.trim()) return {};
+
+  const escapedCustomerSearch = customerSearch
+    .trim()
+    .replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+  const nameRegex = new RegExp(escapedCustomerSearch, 'i');
+  const [users, guestUsers] = await Promise.all([
+    User.find({ name: nameRegex }).select('_id'),
+    GuestUser.find({ name: nameRegex }).select('_id'),
+  ]);
+
+  return {
+    $or: [
+      { userModel: 'User', user: { $in: users.map((user) => user._id) } },
+      {
+        userModel: 'GuestUser',
+        user: { $in: guestUsers.map((user) => user._id) },
+      },
+    ],
+  };
+};
+
 // const multerStorage = multer.diskStorage({
 //   destination: (req, file, cb) => {
 //     cb(null, 'public/pics/tasks');
@@ -129,7 +152,13 @@ exports.getAllTasks = catchAsyncErr(async (req, res, next) => {
   }
 
   if (req.user.role === 'admin') {
-    requestQueries = new RequestQueryHandler(Task.find(), req.query)
+    const customerTaskFilter = await getCustomerTaskFilter(
+      req.query.customerSearch,
+    );
+    requestQueries = new RequestQueryHandler(
+      Task.find(customerTaskFilter),
+      req.query,
+    )
       .filter()
       .sort()
       .limitFields()
@@ -425,7 +454,13 @@ exports.generateAdminReport = catchAsyncErr(async (req, res, next) => {
 
 exports.generateAdminExcel = catchAsyncErr(async (req, res, next) => {
   try {
-    const requestQueries = new RequestQueryHandler(Task.find(), req.query)
+    const customerTaskFilter = await getCustomerTaskFilter(
+      req.query.customerSearch,
+    );
+    const requestQueries = new RequestQueryHandler(
+      Task.find(customerTaskFilter),
+      req.query,
+    )
       .filter()
       .sort()
       .limitFields();
