@@ -1167,6 +1167,12 @@ button[type='submit']:hover {
   justify-content: space-between;
 }
 
+.filter-search-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
 .sort-by {
   font-size: 1.2rem;
   margin-bottom: 0.5rem;
