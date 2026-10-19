@@ -11,17 +11,25 @@ const { RESULTS_LIMIT } = require('../constants/queryConstants');
 const RequestQueryHandler = require('../utils/requestQueryHandler');
 const Task = require('../models/taskModel');
 const User = require('../models/userModel');
+const GuestUser = require('../models/guestUserModel');
 const catchAsyncError = require('../utils/catchAsyncError');
 const factory = require('./handlerFactory');
 
 // const { showAlert } = require('../public/js/alerts');
 
 exports.getHelp = catchAsyncError(async (req, res, next) => {
-  const { language } = req.user;
+  const requestedLanguage = req.query.lang;
+  const detectedLanguage =
+    requestedLanguage === 'nl' || requestedLanguage === 'en'
+      ? requestedLanguage
+      : 'nl';
+  const language = detectedLanguage === 'nl' ? 'nl' : 'en';
 
   res.status(200).render(`help`, {
-    title: 'Instruction',
+    title: language === 'nl' ? 'Hulp' : 'Help',
     language,
+    role: req.user?.role,
+    hideHeader: !req.user,
   });
 });
 
@@ -30,6 +38,22 @@ exports.getMain = catchAsyncError(async (req, res, next) => {
   res.status(200).render('main', {
     title: 'Dentmarker',
     role,
+  });
+});
+
+exports.getGuestMain = catchAsyncError(async (req, res, next) => {
+  const requestedLanguage = req.query.lang;
+  const detectedLanguage =
+    requestedLanguage === 'nl' || requestedLanguage === 'en'
+      ? requestedLanguage
+      : 'nl';
+  const language = detectedLanguage === 'nl' ? 'nl' : 'en';
+
+  res.status(200).render('main', {
+    title: 'Dentmarker',
+    role: 'guest',
+    hideHeader: true,
+    language,
   });
 });
 exports.getPassResetForm = catchAsyncError(async (req, res, next) => {
@@ -45,8 +69,16 @@ exports.getLoginForm = catchAsyncError(async (req, res, next) => {
 });
 
 exports.getLanding = catchAsyncError(async (req, res, next) => {
+  const requestedLanguage = req.query.lang;
+  const detectedLanguage =
+    requestedLanguage === 'nl' || requestedLanguage === 'en'
+      ? requestedLanguage
+      : 'nl';
+  const language = detectedLanguage === 'nl' ? 'nl' : 'en';
+
   res.status(200).render('landing', {
-    title: 'Landing page',
+    title: language === 'nl' ? 'Welkom bij DentMarker' : 'Welcome to DentMarker',
+    language,
   });
 });
 
@@ -139,15 +171,16 @@ exports.getMyTasks = catchAsyncError(async (req, res, next) => {
 
   const page = req.query.page * 1 || 1;
   const limit = req.query.limit * 1 || RESULTS_LIMIT;
-  const { taskStatus, completedAt } = req.query;
-  const from = completedAt ? completedAt.gte : '';
+  const { taskStatus, completedAt, search = '', customerSearch = '' } =
+    req.query;
+  const from = completedAt?.gte ? completedAt.gte.split('T')[0] : '';
   const toDate = completedAt ? completedAt.lt : '';
   // const { taskStatus, createdAt } = req.query;
   // const from = createdAt ? createdAt.gte : '';
   // const toDate = createdAt ? createdAt.lt : '';
   if (toDate) {
-    const toPlusOneDay = new Date(toDate);
-    toPlusOneDay.setDate(toPlusOneDay.getDate() - 1);
+    const toPlusOneDay = new Date(toDate.split('T')[0]);
+    toPlusOneDay.setUTCDate(toPlusOneDay.getUTCDate() - 1);
     to = toPlusOneDay.toISOString().split('T')[0];
   }
 
@@ -164,7 +197,30 @@ exports.getMyTasks = catchAsyncError(async (req, res, next) => {
   }
 
   if (req.user.role === 'admin') {
-    requestQueries = new RequestQueryHandler(Task.find(), req.query)
+    let taskFilter = {};
+
+    if (customerSearch.trim()) {
+      const escapedCustomerSearch = customerSearch
+        .trim()
+        .replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+      const nameRegex = new RegExp(escapedCustomerSearch, 'i');
+      const [users, guestUsers] = await Promise.all([
+        User.find({ name: nameRegex }).select('_id'),
+        GuestUser.find({ name: nameRegex }).select('_id'),
+      ]);
+
+      taskFilter = {
+        $or: [
+          { userModel: 'User', user: { $in: users.map((user) => user._id) } },
+          {
+            userModel: 'GuestUser',
+            user: { $in: guestUsers.map((user) => user._id) },
+          },
+        ],
+      };
+    }
+
+    requestQueries = new RequestQueryHandler(Task.find(taskFilter), req.query)
       .filter()
       .sort()
       .limitFields()
@@ -187,6 +243,8 @@ exports.getMyTasks = catchAsyncError(async (req, res, next) => {
     limit,
     from,
     to,
+    search,
+    customerSearch,
   });
 });
 

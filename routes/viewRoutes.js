@@ -6,7 +6,8 @@ const router = express.Router();
 
 router.get('/landing', viewsController.getLanding);
 router.get('/welcome', viewsController.getWelcome);
-router.get('/help', authController.protect, viewsController.getHelp);
+router.get('/help', authController.isLoggedIn, viewsController.getHelp);
+router.get('/guest', viewsController.getGuestMain);
 router.get('/', authController.protect, viewsController.getMain);
 
 router.get('/login', viewsController.getLoginForm);

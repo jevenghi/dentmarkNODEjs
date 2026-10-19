@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { updateSettings } from './updateAccount';
 import he from 'he';
 import { login, logoutUser, forgotPassword } from './login';
@@ -25,7 +26,7 @@ import {
   getImagesAndDents,
 } from './photosHandler';
 import { sendTask } from './sendTask';
-import { translateContent, userAutoSuggest } from './searchUsers';
+import { setLanguage, translateContent, userAutoSuggest } from './searchUsers';
 import { generateTaskPDF, createScreenshotContainer } from './makeScreenshot';
 import { UPLOADED_IMAGE_WIDTH } from '../../constants/markerConstants';
 import { translations } from './translations';
@@ -34,6 +35,7 @@ import {
   warnUnsavedChanges,
 } from './elementsHandler';
 import { updateStatusBulk } from './updateStatusBulk';
+import { getLocalDateBoundary } from './taskDateFilters';
 import {
   getInvoiceAddress,
   getInvoiceData,
@@ -44,6 +46,9 @@ const passwordResetForm = document.querySelector('.reset-form');
 const sendContainer = document.querySelector('.send-container');
 const sendMarksBtn = document.querySelector('.send-marks');
 const vehicleModel = document.querySelector('.form__input--model');
+const kentekenInput = document.querySelector('.form__input--kenteken');
+const guestEmailInput = document.querySelector('.form__input--guest-email');
+const guestEmailWarning = document.querySelector('.guest-email-warning');
 const newTaskNote = document.querySelector('.form__input--note');
 const removeLastMarkBtn = document.querySelector('.remove__last');
 const removeMarksBtn = document.querySelector('.remove--marks');
@@ -92,9 +97,12 @@ const addNewDentsToTask = document.querySelector('.save-new-dents');
 let buttonsSide = document.querySelectorAll('.button--side');
 const fileInput = document.getElementById('photo');
 let sideSelection = document.querySelector('.sides-container');
+const guestLanguageButtons = document.querySelectorAll(
+  '.main-language-switcher [data-language]',
+);
 
 let url = new URL(window.location.href);
-let defaultLang = 'en';
+let defaultLang = document.documentElement.lang === 'nl' ? 'nl' : 'en';
 let img;
 let customer;
 let storedCoordinates;
@@ -106,6 +114,87 @@ let specialCase = false;
 let bigDent = false;
 let taskId;
 let warnBeforeUnload = true;
+const isGuest = Boolean(guestEmailInput);
+const RDW_VEHICLES_ENDPOINT = 'https://opendata.rdw.nl/resource/m9d7-ebf2.json';
+
+const isValidEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+
+const normalizeKenteken = (value) =>
+  value.replace(/[^a-z0-9]/gi, '').toUpperCase();
+
+const getYearFromRdwDate = (value) => {
+  if (!value || value.length < 4) return '';
+  return value.slice(0, 4);
+};
+
+const applyVehicleYear = (year) => {
+  if (!selectedYear || !year) return;
+
+  const yearOption = selectedYear.querySelector(`option[value="${year}"]`);
+  selectedYear.value = yearOption ? year : 'older';
+};
+
+const lookupKenteken = async () => {
+  if (!kentekenInput || !vehicleModel || !selectedYear) return false;
+
+  const kenteken = normalizeKenteken(kentekenInput.value);
+  if (!kenteken) return false;
+
+  try {
+    const response = await axios.get(RDW_VEHICLES_ENDPOINT, {
+      params: {
+        kenteken,
+        $limit: 1,
+      },
+    });
+
+    const vehicle = response.data?.[0];
+    if (!vehicle) {
+      showAlert('error', translations[defaultLang]['kentekenNotFound']);
+      return false;
+    }
+
+    const make = vehicle.merk || '';
+    const model = vehicle.handelsbenaming || '';
+    const vehicleName = `${make} ${model}`.trim();
+    const year = getYearFromRdwDate(vehicle.datum_eerste_toelating);
+
+    if (vehicleName) vehicleModel.value = vehicleName;
+    applyVehicleYear(year);
+    return Boolean(vehicleName);
+  } catch (err) {
+    console.error(err);
+    showAlert('error', translations[defaultLang]['kentekenLookupFailed']);
+    return false;
+  }
+};
+
+const showGuestEmailWarning = () => {
+  if (guestEmailWarning) guestEmailWarning.classList.remove('hidden');
+  if (guestEmailInput) {
+    guestEmailInput.classList.add('form__input--invalid');
+    guestEmailInput.setAttribute('aria-invalid', 'true');
+  }
+};
+
+const hideGuestEmailWarning = () => {
+  if (guestEmailWarning) guestEmailWarning.classList.add('hidden');
+  if (guestEmailInput) {
+    guestEmailInput.classList.remove('form__input--invalid');
+    guestEmailInput.removeAttribute('aria-invalid');
+  }
+};
+
+const validateGuestEmailInput = () => {
+  if (!isGuest) return true;
+  const emailAddress = guestEmailInput.value.trim();
+  if (isValidEmail(emailAddress)) {
+    hideGuestEmailWarning();
+    return true;
+  }
+  showGuestEmailWarning();
+  return false;
+};
 
 function getDateFormatted(daysToAdd) {
   const date = new Date();
@@ -125,7 +214,24 @@ function generateRandomId() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  translateContent(defaultLang, translations);
+  defaultLang = await translateContent(defaultLang, translations);
+});
+
+const switchGuestLanguage = (language) => {
+  if (!isGuest || (language !== 'en' && language !== 'nl')) return;
+
+  defaultLang = language;
+  setLanguage(defaultLang, translations);
+
+  const nextUrl = new URL(window.location.href);
+  nextUrl.searchParams.set('lang', defaultLang);
+  window.history.replaceState({}, '', nextUrl);
+};
+
+guestLanguageButtons.forEach((button) => {
+  button.addEventListener('click', () => {
+    switchGuestLanguage(button.dataset.language);
+  });
 });
 
 window.addEventListener('beforeunload', () => {
@@ -284,7 +390,10 @@ if (fileInput) {
       const form = new FormData();
       images.forEach((file) => form.append('images', file));
 
-      const imagesProcessed = await uploadPhotosTemp(form);
+      const imagesProcessed = await uploadPhotosTemp(form, isGuest);
+      if (!Array.isArray(imagesProcessed)) {
+        throw new Error('Error uploading photos');
+      }
       uploadedImages.push(...imagesProcessed);
     } catch (error) {
       spinner.style.display = 'none';
@@ -756,6 +865,7 @@ if (filterOptions) {
   const statusFilter = document.getElementById('status-filter');
   const resetDateBtn = document.querySelector('.reset-date');
   const searchByWord = document.getElementById('search-word');
+  const searchByCustomer = document.getElementById('search-customer');
   const searchInputBtn = document.querySelector('.search-by-word');
   const resetSearchBtn = document.querySelector('.reset-search');
   const bulkStatusChangeEl = document.querySelector('.change-status-bulk');
@@ -819,14 +929,23 @@ if (filterOptions) {
   // document.addEventListener('DOMContentLoaded', loadSelection);
   if (searchByWord) {
     searchInputBtn.addEventListener('click', function () {
-      let searchString = searchByWord.value;
+      const searchString = searchByWord.value.trim();
+      const customerSearchString = searchByCustomer?.value.trim();
 
       if (searchString) {
-        searchString = encodeURIComponent(searchByWord.value);
         url.searchParams.set('search', searchString);
-        window.location.href = url.toString();
-        searchString = '';
+      } else {
+        url.searchParams.delete('search');
       }
+
+      if (customerSearchString) {
+        url.searchParams.set('customerSearch', customerSearchString);
+      } else {
+        url.searchParams.delete('customerSearch');
+      }
+
+      url.searchParams.delete('page');
+      window.location.href = url.toString();
     });
   }
 
@@ -846,7 +965,7 @@ if (filterOptions) {
     if (fromDate) {
       // url.searchParams.set(`${sortBySelect.value}[gte]`, fromDate);
       // url.searchParams.set('createdAt[gte]', fromDate);
-      url.searchParams.set('completedAt[gte]', fromDate);
+      url.searchParams.set('completedAt[gte]', getLocalDateBoundary(fromDate));
     } else {
       // url.searchParams.delete(`${sortBySelect.value}[gte]`);
       // url.searchParams.delete('createdAt[gte]');
@@ -859,12 +978,9 @@ if (filterOptions) {
   toDateInput.addEventListener('change', function () {
     const to = toDateInput.value;
     if (to) {
-      const toDate = new Date(to);
-      toDate.setDate(toDate.getDate() + 1);
-      const toPlusOneDay = toDate.toISOString().split('T')[0];
       // url.searchParams.set(`${sortBySelect.value}[lt]`, toPlusOneDay);
       // url.searchParams.set('createdAt[lt]', toPlusOneDay);
-      url.searchParams.set('completedAt[lt]', toPlusOneDay);
+      url.searchParams.set('completedAt[lt]', getLocalDateBoundary(to, 1));
     } else {
       // url.searchParams.delete(`${sortBySelect.value}[lt]`);
       // url.searchParams.delete('createdAt[lt]');
@@ -886,6 +1002,7 @@ if (filterOptions) {
   if (resetSearchBtn) {
     resetSearchBtn.addEventListener('click', function () {
       url.searchParams.delete('search');
+      url.searchParams.delete('customerSearch');
       window.location.href = url.toString();
     });
   }
@@ -948,11 +1065,34 @@ if (vehicleImage) {
   });
 }
 
+if (guestEmailInput) {
+  guestEmailInput.addEventListener('blur', validateGuestEmailInput);
+  guestEmailInput.addEventListener('input', () => {
+    if (isValidEmail(guestEmailInput.value.trim())) hideGuestEmailWarning();
+  });
+}
+
+if (kentekenInput) {
+  kentekenInput.addEventListener('blur', lookupKenteken);
+  kentekenInput.addEventListener('change', lookupKenteken);
+}
+
 if (sendMarksBtn) {
   sendMarksBtn.addEventListener('click', async () => {
     if (dents.length === 0 && !specialCase)
       return showAlert('error', translations[defaultLang]['noDentsMarked']);
+    const emailAddress = guestEmailInput ? guestEmailInput.value.trim() : '';
+    if (isGuest && !validateGuestEmailInput()) {
+      return showAlert('error', translations[defaultLang]['enterValidEmail']);
+    }
     let model = vehicleModel.value.trim();
+    const kenteken = kentekenInput ? normalizeKenteken(kentekenInput.value) : '';
+    if (model.length < 5 && kenteken) {
+      const kentekenFound = await lookupKenteken();
+      model = vehicleModel.value.trim();
+
+      if (!kentekenFound || model.length < 5) return;
+    }
     if (model.length < 5)
       return showAlert(
         'error',
@@ -971,7 +1111,7 @@ if (sendMarksBtn) {
         translations[defaultLang]['addShortDescription'],
       );
     warnBeforeUnload = false;
-    sendMarksBtn.textContent = 'Sending task...';
+    sendMarksBtn.textContent = translations[defaultLang]['sendingTask'];
     await sendTask(
       customer,
       model,
@@ -980,8 +1120,10 @@ if (sendMarksBtn) {
       specialCase,
       note,
       defaultLang,
+      emailAddress,
+      year,
     );
-    sendMarksBtn.textContent = 'Send task';
+    sendMarksBtn.textContent = translations[defaultLang]['sendTask'];
   });
 }
 

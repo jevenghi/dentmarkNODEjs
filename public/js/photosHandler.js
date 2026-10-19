@@ -2,21 +2,25 @@ import { showAlert } from './alerts.js';
 import { placeMarker, populateSidesWithDents } from './placeMarker.js';
 import axios from 'axios';
 
-export const uploadPhotosTemp = async (images) => {
+export const uploadPhotosTemp = async (images, isGuest = false) => {
   try {
     const res = await axios({
       method: 'POST',
-      url: `/api/v1/photos/uploadPhotos`,
+      url: isGuest
+        ? `/api/v1/photos/uploadGuestPhotos`
+        : `/api/v1/photos/uploadPhotos`,
       data: images,
     });
     if (res.data.status === 'success') {
       return res.data.imageNames;
     }
+    throw res.data.message || 'Error uploading photos';
   } catch (err) {
-    throw err.response.data.message === 'Unexpected field'
+    const message = err.response?.data?.message || err.message || err;
+    throw message === 'Unexpected field'
       ? 'You can upload up to 10 images'
       : // : 'Error uploading photos';
-        err.response.data.message;
+        message;
   }
 };
 

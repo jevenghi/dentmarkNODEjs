@@ -8,7 +8,14 @@ class RequestQueryHandler {
 
   filter() {
     const queryObj = { ...this.queryString };
-    const excludedFields = ['page', 'sort', 'limit', 'fields', 'search'];
+    const excludedFields = [
+      'page',
+      'sort',
+      'limit',
+      'fields',
+      'search',
+      'customerSearch',
+    ];
     excludedFields.forEach((el) => delete queryObj[el]);
 
     // Handle date and comparison operators first
@@ -21,9 +28,8 @@ class RequestQueryHandler {
 
     // Add search condition if it exists
     if (this.queryString.search) {
-      const decodedSearchString = decodeURIComponent(this.queryString.search);
       const searchRegex = new RegExp(
-        this.escapeRegex(decodedSearchString),
+        this.escapeRegex(this.queryString.search),
         'i',
       );
       finalQuery = {

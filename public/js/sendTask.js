@@ -10,12 +10,30 @@ export const sendTask = async (
   specialCase,
   remark,
   defaultLang,
+  emailAddress = '',
+  year = '',
 ) => {
   try {
+    const isGuest = Boolean(emailAddress);
+    const payload = {
+      user: customer,
+      emailAddress,
+      language: defaultLang,
+      carModel,
+      dents,
+      images,
+      specialCase,
+      remark,
+    };
+
+    if (/^\d{4}$/.test(String(year))) {
+      payload.year = Number(year);
+    }
+
     const res = await axios({
       method: 'POST',
-      url: '/api/v1/tasks/sendTask',
-      data: { user: customer, carModel, dents, images, specialCase, remark },
+      url: isGuest ? '/api/v1/tasks/sendGuestTask' : '/api/v1/tasks/sendTask',
+      data: payload,
     });
     if (res.data.status === 'success') {
       alert(translations[defaultLang]['taskSent']);
@@ -27,8 +45,8 @@ export const sendTask = async (
     }
   } catch (err) {
     console.error(err);
-    //TODO: change error message back to send failed
-    showAlert('error', translations[defaultLang]['taskSendFailed']);
-    // showAlert('error', err);
+    const message =
+      err.response?.data?.message || translations[defaultLang]['taskSendFailed'];
+    showAlert('error', message);
   }
 };

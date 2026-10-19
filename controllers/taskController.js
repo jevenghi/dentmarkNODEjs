@@ -2,6 +2,7 @@
 const generatePDF = require('../utils/generatePDF');
 const sharp = require('sharp');
 const User = require('../models/userModel');
+const GuestUser = require('../models/guestUserModel');
 const Task = require('../models/taskModel');
 const Dent = require('../models/dentModel');
 const RequestQueryHandler = require('../utils/requestQueryHandler');
@@ -20,6 +21,30 @@ const fs = require('fs');
 const path = require('path');
 const { PDFDocument } = require('pdf-lib');
 const slugify = require('slugify');
+const validator = require('validator');
+
+const getCustomerTaskFilter = async (customerSearch) => {
+  if (!customerSearch?.trim()) return {};
+
+  const escapedCustomerSearch = customerSearch
+    .trim()
+    .replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+  const nameRegex = new RegExp(escapedCustomerSearch, 'i');
+  const [users, guestUsers] = await Promise.all([
+    User.find({ name: nameRegex }).select('_id'),
+    GuestUser.find({ name: nameRegex }).select('_id'),
+  ]);
+
+  return {
+    $or: [
+      { userModel: 'User', user: { $in: users.map((user) => user._id) } },
+      {
+        userModel: 'GuestUser',
+        user: { $in: guestUsers.map((user) => user._id) },
+      },
+    ],
+  };
+};
 
 // const multerStorage = multer.diskStorage({
 //   destination: (req, file, cb) => {
@@ -127,7 +152,13 @@ exports.getAllTasks = catchAsyncErr(async (req, res, next) => {
   }
 
   if (req.user.role === 'admin') {
-    requestQueries = new RequestQueryHandler(Task.find(), req.query)
+    const customerTaskFilter = await getCustomerTaskFilter(
+      req.query.customerSearch,
+    );
+    requestQueries = new RequestQueryHandler(
+      Task.find(customerTaskFilter),
+      req.query,
+    )
       .filter()
       .sort()
       .limitFields()
@@ -146,6 +177,23 @@ exports.getAllTasks = catchAsyncErr(async (req, res, next) => {
 });
 
 exports.getTask = factory.getOne(Task, { path: 'user', select: 'name' });
+
+exports.getTaskReportData = catchAsyncErr(async (req, res, next) => {
+  const queryString = { ...req.query };
+  if (req.user.role !== 'admin') delete queryString.user;
+  const taskFilter =
+    req.user.role === 'admin'
+      ? await getCustomerTaskFilter(req.query.customerSearch)
+      : { user: req.user.id };
+  const requestQueries = new RequestQueryHandler(
+    Task.find(taskFilter),
+    queryString,
+  )
+    .filter()
+    .sort();
+  const tasks = await requestQueries.query;
+  res.status(200).json({ status: 'success', tasks });
+});
 
 // exports.getTask = catchAsyncErr(async (req, res, next) => {
 //   const currentTask = await Task.findById(req.params.id).populate({
@@ -166,8 +214,10 @@ exports.sendTask = catchAsyncErr(async (req, res, next) => {
   if (req.body.user && req.user.role === 'admin') {
     const customer = await User.findOne({ name: req.body.user });
     req.body.user = customer.id;
+    req.body.userModel = 'User';
   } else {
     req.body.user = req.user.id;
+    req.body.userModel = 'User';
   }
   req.body.carModel = he.decode(req.body.carModel);
 
@@ -186,6 +236,46 @@ exports.sendTask = catchAsyncErr(async (req, res, next) => {
   // };
   // req.body.images = JSON.parse(req.body.images);
   // req.body.dents = JSON.parse(req.body.dents);
+  const newTask = await Task.create(req.body);
+  req.newTask = newTask;
+
+  res.status(201).json({
+    status: 'success',
+  });
+  next();
+});
+
+exports.validateGuestTaskEmail = (req, res, next) => {
+  const emailAddress = req.body.emailAddress?.trim().toLowerCase();
+
+  if (!emailAddress || !validator.isEmail(emailAddress)) {
+    return next(new AppError('Please provide a valid e-mail address', 400));
+  }
+
+  req.body.emailAddress = emailAddress;
+  req.guestEmailAddress = emailAddress;
+  req.guestLanguage = req.body.language === 'en' ? 'en' : 'nl';
+  next();
+};
+
+exports.sendGuestTask = catchAsyncErr(async (req, res, next) => {
+  req.body.carModel = he.decode(req.body.carModel);
+
+  let guestUser = await GuestUser.findOne({
+    emailAddres: req.body.emailAddress,
+  });
+
+  if (!guestUser) {
+    guestUser = await GuestUser.create({
+      emailAddres: req.body.emailAddress,
+    });
+  }
+
+  req.body.user = guestUser.id;
+  req.body.userModel = 'GuestUser';
+  delete req.body.emailAddress;
+  delete req.body.language;
+
   const newTask = await Task.create(req.body);
   req.newTask = newTask;
 
@@ -307,11 +397,7 @@ exports.updateDents = catchAsyncErr(async (req, res, next) => {
       await Task.findByIdAndUpdate(taskId, { totalCost: cost });
     }
     if (taskStatus) {
-      if (taskStatus === 'pending' || taskStatus === 'complete') {
-        const completeDate = Date.now();
-        await Task.findByIdAndUpdate(taskId, { completedAt: completeDate });
-      }
-      await Task.findByIdAndUpdate(taskId, { taskStatus });
+      await Task.setTaskStatus({ _id: taskId }, taskStatus);
     }
     if (remark) {
       await Task.findByIdAndUpdate(taskId, { remark });
@@ -378,6 +464,86 @@ exports.generateAdminReport = catchAsyncErr(async (req, res, next) => {
     return next(new AppError(`Error generating PDF`, 500));
   }
 });
+
+exports.generateAdminExcel = catchAsyncErr(async (req, res, next) => {
+  try {
+    const customerTaskFilter = await getCustomerTaskFilter(
+      req.query.customerSearch,
+    );
+    const requestQueries = new RequestQueryHandler(
+      Task.find(customerTaskFilter),
+      req.query,
+    )
+      .filter()
+      .sort()
+      .limitFields();
+
+    const tasks = await requestQueries.query;
+    const rows = tasks.map((task) => [
+      task.user ? he.decode(task.user.name) : 'deleted',
+      he.decode(task.carModel || ''),
+      task.taskStatus,
+      task.totalCost,
+      new Date(task.createdAt).toLocaleDateString('en-US', {
+        month: 'short',
+        day: '2-digit',
+        year: 'numeric',
+      }),
+      task.completedAt
+        ? new Date(task.completedAt).toLocaleDateString('en-US', {
+            month: 'short',
+            day: '2-digit',
+            year: 'numeric',
+          })
+        : '',
+      task.remark || '',
+    ]);
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Summary');
+
+    worksheet.addRow([
+      'Customer',
+      'Vehicle Model',
+      'Status',
+      'Cost',
+      'Created',
+      'Completed',
+      'Notes',
+    ]);
+
+    rows.forEach((row) => worksheet.addRow(row));
+
+    worksheet.columns = [
+      { width: 20 },
+      { width: 15 },
+      { width: 10 },
+      { width: 10 },
+      { width: 12 },
+      { width: 12 },
+      { width: 20 },
+    ];
+
+    const dateColumnIndex = 4;
+    const fromDate = rows[rows.length - 1]?.[dateColumnIndex] || 'start';
+    const toDate = rows[0]?.[dateColumnIndex] || 'end';
+    const filename = `summary_${fromDate}_to_${toDate}.xlsx`.replace(
+      /[/\\?%*:|"<>]/g,
+      '-',
+    );
+    const buffer = await workbook.xlsx.writeBuffer();
+
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    );
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.status(200).send(Buffer.from(buffer));
+  } catch (err) {
+    console.error('Error generating Excel:', err);
+    next(new AppError('Error generating Excel', 500));
+  }
+});
 exports.sendTaskCreationEmail = async (req, res, next) => {
   try {
     const taskId = req.newTask.id;
@@ -386,7 +552,10 @@ exports.sendTaskCreationEmail = async (req, res, next) => {
     const userName = task.user.name;
 
     const subject = 'New Task submitted';
-    const message = `${userName} has submitted new task: ${req.protocol}://${req.get('host')}/tasks/${taskId}`;
+    const guestEmailLine = req.guestEmailAddress
+      ? `\nGuest email address: ${req.guestEmailAddress}`
+      : '';
+    const message = `${userName} has submitted new task: ${req.protocol}://${req.get('host')}/tasks/${taskId}${guestEmailLine}`;
 
     const email = new Email(process.env.EMAIL_ADMIN);
     // const email = new Email('jevenghi@gmail.com');
@@ -396,6 +565,50 @@ exports.sendTaskCreationEmail = async (req, res, next) => {
     console.error('Error sending task creation email:', error);
     // You might choose to respond with an error here
     // res.status(500).json({ error: 'Failed to send task creation email' });
+  }
+  if (req.guestEmailAddress) next();
+};
+
+exports.sendGuestTaskConfirmationEmail = async (req, res, next) => {
+  try {
+    if (!req.guestEmailAddress || !req.newTask) return;
+
+    const language = req.guestLanguage === 'en' ? 'en' : 'nl';
+    const carModel = he.decode(req.newTask.carModel || '');
+    const taskReference = req.newTask.id;
+    const emailText = {
+      en: {
+        subject: 'We received your DentMarker request',
+        message: [
+          'Thank you for submitting your dent repair request.',
+          carModel ? `Vehicle: ${carModel}` : null,
+          `Reference: ${taskReference}`,
+          'We will review your request and contact you soon.',
+          '',
+          'Kind regards,',
+          'DentMarker',
+        ],
+      },
+      nl: {
+        subject: 'We hebben uw DentMarker-aanvraag ontvangen',
+        message: [
+          'Bedankt voor het verzenden van uw aanvraag voor deukherstel.',
+          carModel ? `Voertuig: ${carModel}` : null,
+          `Referentie: ${taskReference}`,
+          'We beoordelen uw aanvraag en nemen binnenkort contact met u op.',
+          '',
+          'Met vriendelijke groet,',
+          'DentMarker',
+        ],
+      },
+    };
+
+    const { subject, message } = emailText[language];
+    const email = new Email(req.guestEmailAddress);
+
+    await email.send(subject, message.filter(Boolean).join('\n'));
+  } catch (error) {
+    console.error('Error sending guest task confirmation email:', error);
   }
 };
 exports.sendTaskChangeEmail = async (req, res, next) => {
@@ -428,9 +641,9 @@ exports.updateStatusBulk = async (req, res, next) => {
         return res.status(400).json({ message: 'Invalid input' });
       }
 
-      await Task.updateMany(
+      await Task.setTaskStatus(
         { _id: { $in: selectedTasks } },
-        { $set: { taskStatus: updatedStatus } },
+        updatedStatus,
       );
       res.status(201).json({
         status: 'success',

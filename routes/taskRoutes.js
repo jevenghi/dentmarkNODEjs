@@ -44,6 +44,15 @@ router.post(
   // remove next() to sendTask when commenting below
   taskController.sendTaskCreationEmail,
 );
+
+router.post(
+  '/sendGuestTask',
+  taskController.validateGuestTaskEmail,
+  imageController.transferFiles,
+  taskController.sendGuestTask,
+  taskController.sendTaskCreationEmail,
+  taskController.sendGuestTaskConfirmationEmail,
+);
 router.post(
   '/sendTask/:id',
   authController.protect,
@@ -65,11 +74,18 @@ router.use(
 );
 
 router.route('/').get(taskController.getAllTasks);
+router.get('/report-data', taskController.getTaskReportData);
 // router.route('/task-stats').get(taskController.getTaskStats);
 router.get(
   '/generate-admin-report',
   authController.restrictTo('admin'),
   taskController.generateAdminReport,
+);
+
+router.get(
+  '/generate-admin-excel',
+  authController.restrictTo('admin'),
+  taskController.generateAdminExcel,
 );
 router
   .route('/:id')

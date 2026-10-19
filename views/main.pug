@@ -9,7 +9,15 @@ block styles
     
 
 block content
+  -
+    const currentLanguage =
+      typeof language !== 'undefined' && language === 'en' ? 'en' : 'nl';
+    const languageLabel = currentLanguage === 'nl' ? 'Taal' : 'Language';
   .main-container
+    if (role === 'guest')
+      .language-switcher.main-language-switcher(aria-label=languageLabel)
+        button.language-link(type="button" data-language="en" class=currentLanguage === 'en' ? 'language-link--active' : '' lang="en" aria-pressed=currentLanguage === 'en' ? 'true' : 'false') EN
+        button.language-link(type="button" data-language="nl" class=currentLanguage === 'nl' ? 'language-link--active' : '' lang="nl" aria-pressed=currentLanguage === 'nl' ? 'true' : 'false') NL
     h1(data-key="welcome")
     h2(data-key="choosePhotos")
     .photo-upload_container
@@ -69,6 +77,10 @@ block content
         .search-bar.hidden
           input(type="text" placeholder="Customer name..." id="search-input" class="form__input--customer")
           div#search-results.dropdown-content
+      if (role === 'guest')
+        .guest-email
+          input.form__input.form__input--guest-email(type="email" placeholder="Email address..." autocomplete="email" aria-describedby="guest-email-warning")
+          p#guest-email-warning.guest-email-warning.hidden(data-key="enterValidEmail" aria-live="polite") Please enter a valid e-mail address
       .vehicle-model
         input.form__input.form__input--model(type="text" placeholder="Vehicle model...")
         //- label.form__label Year
@@ -77,13 +89,14 @@ block content
           each year in Array.from({ length: 2026 - 2000 }, (_, index) => 2026 - index)
             option(value=year)= year
           option(value="older" data-key="older")
+      .vehicle-lookup-divider(data-key="or")
+      input.form__input.form__input--kenteken(type="text" placeholder=currentLanguage === 'nl' ? 'Kenteken...' : 'License plate...' autocomplete="off" inputmode="text")
       input.form__input.form__input--note(type="text" placeholder="Additional notes...")
     
           
     .form__row.form__row--button
       button.form__btn.send-marks.hidden(data-key="sendTask")
     .need-help-link
-      a(href="/help" data-key="needHelp") 
+      a(href=`/help?lang=${currentLanguage}` data-key="needHelp")
 
-  .overlay.hidden            
-    
+  .overlay.hidden
