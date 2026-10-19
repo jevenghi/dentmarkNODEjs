@@ -63,52 +63,62 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 // };
 
 const getFilteredResults = async () => {
-  const query = window.location.search ? window.location.search : '?';
+  const params = new URLSearchParams(window.location.search);
+  params.delete('page');
+  params.delete('limit');
+  params.delete('fields');
   try {
     const res = await axios({
       method: 'GET',
-      url: `/api/v1/tasks${query}&limit=1000`,
+      url: `/api/v1/tasks/report-data?${params.toString()}`,
     });
     if (res.data.status === 'success') {
-      const result = res.data.tasks.map((task) => [
-        he.decode(task.user.name),
-        task.carModel,
-        task.taskStatus,
-        task.totalCost,
-        new Date(task.createdAt).toLocaleDateString('en-US', {
-          month: 'short',
-          day: '2-digit',
-          year: 'numeric',
-        }),
-        task.completedAt
-          ? new Date(task.completedAt).toLocaleDateString('en-US', {
-              month: 'short',
-              day: '2-digit',
-              year: 'numeric',
-            })
-          : '',
-        task.remark,
-      ]);
-      return result;
-    } else {
-      return showAlert('error', res.data.message);
+      return res.data.tasks;
     }
+    showAlert('error', res.data.message);
   } catch (err) {
-    return showAlert('error', err);
+    showAlert('error', err.response?.data?.message || 'Error making the report');
   }
+  return null;
 };
 
 export const generatePDF = async () => {
-  let filteredResults = await getFilteredResults();
-  filteredResults = filteredResults.map((row) => row.slice(0, -1));
+  const tasks = await getFilteredResults();
+  if (!tasks) return;
+  if (tasks.length === 0) {
+    showAlert('error', 'No tasks found for the selected filters');
+    return;
+  }
+
+  const formatDate = (value) =>
+    new Date(value).toLocaleDateString('en-US', {
+      month: 'short',
+      day: '2-digit',
+      year: 'numeric',
+    });
+  const filteredResults = tasks.map((task) => [
+    he.decode(task.user?.name || 'deleted'),
+    task.carModel || '',
+    task.taskStatus,
+    task.totalCost,
+    formatDate(task.createdAt),
+    task.completedAt ? formatDate(task.completedAt) : '',
+  ]);
 
   const totalSum = filteredResults.reduce((acc, curr) => acc + curr[3], 0);
   const totalAmountTasks = filteredResults.length;
-  const from =
-    filteredResults[filteredResults.length - 1][
-      filteredResults[filteredResults.length - 1].length - 2
-    ];
-  const to = filteredResults[0][filteredResults[0].length - 2];
+  const dateRange = tasks.reduce(
+    (range, task) => {
+      const timestamp = new Date(task.createdAt).getTime();
+      return {
+        from: Math.min(range.from, timestamp),
+        to: Math.max(range.to, timestamp),
+      };
+    },
+    { from: Infinity, to: -Infinity },
+  );
+  const from = formatDate(dateRange.from);
+  const to = formatDate(dateRange.to);
 
   const docDefinition = {
     content: [

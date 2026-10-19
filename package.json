@@ -12,7 +12,8 @@
     "start:prod": "cross-env NODE_ENV=production nodemon server.js",
     "debug:prod": "SET NODE_ENV=production&& ndb server.js",
     "build": "parcel build ./public/js/index.js --dist-dir ./public/js/bundled",
-    "backfill:status-rank": "node scripts/backfillTaskStatusRank.js"
+    "backfill:status-rank": "node scripts/backfillTaskStatusRank.js",
+    "test:task-filters": "node --test tests/taskFiltering.test.cjs"
   },
   "author": "jLapLab",
   "license": "ISC",

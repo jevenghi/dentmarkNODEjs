@@ -74,6 +74,7 @@ router.use(
 );
 
 router.route('/').get(taskController.getAllTasks);
+router.get('/report-data', taskController.getTaskReportData);
 // router.route('/task-stats').get(taskController.getTaskStats);
 router.get(
   '/generate-admin-report',

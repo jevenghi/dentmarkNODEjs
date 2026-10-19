@@ -28,9 +28,8 @@ class RequestQueryHandler {
 
     // Add search condition if it exists
     if (this.queryString.search) {
-      const decodedSearchString = decodeURIComponent(this.queryString.search);
       const searchRegex = new RegExp(
-        this.escapeRegex(decodedSearchString),
+        this.escapeRegex(this.queryString.search),
         'i',
       );
       finalQuery = {

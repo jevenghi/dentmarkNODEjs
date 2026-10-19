@@ -35,6 +35,7 @@ import {
   warnUnsavedChanges,
 } from './elementsHandler';
 import { updateStatusBulk } from './updateStatusBulk';
+import { getLocalDateBoundary } from './taskDateFilters';
 import {
   getInvoiceAddress,
   getInvoiceData,
@@ -964,7 +965,7 @@ if (filterOptions) {
     if (fromDate) {
       // url.searchParams.set(`${sortBySelect.value}[gte]`, fromDate);
       // url.searchParams.set('createdAt[gte]', fromDate);
-      url.searchParams.set('completedAt[gte]', fromDate);
+      url.searchParams.set('completedAt[gte]', getLocalDateBoundary(fromDate));
     } else {
       // url.searchParams.delete(`${sortBySelect.value}[gte]`);
       // url.searchParams.delete('createdAt[gte]');
@@ -977,12 +978,9 @@ if (filterOptions) {
   toDateInput.addEventListener('change', function () {
     const to = toDateInput.value;
     if (to) {
-      const toDate = new Date(to);
-      toDate.setDate(toDate.getDate() + 1);
-      const toPlusOneDay = toDate.toISOString().split('T')[0];
       // url.searchParams.set(`${sortBySelect.value}[lt]`, toPlusOneDay);
       // url.searchParams.set('createdAt[lt]', toPlusOneDay);
-      url.searchParams.set('completedAt[lt]', toPlusOneDay);
+      url.searchParams.set('completedAt[lt]', getLocalDateBoundary(to, 1));
     } else {
       // url.searchParams.delete(`${sortBySelect.value}[lt]`);
       // url.searchParams.delete('createdAt[lt]');

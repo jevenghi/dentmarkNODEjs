@@ -173,14 +173,14 @@ exports.getMyTasks = catchAsyncError(async (req, res, next) => {
   const limit = req.query.limit * 1 || RESULTS_LIMIT;
   const { taskStatus, completedAt, search = '', customerSearch = '' } =
     req.query;
-  const from = completedAt ? completedAt.gte : '';
+  const from = completedAt?.gte ? completedAt.gte.split('T')[0] : '';
   const toDate = completedAt ? completedAt.lt : '';
   // const { taskStatus, createdAt } = req.query;
   // const from = createdAt ? createdAt.gte : '';
   // const toDate = createdAt ? createdAt.lt : '';
   if (toDate) {
-    const toPlusOneDay = new Date(toDate);
-    toPlusOneDay.setDate(toPlusOneDay.getDate() - 1);
+    const toPlusOneDay = new Date(toDate.split('T')[0]);
+    toPlusOneDay.setUTCDate(toPlusOneDay.getUTCDate() - 1);
     to = toPlusOneDay.toISOString().split('T')[0];
   }
 

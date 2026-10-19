@@ -9,6 +9,7 @@ const TASK_STATUS_RANK = {
 };
 
 const getTaskStatusRank = (status = 'open') => TASK_STATUS_RANK[status] || 1;
+const COMPLETED_STATUSES = ['pending', 'complete'];
 
 const applyStatusRankToUpdate = (update) => {
   if (!update) return;
@@ -120,11 +121,52 @@ const taskSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   },
 );
-//TODO: add completedAt field to task schema
 taskSchema.pre('save', function (next) {
   this.statusRank = getTaskStatusRank(this.taskStatus);
+  if (this.isNew || this.isModified('taskStatus')) {
+    this.completedAt = COMPLETED_STATUSES.includes(this.taskStatus)
+      ? this.completedAt || new Date()
+      : undefined;
+  }
   next();
 });
+
+// Evaluate each task's previous state in MongoDB so bulk transitions preserve
+// existing completion dates and update the status and date atomically.
+taskSchema.statics.setTaskStatus = function (filter, status) {
+  if (!Object.hasOwn(TASK_STATUS_RANK, status)) {
+    const error = new mongoose.Error.ValidationError();
+    error.addError(
+      'taskStatus',
+      new mongoose.Error.ValidatorError({
+        path: 'taskStatus',
+        value: status,
+        message: 'Invalid task status',
+      }),
+    );
+    throw error;
+  }
+
+  const completedAt = COMPLETED_STATUSES.includes(status)
+    ? {
+        $cond: [
+          { $in: ['$taskStatus', COMPLETED_STATUSES] },
+          { $ifNull: ['$completedAt', '$$NOW'] },
+          '$$NOW',
+        ],
+      }
+    : '$$REMOVE';
+
+  return this.updateMany(filter, [
+    {
+      $set: {
+        taskStatus: status,
+        statusRank: getTaskStatusRank(status),
+        completedAt,
+      },
+    },
+  ]);
+};
 
 taskSchema.pre('findOneAndUpdate', function (next) {
   applyStatusRankToUpdate(this.getUpdate());

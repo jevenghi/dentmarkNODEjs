@@ -178,6 +178,23 @@ exports.getAllTasks = catchAsyncErr(async (req, res, next) => {
 
 exports.getTask = factory.getOne(Task, { path: 'user', select: 'name' });
 
+exports.getTaskReportData = catchAsyncErr(async (req, res, next) => {
+  const queryString = { ...req.query };
+  if (req.user.role !== 'admin') delete queryString.user;
+  const taskFilter =
+    req.user.role === 'admin'
+      ? await getCustomerTaskFilter(req.query.customerSearch)
+      : { user: req.user.id };
+  const requestQueries = new RequestQueryHandler(
+    Task.find(taskFilter),
+    queryString,
+  )
+    .filter()
+    .sort();
+  const tasks = await requestQueries.query;
+  res.status(200).json({ status: 'success', tasks });
+});
+
 // exports.getTask = catchAsyncErr(async (req, res, next) => {
 //   const currentTask = await Task.findById(req.params.id).populate({
 //     path: 'user',
@@ -380,11 +397,7 @@ exports.updateDents = catchAsyncErr(async (req, res, next) => {
       await Task.findByIdAndUpdate(taskId, { totalCost: cost });
     }
     if (taskStatus) {
-      if (taskStatus === 'pending' || taskStatus === 'complete') {
-        const completeDate = Date.now();
-        await Task.findByIdAndUpdate(taskId, { completedAt: completeDate });
-      }
-      await Task.findByIdAndUpdate(taskId, { taskStatus });
+      await Task.setTaskStatus({ _id: taskId }, taskStatus);
     }
     if (remark) {
       await Task.findByIdAndUpdate(taskId, { remark });
@@ -628,9 +641,9 @@ exports.updateStatusBulk = async (req, res, next) => {
         return res.status(400).json({ message: 'Invalid input' });
       }
 
-      await Task.updateMany(
+      await Task.setTaskStatus(
         { _id: { $in: selectedTasks } },
-        { $set: { taskStatus: updatedStatus } },
+        updatedStatus,
       );
       res.status(201).json({
         status: 'success',
